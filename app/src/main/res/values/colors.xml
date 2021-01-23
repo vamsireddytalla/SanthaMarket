@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#fff</color>
+    <color name="colorPrimaryDark">#638AEC</color>
+    <color name="colorAccent">#333E56</color>
+    <color name="light_white">#fafafa</color>
+    <color name="white">#fff</color>
+    <color name="light_cement">#8B9DAF</color>
+    <color name="light_xem">#ECF3FA</color>
+    <color name="gradi_lemon">#F6C72E</color>
+    <color name="ice_blue">#638AEC </color>
+    <color name="black">#000000</color>
+    <color name="gray">#E8E8E8</color>
+    <color name="bottom_menu_item_color">#2f2f2f</color>
+
 </resources>
