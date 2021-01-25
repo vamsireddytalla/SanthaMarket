@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">SanthaMarket</string>
-    <string name="enter_mobile_number_to_sign_in">Please Enter mobile number to SignIn</string>
+    <string name="app_name">Santha Market</string>
+    <string name="enter_mobile_number_to_sign_in">Enter your Mobile Number to SignIn</string>
     <string name="an_otp_desc"><![CDATA[ OTP sent to your Mobile Number \n Enter OTP here]]></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="open">open</string>
     <string name="close">close</string>
+    <string name="santha_market">Santha Market</string>
 </resources>

@@ -10,13 +10,15 @@
     android:fitsSystemWindows="true"
     tools:context=".activities.AuthenticationActivity">
 
+
     <TextView
         android:id="@+id/skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="40dp"
-        android:fontFamily="@font/circular_black"
+        android:fontFamily="@font/roboto_black"
+        android:drawableRight="@drawable/ic_baseline_fast_forward_24"
         android:gravity="right"
         android:text="Skip"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
@@ -49,9 +51,10 @@
         android:gravity="center"
         android:layout_marginTop="32dp"
         android:layout_marginBottom="26dp"
-        android:fontFamily="@font/circular_book"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/light_text_color"
         android:text="@string/enter_mobile_number_to_sign_in"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toTopOf="@+id/editTextPhone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -83,7 +86,7 @@
                 android:gravity="start|center"
                 android:paddingLeft="10dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:fontFamily="@font/circular_black"
+                android:fontFamily="@font/roboto_bold"
                 android:text="+91"/>
             <EditText
                 android:layout_width="match_parent"
@@ -94,7 +97,7 @@
                 android:paddingLeft="10dp"
                 android:inputType="phone"
                 android:maxLength="10"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"/>
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
@@ -110,9 +113,9 @@
         android:layout_marginEnd="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginBottom="60dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@drawable/btn_bg"
         android:text="Get OTP"
-        android:fontFamily="@font/circular_black"
+        android:fontFamily="@font/roboto_black"
         android:textStyle="bold"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"

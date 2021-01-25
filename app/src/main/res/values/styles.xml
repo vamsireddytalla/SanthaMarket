@@ -8,7 +8,7 @@
 
     <style name="botton_nav_style">
         <item name="android:typeface">normal</item>
-        <item name="android:fontFamily">@font/circular_book</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
         <item name="iconTint">@color/colorPrimaryDark</item>
         <item name="itemTextColor">@color/colorPrimaryDark</item>
     </style>
@@ -22,8 +22,14 @@
     <style name="NavigationTheme" parent="AppTheme">
         <item name="android:textSize">10sp</item>
         <item name="android:layout_marginTop">@dimen/_5sdp</item>
-        <item name="fontFamily">@font/jaapokki_regular</item>
+        <item name="fontFamily">@font/roboto_regular</item>
         <item name="android:layout_marginBottom">-5dp</item>
+    </style>
+
+    <style name="AppTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/white</item>
     </style>
 
 </resources>
