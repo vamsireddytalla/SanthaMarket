@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.OrderSummaryActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimaryDark">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:id="@+id/backbtn"
+                android:src="@drawable/ic_left_arrow" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Order Summary"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_20sdp" />
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+     <androidx.core.widget.NestedScrollView
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:background="@color/gray">
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical">
+
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:padding="@dimen/_10sdp"
+                 android:orientation="vertical"
+                 android:background="@color/white">
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="Delivery Address"
+                     android:fontFamily="@font/roboto_bold"/>
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="Vijay Kumar"
+                     android:fontFamily="@font/roboto_regular"/>
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="Vanga vari street"
+                     android:fontFamily="@font/roboto_regular"/>
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="Biccavolu"
+                     android:fontFamily="@font/roboto_regular"/>
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="8885965414"
+                     android:fontFamily="@font/roboto_regular"/>
+                 <Button
+                     android:id="@+id/push_button"
+                     android:layout_width="match_parent"
+                     android:layout_height="@dimen/_40sdp"
+                     android:layout_marginStart="@dimen/_40sdp"
+                     android:layout_marginEnd="@dimen/_40sdp"
+                     android:background="@drawable/btn_bg"
+                     android:fontFamily="@font/roboto_black"
+                     android:layout_margin="@dimen/_10sdp"
+                     android:padding="10dp"
+                     android:textAllCaps="false"
+                     android:text="Change or Add Address"
+                     android:textColor="@color/white"/>
+             </LinearLayout>
+
+             <include layout="@layout/order_summary_item"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="@dimen/_20sdp"/>
+
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:background="@color/white"
+                 android:orientation="vertical"
+                 android:layout_marginTop="@dimen/_20sdp">
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="PRICE DETAILS"
+                     android:padding="@dimen/_10sdp"
+                     android:fontFamily="@font/roboto_medium" />
+                 <View
+                     android:layout_width="match_parent"
+                     android:layout_height="@dimen/_2sdp"
+                     android:background="@color/gray"/>
+                 <LinearLayout
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:orientation="vertical">
+                     <LinearLayout
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content"
+                         android:padding="@dimen/_5sdp"
+                         android:weightSum="1">
+                         <TextView
+                             android:layout_width="0dp"
+                             android:layout_height="wrap_content"
+                             android:layout_weight="0.50"
+                             android:layout_marginLeft="@dimen/_10sdp"
+                             android:fontFamily="@font/roboto_regular"
+                             android:text="Price ( 1 item )"/>
+                         <TextView
+                             android:layout_width="0dp"
+                             android:layout_height="wrap_content"
+                             android:layout_weight="0.50"
+                             android:gravity="end"
+                             android:layout_marginRight="@dimen/_10sdp"
+                             android:fontFamily="@font/roboto_regular"
+                             android:text="350"/>
+                     </LinearLayout>
+                     <LinearLayout
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content"
+                         android:padding="@dimen/_5sdp"
+                         android:weightSum="1">
+                         <TextView
+                             android:layout_width="0dp"
+                             android:layout_height="wrap_content"
+                             android:layout_weight="0.50"
+                             android:layout_marginLeft="@dimen/_10sdp"
+                             android:fontFamily="@font/roboto_regular"
+                             android:text="Discount"/>
+                         <TextView
+                             android:layout_width="0dp"
+                             android:layout_height="wrap_content"
+                             android:layout_weight="0.50"
+                             android:gravity="end"
+                             android:layout_marginRight="@dimen/_10sdp"
+                             android:fontFamily="@font/roboto_regular"
+                             android:textColor="@color/greeen"
+                             android:text="50"/>
+                     </LinearLayout>
+                     <LinearLayout
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content"
+                         android:padding="@dimen/_5sdp"
+                         android:weightSum="1">
+                         <TextView
+                             android:layout_width="0dp"
+                             android:layout_height="wrap_content"
+                             android:layout_weight="0.50"
+                             android:layout_marginLeft="@dimen/_10sdp"
+                             android:fontFamily="@font/roboto_regular"
+                             android:text="Delivery charges"/>
+                         <TextView
+                             android:layout_width="0dp"
+                             android:layout_height="wrap_content"
+                             android:layout_weight="0.50"
+                             android:gravity="end"
+                             android:layout_marginRight="@dimen/_10sdp"
+                             android:fontFamily="@font/roboto_regular"
+                             android:textColor="@color/greeen"
+                             android:text="FREE"/>
+                     </LinearLayout>
+                     <View
+                         android:layout_width="match_parent"
+                         android:layout_height="2dp"
+                         android:background="@drawable/dot_line"/>
+                     <LinearLayout
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content"
+                         android:padding="@dimen/_5sdp"
+                         android:weightSum="1">
+                         <TextView
+                             android:layout_width="0dp"
+                             android:layout_height="wrap_content"
+                             android:layout_weight="0.50"
+                             android:layout_marginLeft="@dimen/_10sdp"
+                             android:fontFamily="@font/roboto_regular"
+                             android:text="Total"/>
+                         <TextView
+                             android:layout_width="0dp"
+                             android:layout_height="wrap_content"
+                             android:layout_weight="0.50"
+                             android:gravity="end"
+                             android:layout_marginRight="@dimen/_10sdp"
+                             android:fontFamily="@font/roboto_regular"
+                             android:text="350"/>
+                     </LinearLayout>
+                 </LinearLayout>
+             </LinearLayout>
+
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="@dimen/_50sdp"
+                 android:background="@color/white"
+                 android:layout_marginTop="@dimen/_50sdp"
+                 android:weightSum="1">
+                 <TextView
+                     android:layout_width="0dp"
+                     android:layout_height="match_parent"
+                     android:text="350 Rs"
+                     android:gravity="center_vertical"
+                     android:fontFamily="@font/roboto_bold"
+                     android:layout_marginLeft="@dimen/_10sdp"
+                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                     android:layout_weight="0.50"/>
+                 <Button
+                     android:layout_width="0dp"
+                     android:layout_height="match_parent"
+                     android:background="@color/orange"
+                     android:layout_weight="0.50"
+                     android:textColor="@color/white"
+                     android:fontFamily="@font/roboto_bold"
+                     android:id="@+id/placeOrder"
+                     android:text="Place Order"/>
+             </LinearLayout>
+
+         </LinearLayout>
+     </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

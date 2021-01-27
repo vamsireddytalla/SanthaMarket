@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_150sdp"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.30">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@color/gray" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.70">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/productName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="21dp"
+                android:layout_marginLeft="21dp"
+                android:layout_marginTop="10dp"
+                android:layout_toStartOf="@+id/makeFav"
+                android:layout_toLeftOf="@+id/makeFav"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Bata Shoes Branded"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <ImageView
+                android:id="@+id/makeFav"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginRight="14dp"
+                android:src="@drawable/fav_outlined" />
+
+            <TextView
+                android:id="@+id/productDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/productName"
+                android:layout_alignEnd="@+id/productName"
+                android:layout_alignRight="@+id/productName"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginStart="21dp"
+                android:layout_marginLeft="21dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Description" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/productDesc"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginStart="21dp"
+                android:layout_marginLeft="21dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="1369 rs"
+                android:textColor="@color/greeen" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="@dimen/_40sdp"
+                android:fontFamily="@font/roboto_medium"
+                android:layout_marginBottom="22dp"
+                android:text="Add to Cart" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -45,7 +45,7 @@ public class HomeActivity extends AppCompatActivity {
                     case R.id.favourite:
                         Intent favIntent = new Intent(HomeActivity.this, FavouriteActivity.class);
                         startActivity(favIntent);
-                        break;
+                        return false;
                     case R.id.profile:
                         Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                         startActivity(intent);
@@ -80,26 +80,25 @@ public class HomeActivity extends AppCompatActivity {
             String tag = backStackEntry.getName();
             Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.rootFrame);
             if (currentFrag instanceof MyOrdersFragment) {
-                addFragment(new HomeFragment());
                 binding.bottomNav.getMenu().getItem(0).setChecked(true);
-            } else {
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog_MinWidth);
-                builder.setTitle("Do you want to Exit !");
-                builder.setBackground(this.getResources().getDrawable(R.drawable.white_bg));
-                builder.setCancelable(false);
-                builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        finish();
-                    }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
             }
+        } else {
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog_MinWidth);
+            builder.setTitle("Do you want to Exit !");
+            builder.setBackground(this.getResources().getDrawable(R.drawable.white_bg));
+            builder.setCancelable(false);
+            builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    finish();
+                }
+            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }).show();
         }
 
     }

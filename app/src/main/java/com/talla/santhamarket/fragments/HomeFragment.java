@@ -23,6 +23,9 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.talla.santhamarket.R;
+import com.talla.santhamarket.activities.AuthenticationActivity;
+import com.talla.santhamarket.activities.CartActivity;
+import com.talla.santhamarket.activities.OtpActivity;
 import com.talla.santhamarket.adapters.HomeBannerAdapter;
 import com.talla.santhamarket.databinding.FragmentHomeBinding;
 
@@ -101,6 +104,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+        binding.cartItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), CartActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return binding.getRoot();
     }
