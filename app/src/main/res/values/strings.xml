@@ -7,4 +7,9 @@
     <string name="open">open</string>
     <string name="close">close</string>
     <string name="santha_market">Santha Market</string>
+    <string name="Rs">\u20B9</string>
+    <array name="initial_range_slider_values">
+        <item>10.0</item>
+        <item>50000.0</item>
+    </array>
 </resources>

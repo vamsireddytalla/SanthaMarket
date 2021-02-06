@@ -183,10 +183,10 @@
                         android:text="Categories"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
-                    <include
-                        layout="@layout/dash_cat_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                  <androidx.recyclerview.widget.RecyclerView
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/categoryRCV"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -204,6 +204,7 @@
 
                     <include
                         layout="@layout/offer_product_item"
+                        android:id="@+id/productItem"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_10sdp" />

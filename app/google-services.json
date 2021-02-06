@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "365517331678",
+    "project_id": "santhamarket-e5c46",
+    "storage_bucket": "santhamarket-e5c46.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365517331678:android:14194eb4f1ca500054764f",
+        "android_client_info": {
+          "package_name": "com.talla.santhamarket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "365517331678-1es31n1t8rjrr0m8othtgvnihgjknlki.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.talla.santhamarket",
+            "certificate_hash": "36208fc0b466ece517c8b1f9b7b8f7b800ed085a"
+          }
+        },
+        {
+          "client_id": "365517331678-34k9mp4sd7d0bgvulrvijte5c2podsv5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpVyAtbfx3vIYEKpNq8VZh4A7Hbg8Px68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "365517331678-34k9mp4sd7d0bgvulrvijte5c2podsv5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

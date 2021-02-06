@@ -8,24 +8,19 @@
     android:orientation="vertical"
     android:clickable="true"
     android:focusable="true"
+    android:id="@+id/rootItem"
     android:foreground="?attr/selectableItemBackground">
 
-
-  <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:gravity="center"
-      android:padding="@dimen/_15sdp"
-      android:background="@drawable/l_grey_circle">
       <ImageView
-          android:layout_width="@dimen/_40sdp"
-          android:layout_height="@dimen/_40sdp"
-          android:src="@drawable/anchovies"/>
-  </LinearLayout>
+          android:layout_width="@dimen/_50sdp"
+          android:layout_height="@dimen/_50sdp"
+          android:src="@drawable/anchovies"
+          android:id="@+id/imageIcon"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Anchovies"
+        android:id="@+id/catTitle"
         android:fontFamily="@font/roboto_regular"/>
 
 </LinearLayout>

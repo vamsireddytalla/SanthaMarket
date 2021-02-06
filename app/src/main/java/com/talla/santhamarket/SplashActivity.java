@@ -16,11 +16,14 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.talla.santhamarket.activities.AuthenticationActivity;
+import com.talla.santhamarket.activities.HomeActivity;
 import com.talla.santhamarket.databinding.ActivitySplashBinding;
 
 public class SplashActivity extends AppCompatActivity {
     private ActivitySplashBinding binding;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +33,22 @@ public class SplashActivity extends AppCompatActivity {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            statusBarColor();
 //        }
+        auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null) {
+            Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }else {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SplashActivity.this, AuthenticationActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 2000);
+        }
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.this, AuthenticationActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }, 2000);
 
     }
 

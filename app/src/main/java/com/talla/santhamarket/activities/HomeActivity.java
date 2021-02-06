@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
@@ -19,8 +20,9 @@ import com.talla.santhamarket.R;
 import com.talla.santhamarket.databinding.ActivityHomeBinding;
 import com.talla.santhamarket.fragments.HomeFragment;
 import com.talla.santhamarket.fragments.MyOrdersFragment;
+import com.talla.santhamarket.interfaces.OnFragmentListner;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements OnFragmentListner {
     private ActivityHomeBinding binding;
 
     @Override
@@ -35,17 +37,20 @@ public class HomeActivity extends AppCompatActivity {
         binding.bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.rootFrame);
                 switch (item.getItemId()) {
                     case R.id.home:
-                        replacefragment(new HomeFragment(), "home_frag");
-                        break;
+                        if (currentFrag instanceof HomeFragment)
+                            return true;
+                        replacefragment(new HomeFragment(), "HomeFag");
+                        return true;
                     case R.id.orders:
-                        replacefragment(new MyOrdersFragment(), "orders_frag");
-                        break;
+                        replacefragment(new MyOrdersFragment(), "MyOrderFrag");
+                        return true;
                     case R.id.favourite:
                         Intent favIntent = new Intent(HomeActivity.this, FavouriteActivity.class);
                         startActivity(favIntent);
-                        return false;
+                        return true;
                     case R.id.profile:
                         Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                         startActivity(intent);
@@ -79,7 +84,9 @@ public class HomeActivity extends AppCompatActivity {
             FragmentManager.BackStackEntry backStackEntry = getSupportFragmentManager().getBackStackEntryAt(index);
             String tag = backStackEntry.getName();
             Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.rootFrame);
-            if (currentFrag instanceof MyOrdersFragment) {
+            if (currentFrag instanceof HomeFragment) {
+                binding.bottomNav.getMenu().getItem(1).setChecked(true);
+            } else if (currentFrag instanceof MyOrdersFragment) {
                 binding.bottomNav.getMenu().getItem(0).setChecked(true);
             }
         } else {
@@ -100,6 +107,12 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }).show();
         }
-
     }
+
+    @Override
+    public void fragmentChangeListner(int fragNo) {
+        Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.rootFrame);
+        binding.bottomNav.getMenu().getItem(fragNo).setChecked(true);
+    }
+
 }
