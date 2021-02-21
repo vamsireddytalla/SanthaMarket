@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.auth.FirebaseAuth;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.databinding.ActivityHomeBinding;
 import com.talla.santhamarket.fragments.HomeFragment;
@@ -24,6 +25,8 @@ import com.talla.santhamarket.interfaces.OnFragmentListner;
 
 public class HomeActivity extends AppCompatActivity implements OnFragmentListner {
     private ActivityHomeBinding binding;
+    private String UID;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,8 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         binding.bottomNav.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_LABELED);
         addFragment(new HomeFragment());
+        auth = FirebaseAuth.getInstance();
+        UID = auth.getCurrentUser().getUid();
 
         binding.bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -50,13 +55,19 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
                     case R.id.favourite:
                         Intent favIntent = new Intent(HomeActivity.this, FavouriteActivity.class);
                         startActivity(favIntent);
-                        return true;
+                        return false;
                     case R.id.profile:
-                        Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
-                        startActivity(intent);
+                        if (auth.getCurrentUser()!=null)
+                        {
+                            Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+                            startActivity(intent);
+                        }else {
+                            Intent intent = new Intent(HomeActivity.this, AuthenticationActivity.class);
+                            startActivity(intent);
+                        }
                         return false;
                 }
-                return true;
+                return false;
             }
         });
 

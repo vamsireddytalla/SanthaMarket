@@ -45,7 +45,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ViewProductsActivity extends AppCompatActivity {
+public class ViewProductsActivity extends AppCompatActivity
+{
     private ActivityViewProductsBinding binding;
     private CheckInternetBinding checkInternetBinding;
     private Long categoryId;
@@ -321,4 +322,6 @@ public class ViewProductsActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+
 }

@@ -20,14 +20,13 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_40sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:background="@drawable/btn_bg"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:id="@+id/tryAgain"
-        android:paddingRight="@dimen/_10sdp"
-        android:paddingLeft="@dimen/_10sdp"
+        android:textAllCaps="false"
         android:fontFamily="@font/roboto_regular"
         android:text="Try again"/>
 

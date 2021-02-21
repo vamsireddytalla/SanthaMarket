@@ -24,23 +24,26 @@
                 android:layout_height="@dimen/_24sdp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
+                android:id="@+id/backBtn"
                 android:src="@drawable/ic_left_arrow" />
 
-            <include layout="@layout/add_cart_item"
-                android:layout_alignParentRight="true"
+            <include
+                layout="@layout/add_cart_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/_20sdp"/>
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/_20sdp" />
 
         </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_anchorGravity="center"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -50,17 +53,23 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <RelativeLayout
+                android:id="@+id/one"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_350sdp"
                 android:orientation="vertical"
-                android:id="@+id/one"
                 android:visibility="visible">
 
                 <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/viewPagerHome"
+                    android:id="@+id/viewPagerPrductImages"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal" />
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:orientation="horizontal"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true" />
 
                 <LinearLayout
                     android:layout_width="@dimen/_32sdp"
@@ -70,17 +79,19 @@
                     android:background="@drawable/white_circle"
                     android:gravity="center">
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="@dimen/_5sdp"
-                        android:src="@drawable/fav_filled_icon" />
+                    <ToggleButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/toggleBtn"
+                        android:textOn=""
+                        android:textOff=""
+                        android:layout_margin="@dimen/_4sdp"
+                        android:background="@drawable/toggle_bg"/>
                 </LinearLayout>
 
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabIndicator"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_centerInParent="true"
@@ -95,9 +106,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/one"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:orientation="vertical"
-                android:layout_below="@+id/one"
                 android:paddingLeft="@dimen/_10sdp"
                 android:paddingRight="@dimen/_10sdp">
 
@@ -106,12 +117,14 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
                     android:text="US Asian Tea Shirt"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                    android:id="@+id/productName"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp">
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:gravity="center_vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -140,23 +153,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_10sdp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
                         android:text="258 rs"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:id="@+id/productPrice"
                         android:textColor="@color/black" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_20sdp"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:id="@+id/mrpPrice"
                         android:fontFamily="@font/roboto_regular"
-                        android:text="258"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                        android:text="258" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -164,9 +178,80 @@
                         android:layout_marginLeft="@dimen/_20sdp"
                         android:fontFamily="@font/roboto_regular"
                         android:text="28 % Off"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:id="@+id/discount"
                         android:textColor="@color/greeen" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/linear_border"
+                        android:layout_marginLeft="@dimen/_20sdp"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/_5sdp"
+                            android:text="Quantity"/>
+                        <Spinner
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/quantitySpin"/>
+                    </LinearLayout>
+
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_2sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:background="@color/cement" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:id="@+id/sizeRoot"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="Size Chart" />
+
+                   <androidx.recyclerview.widget.RecyclerView
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="horizontal"
+                       android:layout_marginTop="@dimen/_6sdp"
+                       app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                       android:id="@+id/sizeRCV"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/colorRoot"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="Color Chart" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:id="@+id/colorChartRCV"/>
+                </LinearLayout>
+
 
                 <View
                     android:layout_width="match_parent"
@@ -176,77 +261,33 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:orientation="horizontal">
-
+                    android:layout_height="@dimen/_50sdp"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/productDetails"
+                    android:background="?attr/selectableItemBackground">
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:gravity="center"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:layout_alignParentStart="true"
                         android:text="Product Details"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/black" />
-
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="@dimen/_5sdp" />
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:src="@drawable/ic_chevron_right"
                         android:layout_alignParentRight="true"
-                        android:layout_gravity="end"
-                        android:src="@drawable/ic_chevron_right" />
+                        android:layout_centerVertical="true"/>
                 </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_2sdp"
-                    android:layout_marginTop="@dimen/_15sdp"
-                    android:background="@color/cement" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_medium"
-                        android:text="Size Chart"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                    <include
-                        layout="@layout/size_chart"
-                        android:layout_width="@dimen/_50sdp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_8sdp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_medium"
-                        android:text="Color Chart"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                    <include
-                        layout="@layout/color_chart"
-                        android:layout_width="@dimen/_30sdp"
-                        android:layout_height="@dimen/_30sdp"
-                        android:layout_marginTop="@dimen/_8sdp" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_2sdp"
-                    android:layout_marginTop="@dimen/_15sdp"
                     android:background="@color/cement" />
 
                 <LinearLayout
@@ -266,7 +307,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:fontFamily="@font/roboto_medium"
-                        android:text="5 Feb Friday"
+                        android:id="@+id/dateDelivery"
                         android:textColor="@color/black" />
 
                     <TextView
@@ -299,12 +340,15 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:id="@+id/ratingRCV"/>
                 </LinearLayout>
             </LinearLayout>
 
 
         </RelativeLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

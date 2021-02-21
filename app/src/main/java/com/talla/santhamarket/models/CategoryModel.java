@@ -1,19 +1,15 @@
 package com.talla.santhamarket.models;
 
-public class CategoryModel
-{
-  private Long index;
-  private String categoryName;
-  private String icon;
+import java.util.List;
+
+public class CategoryModel {
+    private Long index;
+    private String categoryName;
+    private String icon;
 
     public CategoryModel() {
     }
 
-    public CategoryModel(Long index, String categoryName, String icon) {
-        this.index = index;
-        this.categoryName = categoryName;
-        this.icon = icon;
-    }
 
     public Long getIndex() {
         return index;
@@ -38,6 +34,7 @@ public class CategoryModel
     public void setIcon(String icon) {
         this.icon = icon;
     }
+
 
     @Override
     public String toString() {

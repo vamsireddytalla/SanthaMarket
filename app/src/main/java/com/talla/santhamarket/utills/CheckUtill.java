@@ -8,13 +8,16 @@ import android.view.inputmethod.InputMethodManager;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CheckUtill
-{
-    public static final String BASEURl="http://193.164.132.56:4900";
+public class CheckUtill {
+    public static final String BASEURl = "http://193.164.132.56:4900";
+
     //https://automationwbpds.wb.gov.in
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -65,6 +68,13 @@ public class CheckUtill
         }
     }
 
-
+    public static String getDateAfterDays(int days) {
+        Date today = new Date();
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(today);
+        cal.add(Calendar.DAY_OF_MONTH, days);
+        Date today30 = cal.getTime();
+        return new SimpleDateFormat("dd-MMM-yyyy").format(today30);
+    }
 
 }

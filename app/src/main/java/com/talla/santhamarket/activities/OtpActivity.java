@@ -140,7 +140,7 @@ public class OtpActivity extends AppCompatActivity {
                                 userModel.setUser_email("");
                                 userModel.setUser_name("");
                                 userModel.setUser_gender("");
-                                userModel.setUser_image_url("");
+                                userModel.setImage_url("");
                                 userModel.setDefault_address(new UserAddress());
                                 documentReference.set(userModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -170,12 +170,13 @@ public class OtpActivity extends AppCompatActivity {
                             // ...
                         } else {
                             // Sign in failed, display a message and update the UI
-                            showSnackBar("Invalid Code");
-                            Toast.makeText(OtpActivity.this, "Invalid", Toast.LENGTH_SHORT).show();
+                            showSnackBar("Sign-In Failed");
+                            Toast.makeText(OtpActivity.this, "Sign-In Failed", Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
-                                Toast.makeText(OtpActivity.this, "Invalid", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(OtpActivity.this, "Invalid OTP", Toast.LENGTH_SHORT).show();
+                                showSnackBar("Invalid OTP");
                             }
                         }
                     }

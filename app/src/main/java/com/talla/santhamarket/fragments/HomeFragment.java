@@ -33,7 +33,9 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.activities.CartActivity;
+import com.talla.santhamarket.activities.DetailProductActivity;
 import com.talla.santhamarket.activities.HomeActivity;
+import com.talla.santhamarket.activities.SearchProductActivity;
 import com.talla.santhamarket.activities.ViewProductsActivity;
 import com.talla.santhamarket.adapters.HomeBannerAdapter;
 import com.talla.santhamarket.adapters.HomeCategoryAdapter;
@@ -142,7 +144,15 @@ public class HomeFragment extends Fragment {
         binding.productItem.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), ViewProductsActivity.class);
+                Intent intent = new Intent(getContext(), DetailProductActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        binding.searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), SearchProductActivity.class);
                 startActivity(intent);
             }
         });

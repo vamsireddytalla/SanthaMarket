@@ -9,7 +9,7 @@ public class UserModel
     private String user_email;
     private String user_name;
     private String user_gender;
-    private String user_image_url;
+    private String image_url;
     private UserAddress default_address;
 
 
@@ -69,12 +69,12 @@ public class UserModel
         this.user_gender = user_gender;
     }
 
-    public String getUser_image_url() {
-        return user_image_url;
+    public String getImage_url() {
+        return image_url;
     }
 
-    public void setUser_image_url(String user_image_url) {
-        this.user_image_url = user_image_url;
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
     }
 
     public UserAddress getDefault_address() {
@@ -95,7 +95,7 @@ public class UserModel
                 ", user_email='" + user_email + '\'' +
                 ", user_name='" + user_name + '\'' +
                 ", user_gender='" + user_gender + '\'' +
-                ", user_image_url='" + user_image_url + '\'' +
+                ", user_image_url='" + image_url + '\'' +
                 ", default_address=" + default_address +
                 '}';
     }

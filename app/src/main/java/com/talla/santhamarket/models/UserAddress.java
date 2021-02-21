@@ -2,16 +2,19 @@ package com.talla.santhamarket.models;
 
 public class UserAddress
 {
+    private String userId;
+    private String user_name;
+    private String user_phone;
+    private String user_alter_phone;
     private String user_country;
     private String user_state;
-    private String user_district;
     private String user_city;
     private String user_pincode;
     private String user_streetAddress;
-    private String user_doorNo;
-    private String user_nearBy;
     private String user_lat;
-    private  String user_long;
+    private String user_long;
+    private boolean defaultAddress;
+    private String docID;
 
     public String getUser_country() {
         return user_country;
@@ -29,13 +32,6 @@ public class UserAddress
         this.user_state = user_state;
     }
 
-    public String getUser_district() {
-        return user_district;
-    }
-
-    public void setUser_district(String user_district) {
-        this.user_district = user_district;
-    }
 
     public String getUser_city() {
         return user_city;
@@ -61,21 +57,6 @@ public class UserAddress
         this.user_streetAddress = user_streetAddress;
     }
 
-    public String getUser_doorNo() {
-        return user_doorNo;
-    }
-
-    public void setUser_doorNo(String user_doorNo) {
-        this.user_doorNo = user_doorNo;
-    }
-
-    public String getUser_nearBy() {
-        return user_nearBy;
-    }
-
-    public void setUser_nearBy(String user_nearBy) {
-        this.user_nearBy = user_nearBy;
-    }
 
     public String getUser_lat() {
         return user_lat;
@@ -93,19 +74,71 @@ public class UserAddress
         this.user_long = user_long;
     }
 
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public String getUser_phone() {
+        return user_phone;
+    }
+
+    public void setUser_phone(String user_phone) {
+        this.user_phone = user_phone;
+    }
+
+    public String getUser_alter_phone() {
+        return user_alter_phone;
+    }
+
+    public void setUser_alter_phone(String user_alter_phone) {
+        this.user_alter_phone = user_alter_phone;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isDefaultAddress() {
+        return defaultAddress;
+    }
+
+    public void setDefaultAddress(boolean defaultAddress) {
+        this.defaultAddress = defaultAddress;
+    }
+
+    public String getDocID() {
+        return docID;
+    }
+
+    public void setDocID(String docID) {
+        this.docID = docID;
+    }
+
     @Override
     public String toString() {
         return "UserAddress{" +
-                "user_country='" + user_country + '\'' +
+                "userId='" + userId + '\'' +
+                ", user_name='" + user_name + '\'' +
+                ", user_phone='" + user_phone + '\'' +
+                ", user_alter_phone='" + user_alter_phone + '\'' +
+                ", user_country='" + user_country + '\'' +
                 ", user_state='" + user_state + '\'' +
-                ", user_district='" + user_district + '\'' +
                 ", user_city='" + user_city + '\'' +
                 ", user_pincode='" + user_pincode + '\'' +
                 ", user_streetAddress='" + user_streetAddress + '\'' +
-                ", user_doorNo='" + user_doorNo + '\'' +
-                ", user_nearBy='" + user_nearBy + '\'' +
                 ", user_lat='" + user_lat + '\'' +
                 ", user_long='" + user_long + '\'' +
+                ", defaultAddress=" + defaultAddress +
+                ", docID='" + docID + '\'' +
                 '}';
     }
 }

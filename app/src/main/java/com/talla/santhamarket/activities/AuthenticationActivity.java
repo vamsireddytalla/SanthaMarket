@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.databinding.ActivityAuthenticationBinding;
+import com.talla.santhamarket.fragments.HomeFragment;
 import com.talla.santhamarket.utills.CheckInternet;
 
 public class AuthenticationActivity extends AppCompatActivity {
@@ -78,4 +79,9 @@ public class AuthenticationActivity extends AppCompatActivity {
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
     }
 
+    public void skipItem(View view) {
+        Intent intent = new Intent(AuthenticationActivity.this, HomeActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

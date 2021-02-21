@@ -1,9 +1,10 @@
 package com.talla.santhamarket.models;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class ProductModel
+public class ProductModel implements Serializable
 {
     private Long category_id;
     private Long product_id;
@@ -17,7 +18,9 @@ public class ProductModel
     private boolean cod_available;
     private Map<String, Object> product_colors;
     private Map<String, Object> product_sizes;
-    private List<String> product_images;
+    private Map<String, Object> specifications;
+    private List<ProductImageModel> product_images;
+    private List<String> tags;
 
 
     public Long getCategory_id() {
@@ -116,12 +119,29 @@ public class ProductModel
         this.product_sizes = product_sizes;
     }
 
-    public List<String> getProduct_images() {
+
+    public List<ProductImageModel> getProduct_images() {
         return product_images;
     }
 
-    public void setProduct_images(List<String> product_images) {
+    public void setProduct_images(List<ProductImageModel> product_images) {
         this.product_images = product_images;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public Map<String, Object> getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(Map<String, Object> specifications) {
+        this.specifications = specifications;
     }
 
     @Override
@@ -139,7 +159,10 @@ public class ProductModel
                 ", cod_available=" + cod_available +
                 ", product_colors=" + product_colors +
                 ", product_sizes=" + product_sizes +
+                ", specifications=" + specifications +
                 ", product_images=" + product_images +
+                ", tags=" + tags +
                 '}';
     }
+
 }

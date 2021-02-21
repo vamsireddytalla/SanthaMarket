@@ -11,9 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.DetailProductActivity"></activity>
-        <activity android:name=".activities.ViewProductsActivity"
+        <activity android:name=".activities.AddressBookActivity"
             android:theme="@style/MaterialTheme"/>
+        <activity android:name=".activities.PoductDescriptionActivity" />
+        <activity android:name=".activities.SearchProductActivity" />
+        <activity android:name=".activities.DetailProductActivity" />
+        <activity
+            android:name=".activities.ViewProductsActivity"
+            android:theme="@style/MaterialTheme" />
         <activity android:name=".activities.OrderSummaryActivity" />
         <activity android:name=".activities.CartActivity" />
         <activity android:name=".activities.FavouriteActivity" />

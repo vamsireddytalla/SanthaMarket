@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/linear_border"
+    android:padding="@dimen/_10sdp"
+    android:layout_marginTop="@dimen/_10sdp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="0.90">
+          <CheckBox
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Make Default Address"
+              android:paddingRight="@dimen/_10sdp"
+              android:id="@+id/defaultAddress"
+              android:gravity="left|center_vertical"
+              android:textColor="#34495E"
+              android:layoutDirection="rtl"/>
+      </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.10">
+            <TextView
+                android:id="@+id/threeDots"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="&#8942;"
+                android:gravity="center_horizontal"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/add_userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Name : " />
+
+    <TextView
+        android:id="@+id/add_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Contact Number : " />
+
+    <TextView
+        android:id="@+id/add_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Alternate Number : " />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:weightSum="1">
+      <TextView
+          android:id="@+id/add_country"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:fontFamily="@font/roboto_medium"
+          android:layout_weight="0.50"
+          android:text="Country : " />
+
+      <TextView
+          android:id="@+id/add_state"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:fontFamily="@font/roboto_medium"
+          android:layout_weight="0.50"
+          android:text="State : " />
+  </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+        <TextView
+            android:id="@+id/add_city"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_medium"
+            android:layout_weight="0.50"
+            android:text="City : " />
+
+        <TextView
+            android:id="@+id/add_pincode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.50"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Pincode : " />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/add_Address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Address : " />
+
+
+</LinearLayout>

@@ -21,7 +21,7 @@
             android:background="@color/colorPrimaryDark">
 
             <ImageView
-                android:id="@+id/profile_bacBtn"
+                android:id="@+id/backBtn_pro"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_alignParentLeft="true"
@@ -34,6 +34,25 @@
                 android:layout_marginBottom="25dp"
                 android:onClick="profileBackBtnClick"
                 android:src="@drawable/ic_left_arrow"
+                tools:ignore="OnClick" />
+            <TextView
+                android:id="@+id/logoutBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="25dp"
+                android:onClick="logout"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:drawablePadding="@dimen/_5sdp"
+                android:text="Logout"
+                android:drawableRight="@drawable/ic_logout"
                 tools:ignore="OnClick" />
 
             <com.mikhaellopez.circularimageview.CircularImageView
@@ -69,20 +88,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_imageView"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="177dp"
-                android:layout_marginLeft="177dp"
+                android:layout_centerInParent="true"
                 android:layout_marginTop="7dp"
-                android:layout_marginEnd="170dp"
-                android:layout_marginRight="170dp"
                 android:layout_marginBottom="6dp"
-                android:fontFamily="@font/circular_black"
+                android:fontFamily="@font/roboto_medium"
                 android:maxLength="20"
-                android:text="profile"
+                android:text="Complete Profile"
                 android:textColor="@color/white"
                 android:textSize="20dp" />
         </RelativeLayout>
@@ -116,7 +127,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     tools:ignore="OnClick"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/circular_book"/>
+                    android:fontFamily="@font/roboto_medium"/>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -131,6 +142,7 @@
                     android:id="@+id/profile_emailText"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:onClick="profileEmail"
                     android:drawableRight="@drawable/edit_size"
                     android:background="@drawable/white_bg"
                     android:gravity="center_vertical"
@@ -138,7 +150,7 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="20dp"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/circular_book"
+                    android:fontFamily="@font/roboto_medium"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small" />
             </androidx.cardview.widget.CardView>
 
@@ -155,13 +167,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/white_bg"
-                    android:drawableRight="@drawable/edit_size"
                     android:gravity="center_vertical"
                     android:hint="Mobile Number"
                     android:paddingLeft="15dp"
                     android:paddingRight="20dp"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/circular_book"
+                    android:fontFamily="@font/roboto_medium"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small" />
             </androidx.cardview.widget.CardView>
 
@@ -179,13 +190,14 @@
                   android:layout_height="wrap_content"
                   android:orientation="vertical">
                   <TextView
-                      android:id="@+id/profile_paswordEdit"
+                      android:id="@+id/addAddress"
                       android:layout_width="match_parent"
                       android:layout_height="50dp"
                       android:background="@drawable/white_bg"
                       android:drawableRight="@drawable/add_icon"
                       android:paddingLeft="15dp"
                       android:text="Default Address"
+                      android:onClick="addDefAddress"
                       android:gravity="center_vertical"
                       android:paddingRight="20dp"
                       android:fontFamily="@font/roboto_bold"
@@ -194,8 +206,8 @@
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:paddingLeft="15dp"
-                      android:text="Street 209,50045 \nHyderabad,Telangana"
                       android:gravity="start"
+                      android:id="@+id/addressProfile"
                       android:fontFamily="@font/circular_book"
                       android:paddingBottom="@dimen/_10sdp"
                       android:textAppearance="@style/TextAppearance.AppCompat.Small" />
@@ -240,25 +252,6 @@
                 </RadioGroup>
 
             </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="bottom">
-
-                <Button
-                    android:id="@+id/logout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/btn_bg"
-                    android:onClick="logout"
-                    android:text="LOGOUT"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/circular_black"
-                    tools:ignore="OnClick"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"/>
-            </RelativeLayout>
 
         </LinearLayout>
 

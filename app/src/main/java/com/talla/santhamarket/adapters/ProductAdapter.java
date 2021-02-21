@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.talla.santhamarket.R;
+import com.talla.santhamarket.activities.DetailProductActivity;
 import com.talla.santhamarket.activities.ViewProductsActivity;
 import com.talla.santhamarket.databinding.DashCatLayoutBinding;
 import com.talla.santhamarket.databinding.ProductItemBinding;
@@ -53,8 +54,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         holder.onBindView(productModelList.get(position));
+
+        holder.binding.productRoot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, DetailProductActivity.class);
+                intent.putExtra("product_id", productModelList.get(position).getProduct_id());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -99,19 +109,21 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         public MyViewHolder(ProductItemBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
+
+
         }
 
         public void onBindView(ProductModel productModel) {
-            Glide.with(context).load(productModel.getProduct_images().get(0)).fitCenter().into(binding.productImage);
+            Glide.with(context).load(productModel.getProduct_images().get(0).getProduct_image()).fitCenter().into(binding.productImage);
             binding.productTitle.setText(productModel.getProduct_name());
             binding.sellerName.setText(productModel.getSeller_name());
             Long mrp_price = productModel.getMrp_price();
             Long selling_price = productModel.getProduct_price();
-            float res=StaticUtills.discountPercentage(selling_price,mrp_price);
-            binding.sellingPrice.setText(context.getResources().getString(R.string.Rs)+ CheckUtill.FormatCost(Math.round(selling_price)));
+            float res = StaticUtills.discountPercentage(selling_price, mrp_price);
+            binding.sellingPrice.setText(context.getResources().getString(R.string.Rs) + CheckUtill.FormatCost(Math.round(selling_price)));
             binding.mrpPrice.setText(CheckUtill.FormatCost(Math.round(mrp_price)) + context.getResources().getString(R.string.Rs));
-            binding.mrpPrice.setPaintFlags(binding.mrpPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
-            binding.discount.setText(String.valueOf(res).substring(0,1)+"% OFF");
+            binding.mrpPrice.setPaintFlags(binding.mrpPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            binding.discount.setText(String.valueOf(res).substring(0, 2) + " %OFF");
         }
 
     }
