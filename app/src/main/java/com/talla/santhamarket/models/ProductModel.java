@@ -7,7 +7,7 @@ import java.util.Map;
 public class ProductModel implements Serializable
 {
     private Long category_id;
-    private Long product_id;
+    private String product_id;
     private String product_name;
     private String seller_name;
     private String description;
@@ -21,6 +21,7 @@ public class ProductModel implements Serializable
     private Map<String, Object> specifications;
     private List<ProductImageModel> product_images;
     private List<String> tags;
+    private String extra_filed;
 
 
     public Long getCategory_id() {
@@ -31,11 +32,11 @@ public class ProductModel implements Serializable
         this.category_id = category_id;
     }
 
-    public Long getProduct_id() {
+    public String getProduct_id() {
         return product_id;
     }
 
-    public void setProduct_id(Long product_id) {
+    public void setProduct_id(String product_id) {
         this.product_id = product_id;
     }
 
@@ -144,11 +145,20 @@ public class ProductModel implements Serializable
         this.specifications = specifications;
     }
 
+    public String getExtra_filed() {
+        return extra_filed;
+    }
+
+    public void setExtra_filed(String extra_filed) {
+        this.extra_filed = extra_filed;
+    }
+
+
     @Override
     public String toString() {
         return "ProductModel{" +
                 "category_id=" + category_id +
-                ", product_id=" + product_id +
+                ", product_id='" + product_id + '\'' +
                 ", product_name='" + product_name + '\'' +
                 ", seller_name='" + seller_name + '\'' +
                 ", description='" + description + '\'' +
@@ -162,7 +172,7 @@ public class ProductModel implements Serializable
                 ", specifications=" + specifications +
                 ", product_images=" + product_images +
                 ", tags=" + tags +
+                ", extra_filed='" + extra_filed + '\'' +
                 '}';
     }
-
 }

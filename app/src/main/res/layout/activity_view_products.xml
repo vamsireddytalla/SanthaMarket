@@ -38,7 +38,7 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/_15sdp"
                     android:layout_toRightOf="@+id/backBtn"
-                    android:fontFamily="@font/roboto_regular"
+                    android:theme="@style/Pop_TextView_Medium"
                     android:text="View Products"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/white" />

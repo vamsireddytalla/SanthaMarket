@@ -37,7 +37,10 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
         binding.bottomNav.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_LABELED);
         addFragment(new HomeFragment());
         auth = FirebaseAuth.getInstance();
-        UID = auth.getCurrentUser().getUid();
+        if (auth.getCurrentUser()!=null)
+        {
+            UID = auth.getCurrentUser().getUid();
+        }
 
         binding.bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

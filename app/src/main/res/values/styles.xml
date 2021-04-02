@@ -50,4 +50,10 @@
         <item name="boxStrokeColor">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="Pop_TextView_Medium" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+
 </resources>

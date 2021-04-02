@@ -1,6 +1,8 @@
 package com.talla.santhamarket.models;
 
-public class ProductImageModel
+import java.io.Serializable;
+
+public class ProductImageModel implements Serializable
 {
     private String product_image;
     private String product_bg_color;

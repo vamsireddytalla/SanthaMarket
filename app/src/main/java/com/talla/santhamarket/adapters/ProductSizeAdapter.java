@@ -2,6 +2,7 @@ package com.talla.santhamarket.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,14 @@ import com.talla.santhamarket.databinding.SizeChartBinding;
 import com.talla.santhamarket.models.CategoryModel;
 
 import java.util.List;
+import java.util.Map;
 
 public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.MyViewHolder> {
     private Context context;
-    private List<String> sizeList;
+    private List<Map.Entry<String, Object>> sizeList;
     private int itemIndex=-1;
 
-    public ProductSizeAdapter(Context context, List<String> sizeList) {
+    public ProductSizeAdapter(Context context, List<Map.Entry<String, Object>> sizeList) {
         this.context = context;
         this.sizeList = sizeList;
         notifyDataSetChanged();
@@ -72,8 +74,9 @@ public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.
             this.binding = itemView;
         }
 
-        public void onBindView(String sizeObj) {
-            binding.sizeItem.setText(sizeObj);
+        public void onBindView(Map.Entry<String, Object> sizeObj) {
+            binding.sizeItem.setText(sizeObj.getValue().toString());
+            Log.d("DetailProductActivity","  Adapter : "+sizeObj.toString());
         }
 
     }

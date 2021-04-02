@@ -25,6 +25,11 @@ public class ProductImagesAdapter extends RecyclerView.Adapter<ProductImagesAdap
         notifyDataSetChanged();
     }
 
+    public void setProductImageModelList(List<ProductImageModel> productImageModelList) {
+        this.productImageModelList = productImageModelList;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ProductImagesAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

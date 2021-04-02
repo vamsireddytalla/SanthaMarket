@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".activities.DetailProductActivity">
 
@@ -20,11 +21,11 @@
             android:gravity="center_vertical">
 
             <ImageView
+                android:id="@+id/backBtn"
                 android:layout_width="@dimen/_24sdp"
                 android:layout_height="@dimen/_24sdp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
-                android:id="@+id/backBtn"
                 android:src="@drawable/ic_left_arrow" />
 
             <include
@@ -42,6 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_anchorGravity="center"
+        android:layout_below="@+id/toolbar"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
@@ -64,29 +66,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:orientation="horizontal"
-                    android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentRight="true" />
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="horizontal" />
 
                 <LinearLayout
                     android:layout_width="@dimen/_32sdp"
                     android:layout_height="@dimen/_32sdp"
                     android:layout_alignParentRight="true"
                     android:layout_margin="@dimen/_15sdp"
-                    android:background="@drawable/white_circle"
+                    android:background="@drawable/gray_circle"
                     android:gravity="center">
 
                     <ToggleButton
+                        android:id="@+id/toggleBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/toggleBtn"
-                        android:textOn=""
-                        android:textOff=""
                         android:layout_margin="@dimen/_4sdp"
-                        android:background="@drawable/toggle_bg"/>
+                        android:background="@drawable/toggle_bg"
+                        android:textOff=""
+                        android:textOn="" />
                 </LinearLayout>
 
                 <com.google.android.material.tabs.TabLayout
@@ -113,23 +115,23 @@
                 android:paddingRight="@dimen/_10sdp">
 
                 <TextView
+                    android:id="@+id/productName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_medium"
                     android:text="US Asian Tea Shirt"
-                    android:id="@+id/productName"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:theme="@style/Pop_TextView_Medium" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:gravity="center_vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_regular"
+                        android:theme="@style/Pop_TextView_Medium"
                         android:text="4.7" />
 
                     <RatingBar
@@ -145,7 +147,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_regular"
+                        android:theme="@style/Pop_TextView_Medium"
                         android:text="25 Reviews" />
                 </LinearLayout>
 
@@ -153,50 +155,53 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_10sdp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/productPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_medium"
+                        android:theme="@style/Pop_TextView_Medium"
                         android:text="258 rs"
-                        android:id="@+id/productPrice"
                         android:textColor="@color/black" />
 
                     <TextView
+                        android:id="@+id/mrpPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_10sdp"
-                        android:id="@+id/mrpPrice"
-                        android:fontFamily="@font/roboto_regular"
+                        android:layout_marginLeft="@dimen/_6sdp"
+                        android:theme="@style/Pop_TextView_Medium"
                         android:text="258" />
 
                     <TextView
+                        android:id="@+id/discount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_20sdp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="28 % Off"
-                        android:id="@+id/discount"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:theme="@style/Pop_TextView_Medium"
+                        android:text="28 %Off"
                         android:textColor="@color/greeen" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/linear_border"
                         android:layout_marginLeft="@dimen/_20sdp"
+                        android:background="@drawable/spinner_border"
                         android:gravity="center">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:padding="@dimen/_5sdp"
-                            android:text="Quantity"/>
+                            android:gravity="center"
+                            android:text="Qty"
+                            android:theme="@style/Pop_TextView_Medium" />
+
                         <Spinner
+                            android:id="@+id/quantitySpin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/quantitySpin"/>
+                            android:gravity="center"/>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -208,81 +213,88 @@
                     android:background="@color/cement" />
 
                 <LinearLayout
+                    android:id="@+id/sizeRoot"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_10sdp"
-                    android:id="@+id/sizeRoot"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_medium"
+                        android:theme="@style/Pop_TextView_Medium"
                         android:text="Size Chart" />
 
-                   <androidx.recyclerview.widget.RecyclerView
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:orientation="horizontal"
-                       android:layout_marginTop="@dimen/_6sdp"
-                       app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                       android:id="@+id/sizeRCV"/>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/sizeRCV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/colorRoot"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/colorRoot"
                     android:layout_marginTop="@dimen/_10sdp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_medium"
+                        android:theme="@style/Pop_TextView_Medium"
                         android:text="Color Chart" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/colorChartRCV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:layout_marginTop="@dimen/_6sdp"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        android:id="@+id/colorChartRCV"/>
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
                 </LinearLayout>
 
 
                 <View
+                    android:id="@+id/tempView"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_2sdp"
                     android:layout_marginTop="@dimen/_15sdp"
-                    android:background="@color/cement" />
+                    android:background="@color/cement"
+                    android:visibility="gone" />
 
                 <RelativeLayout
+                    android:id="@+id/productDetails"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_50sdp"
-                    android:gravity="center_vertical"
-                    android:orientation="vertical"
+                    android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
-                    android:id="@+id/productDetails"
-                    android:background="?attr/selectableItemBackground">
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:gravity="center_vertical"
                         android:layout_alignParentStart="true"
-                        android:text="Product Details"
-                        android:layout_marginStart="@dimen/_5sdp"
                         android:layout_alignParentLeft="true"
-                        android:layout_marginLeft="@dimen/_5sdp" />
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:theme="@style/Pop_TextView_Medium"
+                        android:gravity="center_vertical"
+                        android:text="Product Details" />
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_chevron_right"
                         android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"/>
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_chevron_right" />
                 </RelativeLayout>
 
                 <View
@@ -299,22 +311,22 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_medium"
+                        android:theme="@style/Pop_TextView_Medium"
                         android:text="Delivery By" />
 
                     <TextView
+                        android:id="@+id/dateDelivery"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:fontFamily="@font/roboto_medium"
-                        android:id="@+id/dateDelivery"
                         android:textColor="@color/black" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
-                        android:fontFamily="@font/roboto_medium"
+                        android:theme="@style/Pop_TextView_Medium"
                         android:text="50 rs Delivery Charge for half Kg \nPrice will Increase based on Weight Of Product"
                         android:textColor="@color/light_text_color" />
                 </LinearLayout>
@@ -335,20 +347,59 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_bold"
+                        android:theme="@style/Pop_TextView_Medium"
                         android:text="Ratings and Reviews" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/ratingRCV"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        android:id="@+id/ratingRCV"/>
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
                 </LinearLayout>
             </LinearLayout>
+
 
 
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp"
+        android:visibility="visible"
+        android:layout_alignParentBottom="true"
+        card_view:cardBackgroundColor="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1"
+            android:gravity="center">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.50"
+                android:text="Add to Cart"
+                android:gravity="center"
+                style="@style/Pop_TextView_Medium"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_50sdp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_weight="0.50"
+                android:id="@+id/continueBtn"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Continue"
+                    android:drawablePadding="@dimen/_10sdp"
+                    android:textColor="@color/white"
+                    android:gravity="center_vertical"
+                    style="@style/Pop_TextView_Medium"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

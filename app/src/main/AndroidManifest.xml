@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.talla.santhamarket">
+    package="com.talla.santhamarket"
+    xmlns:dist="http://schemas.android.com/apk/distribution">
 
+    <dist:module dist:instant="true" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -12,28 +14,42 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.AddressBookActivity"
-            android:theme="@style/MaterialTheme"/>
-        <activity android:name=".activities.PoductDescriptionActivity" />
-        <activity android:name=".activities.SearchProductActivity" />
-        <activity android:name=".activities.DetailProductActivity" />
+            android:theme="@style/MaterialTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.PoductDescriptionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.SearchProductActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.DetailProductActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.ViewProductsActivity"
-            android:theme="@style/MaterialTheme" />
-        <activity android:name=".activities.OrderSummaryActivity" />
-        <activity android:name=".activities.CartActivity" />
-        <activity android:name=".activities.FavouriteActivity" />
-        <activity android:name=".activities.ProfileActivity" />
-        <activity android:name=".activities.DetailOrderActivity" />
+            android:theme="@style/MaterialTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.OrderSummaryActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.CartActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.FavouriteActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.ProfileActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.DetailOrderActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.HomeActivity"
-            android:theme="@style/MaterialTheme" />
+            android:theme="@style/MaterialTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.OtpActivity"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.AuthenticationActivity"
-            android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".SplashActivity">
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

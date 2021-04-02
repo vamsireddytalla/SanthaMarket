@@ -3,14 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
+    android:padding="@dimen/_20sdp"
     tools:context=".fragments.DescriptionFragment">
 
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="DESCRIPTION FRAGMENT" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_medium"/>
+        <View
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="2dp"
+            android:background="@color/gradi_lemon" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/desc"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:text="----------------"
+        android:fontFamily="@font/poppins_regular"/>
 
 </LinearLayout>

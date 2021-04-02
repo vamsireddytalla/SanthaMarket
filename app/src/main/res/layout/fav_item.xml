@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_150sdp"
+    android:layout_height="@dimen/_160sdp"
+    android:layout_margin="@dimen/_5sdp"
+    android:background="@drawable/spinner_border"
     android:weightSum="1">
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/_140sdp"
         android:layout_weight="0.30">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/imageIcon"
+            android:scaleType="fitXY"
             android:src="@color/gray" />
     </LinearLayout>
 
@@ -36,21 +40,33 @@
                 android:layout_marginTop="10dp"
                 android:layout_toStartOf="@+id/makeFav"
                 android:layout_toLeftOf="@+id/makeFav"
-                android:fontFamily="@font/roboto_bold"
+                android:fontFamily="@font/poppins_regular"
                 android:text="Bata Shoes Branded"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-            <ImageView
-                android:id="@+id/makeFav"
+            <LinearLayout
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
+                android:layout_alignParentRight="true"
+                android:layout_margin="@dimen/_10sdp"
+                android:id="@+id/makeFav"
+                android:background="@drawable/gray_circle"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="14dp"
                 android:layout_marginRight="14dp"
-                android:src="@drawable/fav_outlined" />
+                android:gravity="center">
+
+                <ToggleButton
+                    android:id="@+id/toggleBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_4sdp"
+                    android:background="@drawable/toggle_bg"
+                    android:textOff=""
+                    android:textOn="" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/productDesc"
@@ -63,22 +79,48 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginStart="21dp"
                 android:layout_marginLeft="21dp"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/poppins_medium"
                 android:text="Description" />
-
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:layout_below="@+id/productDesc"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginStart="21dp"
-                android:layout_marginLeft="21dp"
-                android:fontFamily="@font/roboto_regular"
-                android:text="1369 rs"
-                android:textColor="@color/greeen" />
+                android:layout_marginLeft="21dp">
+
+                <TextView
+                    android:id="@+id/productPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/Pop_TextView_Medium"
+                    android:text="258 rs"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/mrpPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_6sdp"
+                    android:theme="@style/Pop_TextView_Medium"
+                    android:text="258" />
+
+                <TextView
+                    android:id="@+id/discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:theme="@style/Pop_TextView_Medium"
+                    android:text="28 %Off"
+                    android:textColor="@color/greeen" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -88,8 +130,9 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginRight="@dimen/_40sdp"
                 android:fontFamily="@font/roboto_medium"
+                android:padding="@dimen/_10sdp"
                 android:layout_marginBottom="22dp"
-                android:text="Add to Cart" />
+                android:text="Buy Now" />
 
         </RelativeLayout>
     </LinearLayout>

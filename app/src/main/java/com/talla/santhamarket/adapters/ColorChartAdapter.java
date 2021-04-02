@@ -14,13 +14,14 @@ import com.talla.santhamarket.R;
 import com.talla.santhamarket.databinding.ColorChartBinding;
 
 import java.util.List;
+import java.util.Map;
 
 public class ColorChartAdapter extends RecyclerView.Adapter<ColorChartAdapter.MyViewHolder> {
     private Context context;
-    private List<String> sizeList;
+    private List<Map.Entry<String, Object>> sizeList;
     private int itemIndex = -1;
 
-    public ColorChartAdapter(Context context, List<String> sizeList) {
+    public ColorChartAdapter(Context context, List<Map.Entry<String, Object>> sizeList) {
         this.context = context;
         this.sizeList = sizeList;
         notifyDataSetChanged();
@@ -68,8 +69,8 @@ public class ColorChartAdapter extends RecyclerView.Adapter<ColorChartAdapter.My
             this.binding = itemView;
         }
 
-        public void onBindView(String colorObj) {
-            binding.colorItem.setBackgroundColor(Color.parseColor(colorObj));
+        public void onBindView(Map.Entry<String, Object> colorObj) {
+            binding.colorItem.setBackgroundColor(Color.parseColor(colorObj.getValue().toString()));
         }
 
     }

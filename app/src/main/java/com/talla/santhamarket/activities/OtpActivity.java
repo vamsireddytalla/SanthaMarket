@@ -53,6 +53,7 @@ public class OtpActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private int count = 60;
     private ProgressDialog progressDialog;
+    private static final String TAG="OtpActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
