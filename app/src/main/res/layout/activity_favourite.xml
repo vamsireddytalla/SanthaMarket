@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/light_white"
     tools:context=".activities.FavouriteActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -46,7 +47,7 @@
         android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"
-        android:background="@color/gray"
+        android:background="@color/white"
         android:id="@+id/favRCV"/>
 
     <TextView

@@ -44,6 +44,7 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
     private FavouriteAdapter favouriteAdapter;
     List<ProductModel> productModelList = new ArrayList<>();
     List<FavouriteModel> favouriteModelList = new ArrayList<>();
+    private boolean isFirstTime = true;
     private static final String TAG = "FavouriteActivity";
 
     @Override
@@ -59,26 +60,25 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
         favouriteAdapter = new FavouriteAdapter(this, productModelList, this);
         binding.favRCV.setAdapter(favouriteAdapter);
 
+        //get ALl Fav Data Based on UID
         getFavData();
     }
 
     private void getFavData() {
-
+        favouriteModelList.clear();
+        productModelList.clear();
         firestore.collection("FAVOURITES").whereEqualTo("userId", UID).addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-
                 if (error != null) {
                     Log.d(TAG, "ERROR :" + error.getLocalizedMessage());
                     Toast.makeText(FavouriteActivity.this, "error", Toast.LENGTH_SHORT).show();
                 } else {
-                    favouriteModelList.clear();
-                    productModelList.clear();
                     for (DocumentChange dc : value.getDocumentChanges()) {
                         switch (dc.getType()) {
                             case ADDED:
                                 FavouriteModel favModel = dc.getDocument().toObject(FavouriteModel.class);
-                                Log.d(TAG, "Fav MODEl Added :" + favModel.toString());
+                                Log.d(TAG, "Get Fav Data API Method In Side Loop Item Added");
                                 favouriteModelList.add(favModel);
                                 break;
                             case MODIFIED:
@@ -87,20 +87,28 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
                                 break;
                             case REMOVED:
                                 FavouriteModel favModelRemoved = dc.getDocument().toObject(FavouriteModel.class);
-                                Log.d(TAG, "Fav MODEl Removed :" + favModelRemoved.toString());
+                                Log.d(TAG, " FAV Model List Size " + favouriteModelList.size() + "\n" + " Product List Size " + productModelList.size());
+                                Log.d(TAG, "Get Fav Data Removed Case");
                                 for (int i = 0; i < favouriteModelList.size(); i++) {
                                     if (favModelRemoved.getFavId().equalsIgnoreCase(favouriteModelList.get(i).getFavId())) {
                                         favouriteModelList.remove(i);
                                         if (favModelRemoved.getFavId().equalsIgnoreCase(productModelList.get(i).getExtra_filed())) {
                                             productModelList.remove(i);
+                                            Log.d(TAG, "After Product Model Removed List Updated " + i + " Remaining Products List For Recycle Items " + productModelList.size());
                                             favouriteAdapter.setFavouriteModelList(productModelList);
+                                            if (productModelList.isEmpty())
+                                                binding.noItemFound.setVisibility(View.VISIBLE);
                                         }
                                     }
                                 }
                                 break;
                         }
                     }
-                    getProdBasedOnProdId();
+                    Log.d(TAG, "Get Fav Data API Method Out Side Loop");
+                    if (isFirstTime) {
+                        isFirstTime = false;
+                        getProdBasedOnProdId();
+                    }
                 }
             }
         });
@@ -109,38 +117,42 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
     private void getProdBasedOnProdId() {
 
         alertDialog.show();
-        for (int i = 0; i < favouriteModelList.size(); i++) {
-            Log.d(TAG, "Fav Item Id in getProdBasedOnProdId()--->" + favouriteModelList.get(i));
+        if (!favouriteModelList.isEmpty()) {
+            for (int i = 0; i < favouriteModelList.size(); i++) {
+                Log.d(TAG, " Fav Item Id in getProdBasedOnProdId()---> " + favouriteModelList.get(i).getFavId());
 
-            final int finalI = i;
-            firestore.collection("PRODUCTS").document(favouriteModelList.get(i).getProduct_id()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                            ProductModel productModel = document.toObject(ProductModel.class);
-                            if (productModel != null) {
-                                productModel.setExtra_filed(favouriteModelList.get(finalI).getFavId());
-                                productModelList.add(productModel);
-                                favouriteAdapter.setFavouriteModelList(productModelList);
+                final int finalI = i;
+                firestore.collection("PRODUCTS").document(favouriteModelList.get(i).getProduct_id()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+//                                Log.d(TAG, " getProdBasedOnProdId()---> DocumentSnapshot data: " + document.getData());
+                                ProductModel productModel = document.toObject(ProductModel.class);
+                                if (productModel != null) {
+                                    productModel.setExtra_filed(favouriteModelList.get(finalI).getFavId());
+                                    productModelList.add(productModel);
+                                    favouriteAdapter.setFavouriteModelList(productModelList);
+                                } else {
+                                    favouriteAdapter.setFavouriteModelList(productModelList);
+                                    Log.d(TAG, " getProdBasedOnProdId() no items Found ");
+                                }
+                            } else {
+                                Log.d(TAG, "No such document found with above Product ID " + favouriteModelList.get(finalI).getFavId());
                             }
-                        } else {
-                            Log.d(TAG, "No such document");
-                        }
 
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
+                        } else {
+                            Log.d(TAG, " getProdBasedOnProdId() failed with ", task.getException());
+                        }
                     }
-                }
-            });
-        }
-        if (productModelList.size() == 0) {
-            binding.noItemFound.setVisibility(View.VISIBLE);
-        } else {
+                });
+            }
             binding.noItemFound.setVisibility(View.GONE);
+        } else {
+            binding.noItemFound.setVisibility(View.VISIBLE);
         }
+
         alertDialog.dismiss();
 
     }

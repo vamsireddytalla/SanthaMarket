@@ -5,32 +5,32 @@ import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.talla.santhamarket.databinding.DashHomeBannerBinding;
 import com.talla.santhamarket.databinding.FavItemBinding;
+import com.talla.santhamarket.databinding.NoItemsFoundBinding;
 import com.talla.santhamarket.interfaces.ToggleItemListner;
-import com.talla.santhamarket.models.FavouriteModel;
 import com.talla.santhamarket.models.ProductModel;
 import com.talla.santhamarket.utills.CheckUtill;
 import com.talla.santhamarket.utills.StaticUtills;
 
 import java.util.List;
 
-public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.MyViewHolder> {
+public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.ViewHolder> {
 
     private Context context;
     private ToggleItemListner toggleItemListner;
     private List<ProductModel> favouriteModelList;
+    private static final int LAYOUT_ITEMS = 1;
+    private static final int NO_ITEMS_FOUND = 0;
 
-    public FavouriteAdapter(Context context, List<ProductModel> favouriteModelList,ToggleItemListner toggleItemListner) {
+    public FavouriteAdapter(Context context, List<ProductModel> favouriteModelList, ToggleItemListner toggleItemListner) {
         this.context = context;
         this.favouriteModelList = favouriteModelList;
-        this.toggleItemListner=toggleItemListner;
+        this.toggleItemListner = toggleItemListner;
         notifyDataSetChanged();
     }
 
@@ -41,36 +41,67 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.MyVi
 
     @NonNull
     @Override
-    public FavouriteAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FavouriteAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        FavItemBinding itemBinding = FavItemBinding.inflate(layoutInflater, parent, false);
-        return new FavouriteAdapter.MyViewHolder(itemBinding);
+        switch (viewType) {
+            case 0:
+                NoItemsFoundBinding noItemsViewHolder = NoItemsFoundBinding.inflate(layoutInflater, parent, false);
+                return new ViewHolder(noItemsViewHolder);
+            case 1:
+                FavItemBinding itemBinding = FavItemBinding.inflate(layoutInflater, parent, false);
+                return new ViewHolder(itemBinding);
+        }
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final FavouriteAdapter.MyViewHolder holder, final int position) {
-        holder.onBindView(favouriteModelList.get(position));
+    public void onBindViewHolder(@NonNull final FavouriteAdapter.ViewHolder holder, final int position) {
 
-        holder.binding.toggleBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    toggleItemListner.toggleChangeListner(position,0);
-            }
-        });
+        switch (holder.getItemViewType()) {
+            case 0:
+                holder.setNoItemFound("No Favourite Items Found !");
+                break;
+            case 1:
+                holder.onBindView(favouriteModelList.get(position));
+                break;
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return favouriteModelList.size();
+        return favouriteModelList.isEmpty()?0:favouriteModelList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        private FavItemBinding binding;
+    @Override
+    public int getItemViewType(int position) {
+        if (favouriteModelList.isEmpty()) {
+            return NO_ITEMS_FOUND;
+        } else {
+            return LAYOUT_ITEMS;
+        }
+    }
 
-        public MyViewHolder(FavItemBinding itemView) {
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private FavItemBinding binding;
+        private NoItemsFoundBinding noItemsFoundBinding;
+
+        public ViewHolder(NoItemsFoundBinding noItemsFoundBinding) {
+            super(noItemsFoundBinding.getRoot());
+            this.noItemsFoundBinding = noItemsFoundBinding;
+        }
+
+        public ViewHolder(FavItemBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
+            binding.toggleBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    toggleItemListner.toggleChangeListner(getAdapterPosition(), 0);
+                }
+            });
         }
+
 
         public void onBindView(ProductModel favouriteModel) {
             Glide.with(context).load(favouriteModel.getProduct_images().get(0).getProduct_image()).fitCenter().into(binding.imageIcon);
@@ -82,9 +113,16 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.MyVi
             Long mrp_price = favouriteModel.getMrp_price();
             Long selling_price = favouriteModel.getProduct_price();
             float res = StaticUtills.discountPercentage(selling_price, mrp_price);
-            binding.discount.setText(String.valueOf(res).substring(0, 2) + "%OFF");;
+            binding.discount.setText(String.valueOf(res).substring(0, 2) + "%OFF");
+            ;
             binding.toggleBtn.setChecked(true);
         }
 
+        public void setNoItemFound(String va) {
+            noItemsFoundBinding.noItemsFound.setText(va);
+        }
+
     }
+
+
 }
