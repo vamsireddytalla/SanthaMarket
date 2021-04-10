@@ -83,22 +83,24 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
                                 break;
                             case MODIFIED:
                                 FavouriteModel favModelModified = dc.getDocument().toObject(FavouriteModel.class);
-                                Log.d(TAG, "Fav MODEl Modified :" + favModelModified.toString());
+                                Log.d(TAG, "Get Fav Data API Method In Side Loop Item Modified");
                                 break;
                             case REMOVED:
                                 FavouriteModel favModelRemoved = dc.getDocument().toObject(FavouriteModel.class);
-                                Log.d(TAG, " FAV Model List Size " + favouriteModelList.size() + "\n" + " Product List Size " + productModelList.size());
                                 Log.d(TAG, "Get Fav Data Removed Case");
                                 for (int i = 0; i < favouriteModelList.size(); i++) {
                                     if (favModelRemoved.getFavId().equalsIgnoreCase(favouriteModelList.get(i).getFavId())) {
                                         favouriteModelList.remove(i);
-                                        if (favModelRemoved.getFavId().equalsIgnoreCase(productModelList.get(i).getExtra_filed())) {
-                                            productModelList.remove(i);
-                                            Log.d(TAG, "After Product Model Removed List Updated " + i + " Remaining Products List For Recycle Items " + productModelList.size());
-                                            favouriteAdapter.setFavouriteModelList(productModelList);
-                                            if (productModelList.isEmpty())
-                                                binding.noItemFound.setVisibility(View.VISIBLE);
-                                        }
+                                       for(int j = 0; j < productModelList.size(); j++)
+                                       {
+                                           if (favModelRemoved.getFavId().equalsIgnoreCase(productModelList.get(j).getExtra_filed())) {
+                                               productModelList.remove(j);
+                                               Log.d(TAG, "After Product Model Removed List Updated " + j + " Remaining Products List For Recycle Items " + productModelList.size());
+                                               favouriteAdapter.setFavouriteModelList(productModelList);
+                                               if (productModelList.isEmpty())
+                                                   binding.noItemFound.setVisibility(View.VISIBLE);
+                                           }
+                                       }
                                     }
                                 }
                                 break;
