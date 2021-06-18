@@ -26,6 +26,9 @@
     <string name="company_name_digits_allowed">ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="password_digits_allowed">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@_</string>
     <string name="indicates_any_of_these_is_manadory">** Indicates any One is Mandatory</string>
+    <string name="categoryId">categoryId</string>
+    <string name="Tags">Tags</string>
+    <string name="no_related_products_available">No Related Products Available !</string>
 
     <string-array name="india_states">
         <item>Andhra Pradesh</item>

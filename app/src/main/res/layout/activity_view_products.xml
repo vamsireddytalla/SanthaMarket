@@ -116,10 +116,17 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/productRCV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:background="@color/gray"
             android:orientation="vertical" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal|center"
+            android:id="@+id/noProductsAvail"
+            android:visibility="gone"
+            android:text="@string/no_related_products_available"/>
     </LinearLayout>
 
     <LinearLayout

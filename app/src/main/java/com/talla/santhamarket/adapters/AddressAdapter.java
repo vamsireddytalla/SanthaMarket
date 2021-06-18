@@ -45,13 +45,19 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AddressAdapter.MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final AddressAdapter.MyViewHolder holder, final int position) {
         holder.onBindView(userAddressList.get(position));
 
         holder.binding.defaultAddress.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                addressItemListner.addressItemListner("Check",position);
+                if (userAddressList.get(position).isDefaultAddress())
+                {
+                    holder.binding.defaultAddress.setChecked(true);
+                }
+                else {
+                    addressItemListner.addressItemListner("Check",position,b);
+                }
             }
         });
     }
@@ -78,10 +84,10 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.MyViewHo
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             switch (menuItem.getItemId()) {
                                 case R.id.edit:
-                                    addressItemListner.addressItemListner("Edit",getAdapterPosition());
+                                    addressItemListner.addressItemListner("Edit",getAdapterPosition(),true);
                                     break;
                                 case R.id.delete:
-                                    addressItemListner.addressItemListner("Delete",getAdapterPosition());
+                                    addressItemListner.addressItemListner("Delete",getAdapterPosition(),userAddressList.get(getAdapterPosition()).isDefaultAddress());
                                     break;
                             }
                             return false;
@@ -107,8 +113,10 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.MyViewHo
             if (val)
             {
                 binding.defaultAddress.setText("DEFAULT ADDRESS");
+                binding.defaultAddress.setChecked(val);
             }else {
                 binding.defaultAddress.setText("Make Default Address");
+                binding.defaultAddress.setChecked(val);
             }
         }
 

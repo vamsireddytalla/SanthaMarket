@@ -142,7 +142,6 @@ public class OtpActivity extends AppCompatActivity {
                                 userModel.setUser_name("");
                                 userModel.setUser_gender("");
                                 userModel.setImage_url("");
-                                userModel.setDefault_address(new UserAddress());
                                 documentReference.set(userModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {

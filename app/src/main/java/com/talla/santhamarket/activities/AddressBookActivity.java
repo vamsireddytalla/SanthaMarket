@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Contacts;
@@ -23,12 +25,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.adapters.AddressAdapter;
@@ -58,7 +62,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     private AddressAdapter addressAdapter;
     List<UserAddress> userAddressList = new ArrayList<>();
     private String clickerAction = "Add";
-    private int itemClickedPos;
+    private int itemClickedPos, totalAddress = 0;
     private static final String TAG = "AddressBookActivity";
 
     @Override
@@ -74,6 +78,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
         auth = FirebaseAuth.getInstance();
         UID = auth.getCurrentUser().getUid();
 
+        getAddressCount();
         getAddressBookListner();
         binding.backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +87,6 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
             }
         });
     }
-
 
     public void addAddress(View view) {
         clickerAction = "Add";
@@ -101,7 +105,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
 
         if (clickerAction.equalsIgnoreCase("Add")) {
             profileDialogBinding.toolbarTitle.setText("Add New Address");
-        }else {
+        } else {
             setDataToDialog();
         }
 
@@ -132,6 +136,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     }
 
     private void addDataToDb() {
+        getAddressCount();
         userId = UID;
         userName = profileDialogBinding.userName.getText().toString().trim();
         country = profileDialogBinding.country.getText().toString().trim();
@@ -182,8 +187,14 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
             userAddress.setUser_alter_phone(alterPhone);
             userAddress.setUser_pincode(pincode);
             userAddress.setUser_streetAddress(streetAddress);
-            userAddress.setDefaultAddress(false);
+
             if (clickerAction.equalsIgnoreCase("Add")) {
+                if (totalAddress>0)
+                {
+                    userAddress.setDefaultAddress(false);
+                }else {
+                    userAddress.setDefaultAddress(true);
+                }
                 insertIntoData(userAddress);
             } else {
                 userAddress.setDocID(userAddressList.get(itemClickedPos).getDocID());
@@ -193,12 +204,13 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     }
 
     private void insertIntoData(UserAddress userAddress) {
-        firestore.collection("Address Book").document().set(userAddress).addOnSuccessListener(new OnSuccessListener<Void>() {
+        DocumentReference ref = firestore.collection("Address Book").document();
+        userAddress.setDocID(ref.getId());
+        ref.set(userAddress).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Sucessfully saved Address to server");
                 showSnackBar("Succesfully Added");
-                Toast.makeText(AddressBookActivity.this, "Succesfully Added", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -207,6 +219,21 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
                 Log.d(TAG, "Error Occured while saving address to server " + e.getMessage());
                 showSnackBar("Error Occured " + e.getMessage());
                 dialog.dismiss();
+            }
+        });
+    }
+
+    private void getAddressCount() {
+        Query query = firestore.collection("Address Book").whereEqualTo("userId", UID);
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, "Error :" + error.getMessage());
+                } else {
+                    totalAddress = value.getDocumentChanges().size();
+                    Log.d(TAG, "Total Address List : " + totalAddress);
+                }
             }
         });
     }
@@ -321,37 +348,49 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     }
 
     @Override
-    public void addressItemListner(String item, int pos) {
+    public void addressItemListner(String item, int pos,boolean checkedType) {
         itemClickedPos = pos;
         if (item.equalsIgnoreCase("Edit")) {
             clickerAction = "Edit";
             showAddressDialog();
             return;
         } else if (item.equalsIgnoreCase("delete")) {
-            deleteItem(userAddressList.get(pos));
+            if (checkedType)
+            {
+                showDialog("You can't Delete default Address Make another address as default and Delete this default Address");
+            }else {
+                deleteItem(userAddressList.get(pos));
+            }
             return;
         } else if (item.equalsIgnoreCase("Check")) {
 
             for (int i = 0; i < userAddressList.size(); i++) {
                 progressDialog.show();
-                if (userAddressList.get(pos).getDocID().equalsIgnoreCase(userAddressList.get(i).getDocID())) {
-                    userAddressList.get(pos).setDefaultAddress(true);
-                } else {
-                    userAddressList.get(pos).setDefaultAddress(false);
-                }
-                firestore.collection("Address Book").document(userAddressList.get(i).getDocID()).update("defaultAddress", userAddressList.get(pos).isDefaultAddress()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        progressDialog.dismiss();
+                if (userAddressList.size()>1)
+                {
+                    if (userAddressList.get(pos).getDocID().equalsIgnoreCase(userAddressList.get(i).getDocID())) {
+                        userAddressList.get(pos).setDefaultAddress(checkedType);
+                    } else {
+                        userAddressList.get(pos).setDefaultAddress(!checkedType);
                     }
-                });
+                    firestore.collection("Address Book").document(userAddressList.get(i).getDocID()).update("defaultAddress", userAddressList.get(pos).isDefaultAddress()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            progressDialog.dismiss();
+                        }
+                    });
+                }else {
+                    progressDialog.dismiss();
+                    showDialog("Atleast One Address must be Default ! Add another address to remove this as Default Address");
+                }
+
             }
             Toast.makeText(this, "Added as  Default Address", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void setDataToDialog() {
-        UserAddress userAddress=userAddressList.get(itemClickedPos);
+        UserAddress userAddress = userAddressList.get(itemClickedPos);
         profileDialogBinding.userName.setText(userAddress.getUser_name());
         profileDialogBinding.country.setText(userAddress.getUser_country());
         profileDialogBinding.state.setText(userAddress.getUser_state());
@@ -362,6 +401,24 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
         profileDialogBinding.streetAddress.setText(userAddress.getUser_streetAddress());
         profileDialogBinding.toolbarTitle.setText("Update Data");
         profileDialogBinding.saveBtn.setText("Update");
+    }
+
+    private void showDialog(String message)
+    {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage(message);
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Ok ! I Understood...",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 
 

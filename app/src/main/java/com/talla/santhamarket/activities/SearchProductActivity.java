@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -172,34 +173,13 @@ public class SearchProductActivity extends AppCompatActivity {
     }
 
     private void getSearchedData(final String tagName) {
-        progressDialog.show();
-        Log.d(TAG, "Searched TAG Name " + tagName);
-        firebaseFirestore.collection("PRODUCTS").whereArrayContains("tags", tagName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
-                        ProductModel productModel = document.toObject(ProductModel.class);
-                        Log.d(TAG, "Searched Products ---> " + productModel.toString());
-                        productModelList.add(productModel);
-                    }
-                    progressDialog.dismiss();
-                    if (productModelList.size()>0)
-                    {
-                        Intent intent = new Intent(SearchProductActivity.this, ViewProductsActivity.class);
-                        intent.putExtra("categoryId", productModelList.get(0).getCategory_id());
-                        startActivity(intent);
-                        finish();
-                    }else {
-                        showDialog("No Items Found with "+tagName, "Click OK to Search Again");
-                    }
-
-                } else {
-                    Toast.makeText(SearchProductActivity.this, "Error Occured  " + task.getException(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        Intent intent = new Intent(SearchProductActivity.this, ViewProductsActivity.class);
+        intent.putExtra(getString(R.string.Tags), tagName);
+        startActivity(intent);
+        finish();
     }
+
+
 
     private void showSnackBar(String message) {
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);

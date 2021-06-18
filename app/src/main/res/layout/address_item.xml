@@ -46,6 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_medium"
+        android:textAllCaps="true"
         android:text="Name : " />
 
     <TextView
@@ -53,6 +54,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_medium"
+        android:textAllCaps="true"
+        android:layout_marginTop="@dimen/_3sdp"
         android:text="Contact Number : " />
 
     <TextView
@@ -60,32 +63,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_medium"
+        android:textAllCaps="true"
+        android:layout_marginTop="@dimen/_3sdp"
         android:text="Alternate Number : " />
 
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:weightSum="1">
-      <TextView
-          android:id="@+id/add_country"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:fontFamily="@font/roboto_medium"
-          android:layout_weight="0.50"
-          android:text="Country : " />
 
       <TextView
-          android:id="@+id/add_state"
-          android:layout_width="0dp"
+          android:id="@+id/add_country"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/_3sdp"
           android:fontFamily="@font/roboto_medium"
-          android:layout_weight="0.50"
-          android:text="State : " />
-  </LinearLayout>
+          android:textAllCaps="true"
+          android:text="Country : " />
+
+    <TextView
+        android:id="@+id/add_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:textAllCaps="true"
+        android:text="State : " />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
         android:weightSum="1">
         <TextView
             android:id="@+id/add_city"
@@ -93,6 +97,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_medium"
             android:layout_weight="0.50"
+            android:textAllCaps="true"
             android:text="City : " />
 
         <TextView
@@ -101,6 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.50"
             android:fontFamily="@font/roboto_medium"
+            android:textAllCaps="true"
             android:text="Pincode : " />
     </LinearLayout>
 
@@ -109,6 +115,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_medium"
+        android:textAllCaps="true"
+        android:layout_marginTop="@dimen/_3sdp"
         android:text="Address : " />
 
 

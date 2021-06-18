@@ -10,8 +10,6 @@ public class UserModel
     private String user_name;
     private String user_gender;
     private String image_url;
-    private UserAddress default_address;
-
 
     public String getUser_number() {
         return user_number;
@@ -77,14 +75,6 @@ public class UserModel
         this.image_url = image_url;
     }
 
-    public UserAddress getDefault_address() {
-        return default_address;
-    }
-
-    public void setDefault_address(UserAddress default_address) {
-        this.default_address = default_address;
-    }
-
     @Override
     public String toString() {
         return "UserModel{" +
@@ -96,7 +86,6 @@ public class UserModel
                 ", user_name='" + user_name + '\'' +
                 ", user_gender='" + user_gender + '\'' +
                 ", user_image_url='" + image_url + '\'' +
-                ", default_address=" + default_address +
                 '}';
     }
 }

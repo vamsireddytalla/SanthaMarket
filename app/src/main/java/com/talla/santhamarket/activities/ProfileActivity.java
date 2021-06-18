@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -108,7 +109,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void getAddressData() {
-        firestore.collection("Address Book").whereEqualTo("userId", UID).whereEqualTo("defaultAddress", true).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firestore.collection("Address Book").whereEqualTo("userId", UID).whereEqualTo("defaultAddress", true).get().addOnCompleteListener(this, new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -123,8 +124,12 @@ public class ProfileActivity extends AppCompatActivity {
                     Log.d(TAG, "error occured" + task.getException());
                 }
             }
+        }).addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showSnackBar(e.getMessage());
+            }
         });
-
     }
 
     private void setDataToUi(UserModel userModel) {
@@ -279,6 +284,11 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void profileBackBtnClick(View view) {
         finish();
+    }
+
+    private void showSnackBar(String message) {
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+        snackbar.show();
     }
 
 //    public void updatePhoneNumber(View view) {

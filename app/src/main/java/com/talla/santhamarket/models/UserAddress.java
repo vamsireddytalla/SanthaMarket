@@ -13,7 +13,7 @@ public class UserAddress
     private String user_streetAddress;
     private String user_lat;
     private String user_long;
-    private boolean defaultAddress;
+    private boolean defaultAddress=true;
     private String docID;
 
     public String getUser_country() {

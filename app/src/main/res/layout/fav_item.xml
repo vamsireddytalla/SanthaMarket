@@ -42,7 +42,7 @@
                 android:layout_toLeftOf="@+id/makeFav"
                 android:fontFamily="@font/poppins_regular"
                 android:text="Bata Shoes Branded"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
             <LinearLayout
                 android:layout_width="@dimen/_32sdp"
@@ -87,6 +87,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+                android:id="@+id/priceDetails"
                 android:layout_below="@+id/productDesc"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
@@ -99,7 +100,7 @@
                     android:id="@+id/productPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:theme="@style/Pop_TextView_Medium"
+                    android:theme="@style/Pop_TextView_small"
                     android:text="258 rs"
                     android:textColor="@color/black" />
 
@@ -108,7 +109,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_6sdp"
-                    android:theme="@style/Pop_TextView_Medium"
+                    android:theme="@style/Pop_TextView_small"
                     android:text="258" />
 
                 <TextView
@@ -116,7 +117,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_10sdp"
-                    android:theme="@style/Pop_TextView_Medium"
+                    android:theme="@style/Pop_TextView_small"
                     android:text="28 %Off"
                     android:textColor="@color/greeen" />
 
@@ -125,13 +126,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/priceDetails"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginRight="@dimen/_40sdp"
+                android:gravity="center"
+                android:layout_marginStart="156dp"
+                android:layout_marginLeft="156dp"
+                android:layout_marginTop="27dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginBottom="7dp"
                 android:fontFamily="@font/roboto_medium"
                 android:padding="@dimen/_10sdp"
-                android:layout_marginBottom="22dp"
                 android:text="Buy Now" />
 
         </RelativeLayout>

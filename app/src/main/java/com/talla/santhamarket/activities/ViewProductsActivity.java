@@ -23,7 +23,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -45,11 +47,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ViewProductsActivity extends AppCompatActivity
-{
+public class ViewProductsActivity extends AppCompatActivity {
     private ActivityViewProductsBinding binding;
     private CheckInternetBinding checkInternetBinding;
     private Long categoryId;
+    private String tagsQuery = "";
     private FirebaseFirestore firebaseFirestore;
     private ProductAdapter productAdapter;
     private List<ProductModel> productModelList = new ArrayList<>();
@@ -71,7 +73,8 @@ public class ViewProductsActivity extends AppCompatActivity
         binding.toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            categoryId = bundle.getLong("categoryId");
+            categoryId = bundle.getLong(getString(R.string.categoryId));
+            tagsQuery = bundle.getString(getString(R.string.Tags));
             Log.d(TAG, "CategoryId from Intent :" + categoryId);
         } else {
             finish();
@@ -113,7 +116,12 @@ public class ViewProductsActivity extends AppCompatActivity
         if (CheckInternet.checkInternet(this)) {
             binding.includeLayoutViewProducts.setVisibility(View.GONE);
             binding.layoutOne.setVisibility(View.VISIBLE);
-            getProductsBasedOnCategory();
+            binding.noProductsAvail.setVisibility(View.GONE);
+            if (tagsQuery != null && !tagsQuery.isEmpty()) {
+                searchData(tagsQuery);
+            } else {
+                getProductsBasedOnCategory();
+            }
         } else {
             binding.layoutOne.setVisibility(View.GONE);
             binding.includeLayoutViewProducts.setVisibility(View.VISIBLE);
@@ -165,9 +173,43 @@ public class ViewProductsActivity extends AppCompatActivity
                     progressDialog.dismiss();
                     if (productModelList.size() == 0) {
                         Log.d(TAG, "No Related Products Available");
+                        showSnackBar("No Related Products Available !");
+                        binding.noProductsAvail.setVisibility(View.VISIBLE);
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    private void searchData(String query) {
+        progressDialog.show();
+        if (productModelList != null) {
+            productModelList.clear();
+        }
+        CollectionReference docref = firebaseFirestore.collection("PRODUCTS");
+        docref.whereArrayContains("Tags", query.toLowerCase()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                        ProductModel productModel = document.toObject(ProductModel.class);
+                        Log.d(TAG, "Searched Products ---> " + productModel.toString());
+                        productModelList.add(productModel);
+                    }
+                    binding.productRCV.setHasFixedSize(true);
+                    binding.productRCV.setLayoutManager(new GridLayoutManager(ViewProductsActivity.this, 2));
+                    productAdapter = new ProductAdapter(ViewProductsActivity.this, productModelList);
+                    binding.productRCV.setAdapter(productAdapter);
+                    progressDialog.dismiss();
+                    if (productModelList.size() == 0) {
+                        Log.d(TAG, "No Related Products Available");
+                        showSnackBar("No Related Products Available !");
+                        binding.noProductsAvail.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    Log.d(TAG, task.getException().toString());
                 }
             }
         });
