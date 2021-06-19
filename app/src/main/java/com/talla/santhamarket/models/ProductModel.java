@@ -22,6 +22,9 @@ public class ProductModel implements Serializable
     private List<ProductImageModel> product_images;
     private List<String> tags;
     private String extra_filed;
+    private boolean out_of_stock;
+    private String selectedColor;
+    private String selectedSize;
 
 
     public Long getCategory_id() {
@@ -153,6 +156,29 @@ public class ProductModel implements Serializable
         this.extra_filed = extra_filed;
     }
 
+    public boolean isOut_of_stock() {
+        return out_of_stock;
+    }
+
+    public void setOut_of_stock(boolean out_of_stock) {
+        this.out_of_stock = out_of_stock;
+    }
+
+    public String getSelectedColor() {
+        return selectedColor;
+    }
+
+    public void setSelectedColor(String selectedColor) {
+        this.selectedColor = selectedColor;
+    }
+
+    public String getSelectedSize() {
+        return selectedSize;
+    }
+
+    public void setSelectedSize(String selectedSize) {
+        this.selectedSize = selectedSize;
+    }
 
     @Override
     public String toString() {
@@ -173,6 +199,9 @@ public class ProductModel implements Serializable
                 ", product_images=" + product_images +
                 ", tags=" + tags +
                 ", extra_filed='" + extra_filed + '\'' +
+                ", out_of_stock=" + out_of_stock +
+                ", selectedColor='" + selectedColor + '\'' +
+                ", selectedSize='" + selectedSize + '\'' +
                 '}';
     }
 }

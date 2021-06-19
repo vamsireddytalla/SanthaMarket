@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Paint;
@@ -26,11 +28,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -38,6 +43,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firestore.v1.StructuredQuery;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.adapters.ColorChartAdapter;
 import com.talla.santhamarket.adapters.ProductAdapter;
@@ -47,7 +53,11 @@ import com.talla.santhamarket.adapters.ProductSizeAdapter;
 import com.talla.santhamarket.adapters.QuantityAdapter;
 import com.talla.santhamarket.adapters.RatingsAdapter;
 import com.talla.santhamarket.databinding.ActivityDetailProductBinding;
+import com.talla.santhamarket.databinding.AddCartItemBinding;
 import com.talla.santhamarket.databinding.ProductDescriptionLayoutBinding;
+import com.talla.santhamarket.interfaces.ChartsClickListner;
+import com.talla.santhamarket.models.CartModel;
+import com.talla.santhamarket.models.CategoryModel;
 import com.talla.santhamarket.models.FavouriteModel;
 import com.talla.santhamarket.models.ProductImageModel;
 import com.talla.santhamarket.models.ProductModel;
@@ -60,9 +70,12 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
+import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
+import static com.google.firebase.firestore.DocumentChange.Type.REMOVED;
 
-public class DetailProductActivity extends AppCompatActivity {
+public class DetailProductActivity extends AppCompatActivity implements ChartsClickListner {
     private ActivityDetailProductBinding binding;
+    private AddCartItemBinding addCartItemBinding;
     private ViewPager2 viewPagerPrductImages;
     private TabLayout imagesTabLayout;
     private ViewPager2 viewPagerDescription;
@@ -80,6 +93,9 @@ public class DetailProductActivity extends AppCompatActivity {
     private DocumentReference documentReference;
     private FavouriteModel favModel;
     private boolean isFirstTime = true;
+    int a = 0;
+    private View view;
+    int totalCart_items=0;
     private static final String TAG = "DetailProductActivity";
 
     @Override
@@ -87,14 +103,8 @@ public class DetailProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityDetailProductBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        view = binding.getRoot();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            productId = bundle.getString("product_id");
-            Log.d(TAG, "CategoryId from Intent :" + productId);
-        } else {
-            finish();
-        }
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Fetching Data");
         progressDialog.setMessage("Please Wait . . .");
@@ -103,6 +113,15 @@ public class DetailProductActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         UID = auth.getCurrentUser().getUid();
         documentReference = firestore.collection("FAVOURITES").document(UID);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            productId = bundle.getString("product_id");
+            getCartItemsCount();
+            Log.d(TAG, "CategoryId from Intent :" + productId);
+        } else {
+            finish();
+        }
+
         //firebase instance
         poductImagesAdapter = new ProductImagesAdapter(this, productsImagesList);
         binding.viewPagerPrductImages.setAdapter(poductImagesAdapter);
@@ -123,22 +142,23 @@ public class DetailProductActivity extends AppCompatActivity {
         });
         getProdBasedOnProdId();
 
-        binding.quantitySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                try {
-                    selectedQty = (int) adapterView.getSelectedItem();
-                    Log.d(TAG, "Selected Quantity in Spinner");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+//        binding.quantitySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                try {
+//                    selectedQty = (int) adapterView.getSelectedItem();
+//                    Log.d(TAG, "Selected Quantity in Spinner");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
         binding.backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,20 +168,20 @@ public class DetailProductActivity extends AppCompatActivity {
 
         binding.dateDelivery.setText(CheckUtill.getDateAfterDays(7));
 
-        List<RatingModel> ratingModelList = new ArrayList<>();
-        for (int i = 20; i < 25; i++) {
-            RatingModel ratingModel = new RatingModel();
-            ratingModel.setRating_title("Title " + i);
-            ratingModel.setRating_desc("Desc " + i);
-            List<ProductImageModel> productImageModelList = new ArrayList<>();
-            ProductImageModel productImageModel = new ProductImageModel();
-            productImageModel.setProduct_image("https://getk2.org/media/k2/items/cache/42433d914d50be2debde725181e28d45_XL.jpg?t=20160407_065923");
-            productImageModelList.add(productImageModel);
-            ratingModel.setProductImageModelList(productImageModelList);
-            ratingModelList.add(ratingModel);
-        }
-        RatingsAdapter ratingsAdapter = new RatingsAdapter(this, ratingModelList);
-        binding.ratingRCV.setAdapter(ratingsAdapter);
+//        List<RatingModel> ratingModelList = new ArrayList<>();
+//        for (int i = 20; i < 25; i++) {
+//            RatingModel ratingModel = new RatingModel();
+//            ratingModel.setRating_title("Title " + i);
+//            ratingModel.setRating_desc("Desc " + i);
+//            List<ProductImageModel> productImageModelList = new ArrayList<>();
+//            ProductImageModel productImageModel = new ProductImageModel();
+//            productImageModel.setProduct_image("https://getk2.org/media/k2/items/cache/42433d914d50be2debde725181e28d45_XL.jpg?t=20160407_065923");
+//            productImageModelList.add(productImageModel);
+//            ratingModel.setProductImageModelList(productImageModelList);
+//            ratingModelList.add(ratingModel);
+//        }
+//        RatingsAdapter ratingsAdapter = new RatingsAdapter(this, ratingModelList);
+//        binding.ratingRCV.setAdapter(ratingsAdapter);
 
         isFavOrNot();
         binding.toggleBtn.setOnClickListener(new View.OnClickListener() {
@@ -230,9 +250,118 @@ public class DetailProductActivity extends AppCompatActivity {
             }
         });
 
+        binding.addToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog.show();
+                checkItemIsExists();
+            }
+        });
+
 
     }
 
+    private void addItemToCart() {
+        DocumentReference ref = firestore.collection("CART_ITEMS").document();
+        CartModel cartModel = new CartModel();
+        cartModel.setCart_doc_id(ref.getId());
+        cartModel.setCart_product_id(productModel.getProduct_id());
+        cartModel.setUser_id(UID);
+        ref.set(cartModel).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    progressDialog.dismiss();
+                    showDialog("Sucessfully added item to Cart !");
+                } else {
+                    progressDialog.dismiss();
+                    showDialog(task.getException() + "");
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.dismiss();
+                showDialog("Error Occured while Adding Product to Cart : " + e.getMessage());
+            }
+        });
+    }
+
+    private void checkItemIsExists() {
+        CollectionReference docref = firestore.collection("CART_ITEMS");
+        docref.whereEqualTo("cart_product_id", productModel.getProduct_id()).whereEqualTo("user_id", UID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    CartModel cartModel = null;
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        cartModel = document.toObject(CartModel.class);
+                    }
+                    if (cartModel == null) {
+                        Log.d(TAG, "No Doc Available");
+                        if (totalCart_items<20)
+                        {
+                            addItemToCart();
+                        }else {
+                            showDialog("Cart Items limit Exceeded !");
+                        }
+
+                    } else {
+                        progressDialog.dismiss();
+                        showDialog("Already Aded Item to Cart !");
+                        Log.d(TAG, "Doc Available");
+                    }
+                } else {
+                    progressDialog.dismiss();
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.dismiss();
+                Log.d(TAG, "No Data Found : " + e.getMessage());
+            }
+        });
+
+    }
+
+
+    private void getCartItemsCount() {
+        Query query = firestore.collection("CART_ITEMS").whereEqualTo("user_id", UID);
+        query.addSnapshotListener(this,new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, "Error :" + error.getMessage());
+                } else {
+                    totalCart_items=value.getDocuments().size();
+                    binding.cartInclude.cartCount.setText(totalCart_items + "");
+                }
+            }
+        });
+    }
+
+    private void showSnackBar(String message) {
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+        snackbar.show();
+    }
+
+    private void showDialog(String message) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage(message);
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
 
     private void isFavOrNot() {
         if (auth.getCurrentUser() != null) {
@@ -274,7 +403,7 @@ public class DetailProductActivity extends AppCompatActivity {
 
     private void getProdBasedOnProdId() {
         progressDialog.show();
-        firestore.collection("PRODUCTS").whereEqualTo("product_id", productId).addSnapshotListener(this,new EventListener<QuerySnapshot>() {
+        firestore.collection("PRODUCTS").whereEqualTo("product_id", productId).addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -292,20 +421,21 @@ public class DetailProductActivity extends AppCompatActivity {
     }
 
     private void setDataToUi(ProductModel productModel) {
+        productsImagesList.clear();
         productsImagesList.addAll(productModel.getProduct_images());
         poductImagesAdapter.setProductImageModelList(productsImagesList);
         List<Map.Entry<String, Object>> sizeChartList = new ArrayList(productModel.getProduct_sizes().entrySet());
         if (!sizeChartList.isEmpty()) {
             binding.tempView.setVisibility(View.VISIBLE);
             binding.sizeRoot.setVisibility(View.VISIBLE);
-            ProductSizeAdapter productSizeAdapter = new ProductSizeAdapter(this, sizeChartList);
+            ProductSizeAdapter productSizeAdapter = new ProductSizeAdapter(this, sizeChartList,this);
             binding.sizeRCV.setAdapter(productSizeAdapter);
         }
         List<Map.Entry<String, Object>> colorChartList = new ArrayList(productModel.getProduct_colors().entrySet());
         if (!colorChartList.isEmpty()) {
             binding.tempView.setVisibility(View.VISIBLE);
             binding.colorRoot.setVisibility(View.VISIBLE);
-            ColorChartAdapter colorChartAdapter = new ColorChartAdapter(this, colorChartList);
+            ColorChartAdapter colorChartAdapter = new ColorChartAdapter(this, colorChartList,this);
             binding.colorChartRCV.setAdapter(colorChartAdapter);
         }
 
@@ -318,6 +448,14 @@ public class DetailProductActivity extends AppCompatActivity {
         float res = StaticUtills.discountPercentage(selling_price, mrp_price);
         binding.discount.setText(String.valueOf(res).substring(0, 2) + "%OFF");
         quatitySpin(Math.round(productModel.getMax_quantity()));
+        if (productModel.isOut_of_stock())
+        {
+            binding.continueBtn.setBackgroundColor(getResources().getColor(R.color.orange));
+            binding.continueText.setText("Out of Stock");
+        }else {
+            binding.continueBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+            binding.continueText.setText("Continue");
+        }
     }
 
     private void quatitySpin(int quantity) {
@@ -326,8 +464,25 @@ public class DetailProductActivity extends AppCompatActivity {
             quantityList.add(i + "");
         }
         QuantityAdapter quantityAdapter = new QuantityAdapter(quantityList, this);
-        binding.quantitySpin.setAdapter(quantityAdapter);
+//        binding.quantitySpin.setAdapter(quantityAdapter);
     }
 
 
+    @Override
+    public void onSelectionCLick(String selectionVal, String key) {
+        if (key.equals(getString(R.string.Selected_Color)))
+        {
+            productModel.setSelectedColor(selectionVal);
+            showSnackBar("Selected Color "+selectionVal);
+        }else {
+            productModel.setSelectedSize(selectionVal);
+            showSnackBar("Selected Size "+selectionVal);
+        }
+    }
+
+    public void nextStep(View view)
+    {
+        Intent intent=new Intent(this, OrderSummaryActivity.class);
+        startActivity(intent);
+    }
 }

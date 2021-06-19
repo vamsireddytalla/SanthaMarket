@@ -231,7 +231,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
                 if (error != null) {
                     Log.e(TAG, "Error :" + error.getMessage());
                 } else {
-                    totalAddress = value.getDocumentChanges().size();
+                    totalAddress = value.getDocuments().size();
                     Log.d(TAG, "Total Address List : " + totalAddress);
                 }
             }

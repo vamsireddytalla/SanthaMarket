@@ -15,6 +15,7 @@ import com.talla.santhamarket.R;
 import com.talla.santhamarket.activities.ViewProductsActivity;
 import com.talla.santhamarket.databinding.DashCatLayoutBinding;
 import com.talla.santhamarket.databinding.SizeChartBinding;
+import com.talla.santhamarket.interfaces.ChartsClickListner;
 import com.talla.santhamarket.models.CategoryModel;
 
 import java.util.List;
@@ -23,11 +24,13 @@ import java.util.Map;
 public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.MyViewHolder> {
     private Context context;
     private List<Map.Entry<String, Object>> sizeList;
-    private int itemIndex=-1;
+    private int itemIndex=0;
+    private ChartsClickListner listner;
 
-    public ProductSizeAdapter(Context context, List<Map.Entry<String, Object>> sizeList) {
+    public ProductSizeAdapter(Context context, List<Map.Entry<String, Object>> sizeList,ChartsClickListner listner) {
         this.context = context;
         this.sizeList = sizeList;
+        this.listner=listner;
         notifyDataSetChanged();
     }
 
@@ -48,6 +51,7 @@ public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.
             @Override
             public void onClick(View view) {
                 itemIndex=position;
+                listner.onSelectionCLick(sizeList.get(position).getValue().toString(),context.getString(R.string.Selected_Size));
                 notifyDataSetChanged();
             }
         });
@@ -55,6 +59,7 @@ public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.
         if (itemIndex==position)
         {
             holder.binding.sizeItemRoot.setBackground(context.getResources().getDrawable(R.drawable.linear_border_color));
+            listner.onSelectionCLick(sizeList.get(position).getValue().toString(),context.getString(R.string.Selected_Size));
         }else {
             holder.binding.sizeItemRoot.setBackground(context.getResources().getDrawable(R.drawable.linear_border));
         }

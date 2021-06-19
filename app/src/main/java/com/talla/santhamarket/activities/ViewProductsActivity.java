@@ -47,7 +47,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ViewProductsActivity extends AppCompatActivity {
+public class ViewProductsActivity extends AppCompatActivity
+{
     private ActivityViewProductsBinding binding;
     private CheckInternetBinding checkInternetBinding;
     private Long categoryId;
@@ -220,6 +221,7 @@ public class ViewProductsActivity extends AppCompatActivity {
         if (productModelList != null) {
             productModelList.clear();
         }
+        binding.noProductsAvail.setVisibility(View.GONE);
         firebaseFirestore.collection("PRODUCTS").whereEqualTo("category_id", categoryId)
                 .whereGreaterThanOrEqualTo("product_price", priceRangeStart).whereLessThanOrEqualTo("product_price", priceRangeEnd).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -237,6 +239,7 @@ public class ViewProductsActivity extends AppCompatActivity {
                     progressDialog.dismiss();
                     if (productModelList.size() == 0) {
                         Log.d(TAG, "No Related Products Available");
+                        binding.noProductsAvail.setVisibility(View.VISIBLE);
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());

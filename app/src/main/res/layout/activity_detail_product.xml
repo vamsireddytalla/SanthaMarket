@@ -30,6 +30,7 @@
 
             <include
                 layout="@layout/add_cart_item"
+                android:id="@+id/cartInclude"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -183,26 +184,7 @@
                         android:text="28 %Off"
                         android:textColor="@color/greeen" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_20sdp"
-                        android:background="@drawable/spinner_border"
-                        android:gravity="center">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="Qty"
-                            android:theme="@style/Pop_TextView_Medium" />
-
-                        <Spinner
-                            android:id="@+id/quantitySpin"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"/>
-                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -335,13 +317,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_2sdp"
                     android:layout_marginTop="@dimen/_15sdp"
-                    android:background="@color/cement" />
+                    android:background="@color/cement"
+                    android:layout_marginBottom="@dimen/_50sdp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_50sdp"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <TextView
@@ -382,19 +366,21 @@
                 android:layout_weight="0.50"
                 android:text="Add to Cart"
                 android:gravity="center"
+                android:id="@+id/addToCart"
                 style="@style/Pop_TextView_Medium"/>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_50sdp"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/orange"
                 android:layout_weight="0.50"
                 android:id="@+id/continueBtn"
+                android:onClick="nextStep"
                 android:gravity="center">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Continue"
-                    android:drawablePadding="@dimen/_10sdp"
+                    android:text="Out of Stock"
+                    android:id="@+id/continueText"
                     android:textColor="@color/white"
                     android:gravity="center_vertical"
                     style="@style/Pop_TextView_Medium"/>

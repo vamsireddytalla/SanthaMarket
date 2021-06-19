@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.databinding.ColorChartBinding;
+import com.talla.santhamarket.interfaces.ChartsClickListner;
 
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,14 @@ import java.util.Map;
 public class ColorChartAdapter extends RecyclerView.Adapter<ColorChartAdapter.MyViewHolder> {
     private Context context;
     private List<Map.Entry<String, Object>> sizeList;
-    private int itemIndex = -1;
+    private int itemIndex = 0;
+    private ChartsClickListner listner;
+    private boolean isFirstTime=true;
 
-    public ColorChartAdapter(Context context, List<Map.Entry<String, Object>> sizeList) {
+    public ColorChartAdapter(Context context, List<Map.Entry<String, Object>> sizeList,ChartsClickListner listner) {
         this.context = context;
         this.sizeList = sizeList;
+        this.listner=listner;
         notifyDataSetChanged();
     }
 
@@ -44,12 +48,14 @@ public class ColorChartAdapter extends RecyclerView.Adapter<ColorChartAdapter.My
             @Override
             public void onClick(View view) {
                 itemIndex = position;
+                listner.onSelectionCLick(sizeList.get(position).getKey().toString(),context.getString(R.string.Selected_Color));
                 notifyDataSetChanged();
             }
         });
 
         if (itemIndex == position) {
             holder.binding.colorRoot.setBackground(context.getResources().getDrawable(R.drawable.color_slected_item));
+            listner.onSelectionCLick(sizeList.get(position).getKey().toString(),context.getString(R.string.Selected_Color));
         } else {
             holder.binding.colorRoot.setBackground(context.getResources().getDrawable(R.drawable.linear_border));
         }

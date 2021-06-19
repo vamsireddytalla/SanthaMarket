@@ -29,6 +29,8 @@
     <string name="categoryId">categoryId</string>
     <string name="Tags">Tags</string>
     <string name="no_related_products_available">No Related Products Available !</string>
+    <string name="Selected_Color">Selected_Color</string>
+    <string name="Selected_Size">Selected_Size</string>
 
     <string-array name="india_states">
         <item>Andhra Pradesh</item>
