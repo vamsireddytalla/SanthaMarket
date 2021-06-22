@@ -54,6 +54,7 @@ import com.talla.santhamarket.adapters.QuantityAdapter;
 import com.talla.santhamarket.adapters.RatingsAdapter;
 import com.talla.santhamarket.databinding.ActivityDetailProductBinding;
 import com.talla.santhamarket.databinding.AddCartItemBinding;
+import com.talla.santhamarket.databinding.OrderSummaryItemBinding;
 import com.talla.santhamarket.databinding.ProductDescriptionLayoutBinding;
 import com.talla.santhamarket.interfaces.ChartsClickListner;
 import com.talla.santhamarket.models.CartModel;
@@ -73,7 +74,8 @@ import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
 import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
 import static com.google.firebase.firestore.DocumentChange.Type.REMOVED;
 
-public class DetailProductActivity extends AppCompatActivity implements ChartsClickListner {
+public class DetailProductActivity extends AppCompatActivity implements ChartsClickListner
+{
     private ActivityDetailProductBinding binding;
     private AddCartItemBinding addCartItemBinding;
     private ViewPager2 viewPagerPrductImages;
@@ -84,7 +86,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     private List<ProductImageModel> productsImagesList = new ArrayList<>();
     private boolean isFavItem = false;
     private ProgressDialog progressDialog;
-    private String productId;
+    private String productId, key;
     private ProductModel productModel;
     private int selectedQty = 1;
     private String UID;
@@ -93,9 +95,8 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     private DocumentReference documentReference;
     private FavouriteModel favModel;
     private boolean isFirstTime = true;
-    int a = 0;
     private View view;
-    int totalCart_items=0;
+    int totalCart_items = 0;
     private static final String TAG = "DetailProductActivity";
 
     @Override
@@ -106,8 +107,8 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         view = binding.getRoot();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Fetching Data");
-        progressDialog.setMessage("Please Wait . . .");
+        progressDialog.setTitle(getString(R.string.processing_request));
+        progressDialog.setMessage(getString(R.string.please_wait));
         progressDialog.setCancelable(false);
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -142,22 +143,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         });
         getProdBasedOnProdId();
 
-//        binding.quantitySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                try {
-//                    selectedQty = (int) adapterView.getSelectedItem();
-//                    Log.d(TAG, "Selected Quantity in Spinner");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//        });
 
         binding.backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -254,7 +239,8 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
             @Override
             public void onClick(View view) {
                 progressDialog.show();
-                checkItemIsExists();
+                key=getString(R.string.add_to_cart);
+                checkItemIsExists(key);
             }
         });
 
@@ -262,17 +248,26 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     }
 
     private void addItemToCart() {
+        progressDialog.show();
         DocumentReference ref = firestore.collection("CART_ITEMS").document();
         CartModel cartModel = new CartModel();
         cartModel.setCart_doc_id(ref.getId());
         cartModel.setCart_product_id(productModel.getProduct_id());
         cartModel.setUser_id(UID);
+        cartModel.setTimestamp(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
+        cartModel.setSize_chart(productModel.getSelectedSize());
+        cartModel.setSelected_color(productModel.getSelectedColor());
         ref.set(cartModel).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     progressDialog.dismiss();
-                    showDialog("Sucessfully added item to Cart !");
+                    if (key.equalsIgnoreCase("Continue")) {
+                        openIntent();
+                    } else {
+                        showDialog("Sucessfully added item to Cart !");
+                    }
+
                 } else {
                     progressDialog.dismiss();
                     showDialog(task.getException() + "");
@@ -288,7 +283,39 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         });
     }
 
-    private void checkItemIsExists() {
+    private void updateItemToCart(String docId) {
+        progressDialog.show();
+        DocumentReference ref = firestore.collection("CART_ITEMS").document(docId);
+        CartModel cartModel = new CartModel();
+        cartModel.setCart_doc_id(ref.getId());
+        cartModel.setCart_product_id(productModel.getProduct_id());
+        cartModel.setUser_id(UID);
+        cartModel.setTimestamp(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
+        cartModel.setSize_chart(productModel.getSelectedSize());
+        cartModel.setSelected_color(productModel.getSelectedColor());
+        ref.set(cartModel).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    progressDialog.dismiss();
+                    openIntent();
+                } else {
+                    progressDialog.dismiss();
+                    showDialog(task.getException() + "");
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.dismiss();
+                showDialog("Error Occured while Adding Product to Cart : " + e.getMessage());
+            }
+        });
+    }
+
+    private void checkItemIsExists(final String key) {
+        progressDialog.show();
         CollectionReference docref = firestore.collection("CART_ITEMS");
         docref.whereEqualTo("cart_product_id", productModel.getProduct_id()).whereEqualTo("user_id", UID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -300,16 +327,20 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                     }
                     if (cartModel == null) {
                         Log.d(TAG, "No Doc Available");
-                        if (totalCart_items<20)
-                        {
+                        progressDialog.dismiss();
+                        if (totalCart_items < 10 || key.equalsIgnoreCase("Continue")) {
                             addItemToCart();
-                        }else {
-                            showDialog("Cart Items limit Exceeded !");
+                        } else {
+                            showDialog("Cart Items limit Exceeded...");
                         }
 
                     } else {
                         progressDialog.dismiss();
-                        showDialog("Already Aded Item to Cart !");
+                        if (key.equalsIgnoreCase("Continue")) {
+                            updateItemToCart(cartModel.getCart_doc_id());
+                        } else {
+                            showDialog("Already Added Item to Cart!");
+                        }
                         Log.d(TAG, "Doc Available");
                     }
                 } else {
@@ -327,16 +358,15 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     }
 
-
     private void getCartItemsCount() {
         Query query = firestore.collection("CART_ITEMS").whereEqualTo("user_id", UID);
-        query.addSnapshotListener(this,new EventListener<QuerySnapshot>() {
+        query.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
                     Log.e(TAG, "Error :" + error.getMessage());
                 } else {
-                    totalCart_items=value.getDocuments().size();
+                    totalCart_items = value.getDocuments().size();
                     binding.cartInclude.cartCount.setText(totalCart_items + "");
                 }
             }
@@ -428,61 +458,54 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         if (!sizeChartList.isEmpty()) {
             binding.tempView.setVisibility(View.VISIBLE);
             binding.sizeRoot.setVisibility(View.VISIBLE);
-            ProductSizeAdapter productSizeAdapter = new ProductSizeAdapter(this, sizeChartList,this);
+            ProductSizeAdapter productSizeAdapter = new ProductSizeAdapter(this, sizeChartList, this);
             binding.sizeRCV.setAdapter(productSizeAdapter);
         }
         List<Map.Entry<String, Object>> colorChartList = new ArrayList(productModel.getProduct_colors().entrySet());
         if (!colorChartList.isEmpty()) {
             binding.tempView.setVisibility(View.VISIBLE);
             binding.colorRoot.setVisibility(View.VISIBLE);
-            ColorChartAdapter colorChartAdapter = new ColorChartAdapter(this, colorChartList,this);
+            ColorChartAdapter colorChartAdapter = new ColorChartAdapter(this, colorChartList, this);
             binding.colorChartRCV.setAdapter(colorChartAdapter);
         }
 
         binding.productName.setText(productModel.getProduct_name());
-        binding.productPrice.setText(CheckUtill.FormatCost(Math.round(productModel.getProduct_price())) + " Rs");
-        binding.mrpPrice.setText(CheckUtill.FormatCost(Math.round(productModel.getMrp_price())) + " Rs");
+        binding.productPrice.setText(CheckUtill.FormatCost(Math.round(productModel.getProduct_price())) + getString(R.string.Rs));
+        binding.mrpPrice.setText(CheckUtill.FormatCost(Math.round(productModel.getMrp_price())) + getString(R.string.Rs));
         binding.mrpPrice.setPaintFlags(binding.mrpPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         Long mrp_price = productModel.getMrp_price();
         Long selling_price = productModel.getProduct_price();
         float res = StaticUtills.discountPercentage(selling_price, mrp_price);
         binding.discount.setText(String.valueOf(res).substring(0, 2) + "%OFF");
-        quatitySpin(Math.round(productModel.getMax_quantity()));
-        if (productModel.isOut_of_stock())
-        {
+        if (productModel.isOut_of_stock()) {
             binding.continueBtn.setBackgroundColor(getResources().getColor(R.color.orange));
             binding.continueText.setText("Out of Stock");
-        }else {
+        } else {
             binding.continueBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
             binding.continueText.setText("Continue");
         }
+        key = binding.continueText.getText().toString();
     }
-
-    private void quatitySpin(int quantity) {
-        List<String> quantityList = new ArrayList<>();
-        for (int i = 1; i <= quantity; i++) {
-            quantityList.add(i + "");
-        }
-        QuantityAdapter quantityAdapter = new QuantityAdapter(quantityList, this);
-//        binding.quantitySpin.setAdapter(quantityAdapter);
-    }
-
 
     @Override
     public void onSelectionCLick(String selectionVal, String key) {
-        if (key.equals(getString(R.string.Selected_Color)))
-        {
+        if (key.equals(getString(R.string.Selected_Color))) {
             productModel.setSelectedColor(selectionVal);
-            showSnackBar("Selected Color "+selectionVal);
-        }else {
+//            showSnackBar("Selected Color " + selectionVal);
+        } else {
             productModel.setSelectedSize(selectionVal);
-            showSnackBar("Selected Size "+selectionVal);
+//            showSnackBar("Selected Size " + selectionVal);
         }
     }
 
-    public void nextStep(View view)
-    {
-        Intent intent=new Intent(this, OrderSummaryActivity.class);
+    public void nextStep(View view) {
+        key = binding.continueText.getText().toString();
+        checkItemIsExists(key);
+    }
+
+    private void openIntent() {
+        Intent intent = new Intent(this, OrderSummaryActivity.class);
         startActivity(intent);
     }
+
 }

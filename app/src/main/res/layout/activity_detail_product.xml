@@ -120,7 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="US Asian Tea Shirt"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:theme="@style/Pop_TextView_Medium" />
 
                 <LinearLayout
@@ -132,7 +132,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:theme="@style/Pop_TextView_Medium"
+                        android:theme="@style/Pop_TextView_small"
                         android:text="4.7" />
 
                     <RatingBar
@@ -148,7 +148,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:theme="@style/Pop_TextView_Medium"
+                        android:theme="@style/Pop_TextView_small"
                         android:text="25 Reviews" />
                 </LinearLayout>
 
@@ -267,7 +267,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_marginStart="@dimen/_5sdp"
                         android:layout_marginLeft="@dimen/_5sdp"
-                        android:theme="@style/Pop_TextView_Medium"
+                        android:theme="@style/Pop_TextView_small"
                         android:gravity="center_vertical"
                         android:text="Product Details" />
 
@@ -293,7 +293,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:theme="@style/Pop_TextView_Medium"
+                        android:theme="@style/Pop_TextView_small"
                         android:text="Delivery By" />
 
                     <TextView
@@ -308,7 +308,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
-                        android:theme="@style/Pop_TextView_Medium"
+                        android:theme="@style/Pop_TextView_small"
                         android:text="50 rs Delivery Charge for half Kg \nPrice will Increase based on Weight Of Product"
                         android:textColor="@color/light_text_color" />
                 </LinearLayout>
@@ -362,12 +362,14 @@
             android:gravity="center">
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="0.50"
-                android:text="Add to Cart"
+                android:text="@string/add_to_cart"
                 android:gravity="center"
                 android:id="@+id/addToCart"
-                style="@style/Pop_TextView_Medium"/>
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                style="@style/Roboto_bold_TextView"/>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_50sdp"
@@ -375,6 +377,8 @@
                 android:layout_weight="0.50"
                 android:id="@+id/continueBtn"
                 android:onClick="nextStep"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
                 android:gravity="center">
                 <TextView
                     android:layout_width="wrap_content"
@@ -383,7 +387,7 @@
                     android:id="@+id/continueText"
                     android:textColor="@color/white"
                     android:gravity="center_vertical"
-                    style="@style/Pop_TextView_Medium"/>
+                    style="@style/Roboto_bold_TextView"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

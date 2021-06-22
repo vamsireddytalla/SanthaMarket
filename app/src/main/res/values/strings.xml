@@ -7,7 +7,6 @@
     <string name="open">open</string>
     <string name="close">close</string>
     <string name="santha_market">Santha Market</string>
-    <string name="Rs">\u20B9</string>
     <array name="initial_range_slider_values">
         <item>10.0</item>
         <item>50000.0</item>
@@ -31,6 +30,17 @@
     <string name="no_related_products_available">No Related Products Available !</string>
     <string name="Selected_Color">Selected_Color</string>
     <string name="Selected_Size">Selected_Size</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="rs_symbol">\u20B9</string>
+    <string name="Rs">\u20A8</string>
+    <string name="processing_request">Processing request</string>
+    <string name="please_wait">Please Wait...</string>
+    <string name="add_new_address">Add New Address</string>
+    <string name="product_id">product_id</string>
+    <string name="add_or_change">Add or Change Address</string>
+    <string name="date_time_min">dd-M-yyyy hh:mm:ss</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="pay_now">PAY NOW</string>
 
     <string-array name="india_states">
         <item>Andhra Pradesh</item>

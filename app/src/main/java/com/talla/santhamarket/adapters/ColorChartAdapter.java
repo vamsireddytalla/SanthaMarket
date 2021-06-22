@@ -48,14 +48,14 @@ public class ColorChartAdapter extends RecyclerView.Adapter<ColorChartAdapter.My
             @Override
             public void onClick(View view) {
                 itemIndex = position;
-                listner.onSelectionCLick(sizeList.get(position).getKey().toString(),context.getString(R.string.Selected_Color));
+                listner.onSelectionCLick(sizeList.get(position).getValue().toString(),context.getString(R.string.Selected_Color));
                 notifyDataSetChanged();
             }
         });
 
         if (itemIndex == position) {
             holder.binding.colorRoot.setBackground(context.getResources().getDrawable(R.drawable.color_slected_item));
-            listner.onSelectionCLick(sizeList.get(position).getKey().toString(),context.getString(R.string.Selected_Color));
+            listner.onSelectionCLick(sizeList.get(position).getValue().toString(),context.getString(R.string.Selected_Color));
         } else {
             holder.binding.colorRoot.setBackground(context.getResources().getDrawable(R.drawable.linear_border));
         }

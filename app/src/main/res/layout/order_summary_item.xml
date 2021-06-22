@@ -1,66 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/_230sdp"
+    android:layout_marginTop="@dimen/_10sdp"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_150sdp"
+        android:layout_height="match_parent"
         android:background="@color/white"
         android:weightSum="1">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="0.65"
             android:gravity="start"
-            android:padding="@dimen/_10sdp"
             android:orientation="vertical"
-            android:layout_weight="0.75">
+            android:padding="@dimen/_10sdp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/sum_title"
                 android:layout_marginTop="@dimen/_10sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_bold"
+                android:singleLine="true"
                 android:text="US Polo Asian Men Casual Shirt"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:fontFamily="@font/roboto_bold"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/sum_sellerName"
                 android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/roboto_medium"
                 android:text="Size M"
-                android:textColor="@color/light_cement"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:fontFamily="@font/roboto_medium"/>
-            <TextView
-                android:layout_width="wrap_content"
+                android:textColor="@color/light_cement" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:text="350 rs"
-                android:textColor="@color/black"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:fontFamily="@font/roboto_regular"/>
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/productPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/Pop_TextView_Medium"
+                    android:text="150 rs"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/mrpPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_6sdp"
+                    android:theme="@style/Pop_TextView_Medium"
+                    android:text="258" />
+
+                <TextView
+                    android:id="@+id/discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:theme="@style/Pop_TextView_Medium"
+                    android:text="28 %Off"
+                    android:textColor="@color/greeen" />
+
+
+
+            </LinearLayout>
+
             <TextView
+                android:id="@+id/itemChart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:text="Delivered by Tue 28"
-                android:textColor="@color/black"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:fontFamily="@font/roboto_light"/>
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Size : L" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:id="@+id/itemColor">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Color :" />
+                <ImageView
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:id="@+id/colorItem" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/dateDelivery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Delivered by 28 July" />
+
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_weight="0.25">
+            android:layout_weight="0.35"
+            android:layout_marginBottom="@dimen/_50sdp"
+            android:orientation="vertical">
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_100sdp"
-                android:src="@color/gray"/>
+                android:id="@+id/sum_pic"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:src="@color/gray" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/spinner_border"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/_3sdp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Qty"
+                    android:layout_gravity="center"
+                    android:theme="@style/Pop_TextView_Medium" />
+
+                <Spinner
+                    android:id="@+id/quantitySpin"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_alignParentBottom="true"
+       android:orientation="vertical">
+       <View
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/_2sdp"
+           android:background="@color/gray"/>
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/_50sdp"
+           android:weightSum="1"
+           android:background="@color/white">
+           <TextView
+               android:layout_width="0dp"
+               android:layout_height="match_parent"
+               android:id="@+id/sum_fav"
+               android:fontFamily="@font/roboto_medium"
+               android:layout_weight="0.50"
+               android:gravity="center"
+               android:background="?attr/selectableItemBackgroundBorderless"
+               android:clickable="true"
+               android:text="Add to Favourites"/>
+           <View
+               android:layout_width="2dp"
+               android:layout_height="match_parent"
+               android:background="@color/gray"/>
+           <TextView
+               android:layout_width="0dp"
+               android:layout_height="match_parent"
+               android:id="@+id/sum_remove"
+               android:fontFamily="@font/roboto_medium"
+               android:layout_weight="0.50"
+               android:gravity="center"
+               android:background="?attr/selectableItemBackgroundBorderless"
+               android:clickable="true"
+               android:text="Remove"/>
+       </LinearLayout>
+       <View
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/_2sdp"
+           android:background="@color/gray"/>
+   </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:background="@color/transparent"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:id="@+id/soldOut">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:fontFamily="@font/roboto_bold"
+            android:singleLine="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Sold Out"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+    </LinearLayout>
+
+</RelativeLayout>

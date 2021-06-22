@@ -1,9 +1,12 @@
 package com.talla.santhamarket.utills;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import com.talla.santhamarket.R;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -38,9 +41,9 @@ public class CheckUtill {
         return matcher.matches();
     }
 
-    public static String getDateFormat(long time) {
+    public static String getDateFormat(long time, Context context) {
         final Date date = new Date(time);
-        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(context.getString(R.string.date_time_min));
         return simpleDateFormat.format(date);
     }
 

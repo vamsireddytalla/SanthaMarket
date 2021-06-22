@@ -55,6 +55,13 @@
         <item name="android:includeFontPadding">false</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
     </style>
+
+    <style name="Roboto_bold_TextView" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+
     <style name="Pop_TextView_small" parent="android:Widget.TextView">
         <item name="android:fontFamily">@font/poppins_medium</item>
         <item name="android:includeFontPadding">false</item>
