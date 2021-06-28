@@ -41,6 +41,25 @@
     <string name="date_time_min">dd-M-yyyy hh:mm:ss</string>
     <string name="add_to_cart">Add to Cart</string>
     <string name="pay_now">PAY NOW</string>
+    <string name="remove_item">Remove</string>
+    <string name="fav">Fav</string>
+    <string name="remove_ad_fav">Remove as Favourite</string>
+    <string name="add_to_fav">Add to Favourite</string>
+
+    <string name="ADDRESS_BOOK">Address Book</string>
+    <string name="CART_ITEMS">CART_ITEMS</string>
+    <string name="CATEGORIES">CATEGORIES</string>
+    <string name="FAVOURITES">FAVOURITES</string>
+    <string name="PRODUCTS">PRODUCTS</string>
+    <string name="USERS">Users</string>
+    <string name="ORDERS">ORDERS</string>
+    <string name="no_address_found">No Address Found</string>
+    <string name="no_orders_found">No Orders Found !</string>
+    <string name="order_status">Order Status</string>
+    <string name="web_url">https://jaadhutv1.moneyeraaa.workers.dev/samplee.mp4</string>
+    <string name="pro_id">product_id</string>
+    <string name="address_book">Address Book</string>
+    <string name="amount_payable">Amount Payable</string>
 
     <string-array name="india_states">
         <item>Andhra Pradesh</item>

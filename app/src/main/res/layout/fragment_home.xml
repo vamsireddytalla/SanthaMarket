@@ -39,8 +39,8 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_regular"
                         android:text="@string/app_name"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/white"
+                        style="@style/Pop_TextView_Medium"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -67,6 +67,7 @@
                         android:layout_marginTop="@dimen/_10sdp"
                         android:background="@drawable/linear_circle"
                         android:gravity="center"
+                        android:id="@+id/cartItem2"
                         android:orientation="vertical"
                         app:layout_constraintBottom_toTopOf="@+id/cartItem"
                         app:layout_constraintEnd_toEndOf="@+id/cartItem"
@@ -75,10 +76,11 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="99"
+                            android:text="0"
                             android:textColor="@color/white"
                             android:textSize="@dimen/_10sdp"
                             android:textStyle="bold"
+                            android:id="@+id/cartItemsCount"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -115,6 +117,7 @@
                         android:layout_height="match_parent"
                         android:layout_toRightOf="@+id/search_one"
                         android:gravity="center|start"
+                        style="@style/Pop_TextView_small"
                         android:text="Search for Products &amp; items"
                         android:textColor="@color/light_cement" />
 
@@ -176,9 +179,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_regular"
                         android:text="Categories"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                        style="@style/Pop_TextView_Medium"/>
 
                   <androidx.recyclerview.widget.RecyclerView
                       android:layout_width="match_parent"
@@ -195,9 +197,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_regular"
                         android:text="Latest Products"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                        style="@style/Pop_TextView_Medium"/>
 
                     <include
                         layout="@layout/offer_product_item"

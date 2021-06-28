@@ -25,19 +25,19 @@
                 android:id="@+id/sum_title"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:ellipsize="end"
-                android:fontFamily="@font/roboto_bold"
                 android:singleLine="true"
-                android:text="US Polo Asian Men Casual Shirt"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                style="@style/Pop_TextView_small"
+                android:text="US Polo Asian Men Casual Shirt" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/sum_sellerName"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:fontFamily="@font/roboto_medium"
+                style="@style/Pop_TextView_small"
                 android:text="Size M"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:ellipsize="end"
+                android:singleLine="true"
                 android:textColor="@color/light_cement" />
 
             <LinearLayout
@@ -51,8 +51,8 @@
                     android:id="@+id/productPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:theme="@style/Pop_TextView_Medium"
                     android:text="150 rs"
+                    style="@style/Pop_TextView_small"
                     android:textColor="@color/black" />
 
                 <TextView
@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_6sdp"
-                    android:theme="@style/Pop_TextView_Medium"
+                    style="@style/Pop_TextView_small"
                     android:text="258" />
 
                 <TextView
@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_10sdp"
-                    android:theme="@style/Pop_TextView_Medium"
+                    style="@style/Pop_TextView_small"
                     android:text="28 %Off"
                     android:textColor="@color/greeen" />
 
@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:fontFamily="@font/roboto_regular"
+                style="@style/Pop_TextView_small"
                 android:text="Size : L" />
 
             <LinearLayout
@@ -93,7 +93,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_regular"
+                    style="@style/Pop_TextView_small"
                     android:text="Color :" />
                 <ImageView
                     android:layout_width="@dimen/_15sdp"
@@ -108,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:fontFamily="@font/roboto_regular"
+                style="@style/Pop_TextView_small"
                 android:text="Delivered by 28 July" />
 
         </LinearLayout>
@@ -143,7 +143,7 @@
                     android:layout_height="wrap_content"
                     android:text="Qty"
                     android:layout_gravity="center"
-                    android:theme="@style/Pop_TextView_Medium" />
+                    style="@style/Pop_TextView_small" />
 
                 <Spinner
                     android:id="@+id/quantitySpin"
@@ -173,7 +173,7 @@
                android:layout_width="0dp"
                android:layout_height="match_parent"
                android:id="@+id/sum_fav"
-               android:fontFamily="@font/roboto_medium"
+               style="@style/Pop_TextView_small"
                android:layout_weight="0.50"
                android:gravity="center"
                android:background="?attr/selectableItemBackgroundBorderless"
@@ -187,12 +187,12 @@
                android:layout_width="0dp"
                android:layout_height="match_parent"
                android:id="@+id/sum_remove"
-               android:fontFamily="@font/roboto_medium"
+               style="@style/Pop_TextView_small"
                android:layout_weight="0.50"
                android:gravity="center"
                android:background="?attr/selectableItemBackgroundBorderless"
                android:clickable="true"
-               android:text="Remove"/>
+               android:text="@string/remove_item"/>
        </LinearLayout>
        <View
            android:layout_width="match_parent"
@@ -211,7 +211,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:ellipsize="end"
-            android:fontFamily="@font/roboto_bold"
+            style="@style/Pop_TextView_small"
             android:singleLine="true"
             android:layout_gravity="center"
             android:gravity="center"

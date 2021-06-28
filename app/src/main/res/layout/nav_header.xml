@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_200sdp"
+    android:layout_height="@dimen/_100sdp"
+    android:background="@color/colorPrimaryDark"
     android:gravity="center"
-    android:background="@color/colorPrimaryDark">
+    android:orientation="vertical">
 
     <ImageView
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="50dp"
-        android:src="@drawable/ic_carts"/>
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_carts" />
+
     <TextView
+        style="@style/Pop_TextView_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
         android:text="Santha Market"
-        android:layout_marginTop="@dimen/_20sdp"
         android:textColor="@color/white"
-        android:fontFamily="@font/roboto_regular"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
 </LinearLayout>

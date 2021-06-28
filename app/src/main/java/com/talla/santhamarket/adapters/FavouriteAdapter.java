@@ -1,6 +1,7 @@
 package com.talla.santhamarket.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.talla.santhamarket.R;
+import com.talla.santhamarket.activities.DetailProductActivity;
 import com.talla.santhamarket.databinding.FavItemBinding;
 import com.talla.santhamarket.databinding.NoItemsFoundBinding;
 import com.talla.santhamarket.interfaces.ToggleItemListner;
@@ -65,6 +68,15 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
                 holder.onBindView(favouriteModelList.get(position));
                 break;
         }
+
+        holder.binding.buyNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in=new Intent(context, DetailProductActivity.class);
+                in.putExtra(context.getString(R.string.pro_id),favouriteModelList.get(position).getProduct_id());
+                context.startActivity(in);
+            }
+        });
 
     }
 

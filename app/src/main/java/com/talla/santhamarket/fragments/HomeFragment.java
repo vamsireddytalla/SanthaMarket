@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -30,13 +31,14 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.talla.santhamarket.R;
-import com.talla.santhamarket.activities.CartActivity;
+import com.talla.santhamarket.activities.AddressBookActivity;
 import com.talla.santhamarket.activities.DetailProductActivity;
 import com.talla.santhamarket.activities.HomeActivity;
+import com.talla.santhamarket.activities.OrderSummaryActivity;
 import com.talla.santhamarket.activities.SearchProductActivity;
-import com.talla.santhamarket.activities.ViewProductsActivity;
 import com.talla.santhamarket.adapters.HomeBannerAdapter;
 import com.talla.santhamarket.adapters.HomeCategoryAdapter;
 import com.talla.santhamarket.databinding.FragmentHomeBinding;
@@ -61,6 +63,7 @@ public class HomeFragment extends Fragment {
     private HomeActivity homeActivity;
     private ListenerRegistration listenerRegistration;
     private OnFragmentListner fragmentListner;
+    private int totalCart_items;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,6 +103,10 @@ public class HomeFragment extends Fragment {
                         binding.navigationView.getMenu().getItem(0).setChecked(true);
                         binding.drawerLayout.closeDrawer(GravityCompat.START);
                         break;
+                    case R.id.address:
+                        Intent intent = new Intent(getContext(), AddressBookActivity.class);
+                        startActivity(intent);
+                        break;
                     case R.id.shareApp:
                         try {
                             String shareMessage = "";
@@ -136,8 +143,7 @@ public class HomeFragment extends Fragment {
         binding.cartItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), CartActivity.class);
-                startActivity(intent);
+                Toast.makeText(homeActivity, "Clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -158,6 +164,29 @@ public class HomeFragment extends Fragment {
         });
 
         getCategoriesData();
+        getCartItemsCount();
+
+        binding.cartItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (totalCart_items>0)
+                {
+                    Intent intent=new Intent(homeActivity, OrderSummaryActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        binding.cartItem2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (totalCart_items>0)
+                {
+                    Intent intent=new Intent(homeActivity, OrderSummaryActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
 
         return binding.getRoot();
     }
@@ -174,6 +203,20 @@ public class HomeFragment extends Fragment {
         fragmentListner.fragmentChangeListner(0);
     }
 
+    private void getCartItemsCount() {
+        Query query = firestore.collection("CART_ITEMS").whereEqualTo("user_id", UID);
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, "Error :" + error.getMessage());
+                } else {
+                    totalCart_items = value.getDocuments().size();
+                    binding.cartItemsCount.setText(totalCart_items + "");
+                }
+            }
+        });
+    }
 
     private void getCategoriesData() {
         if (categoryModelList != null) {
@@ -214,7 +257,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 binding.categoryRCV.setHasFixedSize(true);
-                binding.categoryRCV.setLayoutManager(new GridLayoutManager(getContext(), 4));
+                binding.categoryRCV.setLayoutManager(new GridLayoutManager(getContext(), 3));
                 homeCategoryAdapter = new HomeCategoryAdapter(getContext(), categoryModelList);
                 binding.categoryRCV.setAdapter(homeCategoryAdapter);
 

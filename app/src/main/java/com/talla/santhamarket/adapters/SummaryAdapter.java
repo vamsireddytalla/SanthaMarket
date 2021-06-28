@@ -1,6 +1,8 @@
 package com.talla.santhamarket.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
@@ -22,6 +24,7 @@ import com.talla.santhamarket.R;
 import com.talla.santhamarket.databinding.AddressItemBinding;
 import com.talla.santhamarket.databinding.OrderSummaryItemBinding;
 import com.talla.santhamarket.interfaces.AddressItemListner;
+import com.talla.santhamarket.interfaces.ChartsClickListner;
 import com.talla.santhamarket.interfaces.QuantityClickListner;
 import com.talla.santhamarket.models.ProductModel;
 import com.talla.santhamarket.models.UserAddress;
@@ -35,13 +38,13 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
     private Context context;
     private List<ProductModel> productModelList;
     private QuantityClickListner listner;
-    private int itemSize = 1;
+    private ChartsClickListner chartsClickListner;
 
-    public SummaryAdapter(Context context, List<ProductModel> productModelList, QuantityClickListner listner) {
+    public SummaryAdapter(Context context, List<ProductModel> productModelList, QuantityClickListner listner,ChartsClickListner chartsClickListner) {
         this.context = context;
         this.productModelList = productModelList;
+        this.chartsClickListner=chartsClickListner;
         this.listner = listner;
-        itemSize = productModelList.size();
         notifyDataSetChanged();
     }
 
@@ -62,14 +65,37 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
+//                    Long qty= Long.valueOf(i)+1;
                     String selectedQty = (String) adapterView.getSelectedItem();
-                    listner.quantityClickListener(position, Integer.parseInt(selectedQty));
+                    productModelList.get(position).setTemp_qty(Long.parseLong(selectedQty));
+                    listner.quantityClickListener(position, productModelList.get(position));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+        holder.binding.sumRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog(productModelList.get(position));
+            }
+        });
+        holder.binding.sumFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String favTxt=holder.binding.sumFav.getText().toString();
+                if (favTxt.equalsIgnoreCase(context.getString(R.string.add_to_fav)))
+                {
+                    chartsClickListner.onSelectionCLick(productModelList.get(position).getProduct_id(),context.getString(R.string.add_to_fav));
+                }else {
+                    chartsClickListner.onSelectionCLick(productModelList.get(position).getTemp_favouriteId(),context.getString(R.string.remove_ad_fav));
+                }
 
             }
         });
@@ -120,6 +146,12 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
             }
             Long max_qty = productModel.getMax_quantity();
             quatitySpin(Math.round(max_qty));
+            if (productModel.isTemp_favourite())
+            {
+                binding.sumFav.setText(R.string.remove_ad_fav);
+            }else {
+                binding.sumFav.setText(context.getString(R.string.add_to_fav));
+            }
         }
 
         private void quatitySpin(int quantity) {
@@ -131,5 +163,26 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
             binding.quantitySpin.setAdapter(quantityAdapter);
         }
 
+    }
+
+    private void showDialog(final ProductModel productModel) {
+        String itemName=productModel.getProduct_name();
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+        builder1.setMessage("Are you sure to remove "+itemName+" Item");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                chartsClickListner.onSelectionCLick(productModel.getProduct_id(),context.getString(R.string.remove_item));
+                dialog.cancel();
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 }

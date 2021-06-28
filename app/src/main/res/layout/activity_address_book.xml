@@ -32,8 +32,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/_5sdp"
                 android:layout_toRightOf="@+id/backBtn"
-                android:fontFamily="@font/roboto_medium"
-                android:text="Address Book"
+                android:text="@string/address_book"
+                style="@style/Pop_TextView_small"
                 android:textColor="@color/white" />
 
         </RelativeLayout>

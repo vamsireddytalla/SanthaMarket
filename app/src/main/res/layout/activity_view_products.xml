@@ -38,9 +38,8 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/_15sdp"
                     android:layout_toRightOf="@+id/backBtn"
-                    android:theme="@style/Pop_TextView_Medium"
+                    style="@style/Pop_TextView_small"
                     android:text="View Products"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/white" />
 
             </RelativeLayout>
@@ -80,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/sort_icon"
                     android:drawablePadding="@dimen/_5sdp"
-                    android:fontFamily="@font/roboto_medium"
+                    style="@style/Pop_TextView_small"
                     android:text="Sort"
                     android:textColor="@color/black" />
             </LinearLayout>
@@ -102,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/filter_icon"
                     android:drawablePadding="@dimen/_5sdp"
-                    android:fontFamily="@font/roboto_medium"
+                    style="@style/Pop_TextView_small"
                     android:text="Filter"
                     android:textColor="@color/black" />
             </LinearLayout>
@@ -126,6 +125,7 @@
             android:gravity="center_horizontal|center"
             android:id="@+id/noProductsAvail"
             android:visibility="gone"
+            style="@style/Pop_TextView_Above_Medium"
             android:text="@string/no_related_products_available"/>
     </LinearLayout>
 

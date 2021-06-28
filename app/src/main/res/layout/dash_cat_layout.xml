@@ -21,6 +21,6 @@
         android:layout_height="wrap_content"
         android:text="Anchovies"
         android:id="@+id/catTitle"
-        android:fontFamily="@font/roboto_regular"/>
+        style="@style/Pop_TextView_mini_small"/>
 
 </LinearLayout>

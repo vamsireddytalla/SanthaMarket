@@ -22,7 +22,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -61,8 +63,10 @@ public class OtpActivity extends AppCompatActivity {
         binding = ActivityOtpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+
         Bundle bundle = getIntent().getExtras();
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading...");
@@ -74,11 +78,12 @@ public class OtpActivity extends AppCompatActivity {
             countDownTimer();
             PhoneAuthProvider.verifyPhoneNumber(
                     PhoneAuthOptions
-                            .newBuilder(auth)
+                            .newBuilder(FirebaseAuth.getInstance())
                             .setActivity(this)
                             .setPhoneNumber(phnNumber)
                             .setTimeout(60L, TimeUnit.SECONDS)
                             .setCallbacks(mCallbacks)
+                            .setForceResendingToken(resendToken)
                             .build());
 
         } else {
@@ -188,21 +193,45 @@ public class OtpActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 //                Toast.makeText(OtpActivity.this, phoneAuthCredential.getSmsCode() + "code", Toast.LENGTH_SHORT).show();
+                Log.d(TAG,"OnVerificationCompleted : "+phoneAuthCredential.getSmsCode());
+                progressDialog.dismiss();
+                signInWithPhoneAuthCredential(phoneAuthCredential);
             }
-
             @Override
             public void onVerificationFailed(FirebaseException e) {
+                progressDialog.dismiss();
                 Toast.makeText(OtpActivity.this, "Failed" + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                Log.d("FirebaseException", e.getMessage());
-            }
+                Log.d(TAG,"FirebaseException  "+e.getMessage());
+                if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                    // Invalid request
+                    Log.d(TAG,"Invalid Request");
+                    showSnackBar("Invalid Request");
+                } else if (e instanceof FirebaseTooManyRequestsException) {
+                    // The SMS quota for the project has been exceeded
+                    Log.d(TAG,"Too Many Requests attempted retry tomorrow");
+                    showSnackBar("Too Many Requests attempted retry tomorrow");
+                }
 
+            }
             @Override
             public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                 super.onCodeSent(s, forceResendingToken);
                 codeSent = s;
                 resendToken = forceResendingToken;
                 Toast.makeText(OtpActivity.this, "Otp Sent", Toast.LENGTH_SHORT).show();
+                Log.d(TAG,"onCodeSent : "+codeSent);
                 progressDialog.dismiss();
+                binding.resendLayout.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCodeAutoRetrievalTimeOut(@NonNull String s) {
+                super.onCodeAutoRetrievalTimeOut(s);
+                progressDialog.dismiss();
+                Log.d(TAG,"onCodeAutoRetrievalTimeOut   "+s);
+                binding.coundDownSms.setVisibility(View.GONE);
+                countDownTimer.cancel();
+                binding.resendLayout.setVisibility(View.VISIBLE);
             }
         };
     }

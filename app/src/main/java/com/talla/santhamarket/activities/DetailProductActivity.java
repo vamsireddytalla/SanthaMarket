@@ -116,7 +116,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         documentReference = firestore.collection("FAVOURITES").document(UID);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            productId = bundle.getString("product_id");
+            productId = bundle.getString(getString(R.string.pro_id));
             getCartItemsCount();
             Log.d(TAG, "CategoryId from Intent :" + productId);
         } else {
@@ -203,15 +203,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                     }
                 } else {
                     if (auth.getCurrentUser() != null) {
-                        documentReference = firestore.collection("FAVOURITES").document();
-                        FavouriteModel insertFavModel = new FavouriteModel();
-                        insertFavModel.setProduct_id(productId);
-                        insertFavModel.setUserId(UID);
-                        insertFavModel.setTimestamp(StaticUtills.getTimeStamp());
-                        String id = documentReference.getId();
-                        insertFavModel.setFavId(id);
-                        Log.d(TAG, "Reference Id Times Check----------------- " + id);
-
                         Log.d(TAG, "Reference Id Times Check----------------- " + "UN-Checked");
                         firestore.collection("FAVOURITES").document(favModel.getFavId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -225,7 +216,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                                 Toast.makeText(DetailProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
-
 
                     } else {
                         Intent intent = new Intent(DetailProductActivity.this, AuthenticationActivity.class);

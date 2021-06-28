@@ -55,7 +55,15 @@
         <item name="android:includeFontPadding">false</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
     </style>
-
+    <style name="Pop_TextView_Large" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
+    </style>
+    <style name="Pop_TextView_Above_Medium" parent="android:Widget.TextView">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
+    </style>
     <style name="Roboto_bold_TextView" parent="android:Widget.TextView">
         <item name="android:fontFamily">@font/roboto_bold</item>
         <item name="android:includeFontPadding">false</item>
@@ -66,6 +74,17 @@
         <item name="android:fontFamily">@font/poppins_medium</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+    </style>
+    <style name="Pop_TextView_mini_small" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+    </style>
+    <style name="RadioButtonStyle" parent="android:Widget.Holo.CompoundButton.RadioButton">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+        <item name="android:selectableItemBackground">@color/colorPrimaryDark</item>
     </style>
 
 </resources>

@@ -25,6 +25,9 @@ public class ProductModel implements Serializable
     private boolean out_of_stock;
     private String selectedColor;
     private String selectedSize;
+    private Long temp_qty;
+    private boolean temp_favourite=false;
+    private String temp_favouriteId;
 
 
     public Long getCategory_id() {
@@ -180,6 +183,31 @@ public class ProductModel implements Serializable
         this.selectedSize = selectedSize;
     }
 
+    public Long getTemp_qty() {
+        return temp_qty;
+    }
+
+    public void setTemp_qty(Long temp_qty) {
+        this.temp_qty = temp_qty;
+    }
+
+
+    public boolean isTemp_favourite() {
+        return temp_favourite;
+    }
+
+    public void setTemp_favourite(boolean temp_favourite) {
+        this.temp_favourite = temp_favourite;
+    }
+
+    public String getTemp_favouriteId() {
+        return temp_favouriteId;
+    }
+
+    public void setTemp_favouriteId(String temp_favouriteId) {
+        this.temp_favouriteId = temp_favouriteId;
+    }
+
     @Override
     public String toString() {
         return "ProductModel{" +
@@ -202,6 +230,9 @@ public class ProductModel implements Serializable
                 ", out_of_stock=" + out_of_stock +
                 ", selectedColor='" + selectedColor + '\'' +
                 ", selectedSize='" + selectedSize + '\'' +
+                ", temp_qty=" + temp_qty +
+                ", temp_favourite=" + temp_favourite +
+                ", temp_favouriteId='" + temp_favouriteId + '\'' +
                 '}';
     }
 }

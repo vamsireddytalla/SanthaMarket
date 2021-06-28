@@ -4,43 +4,27 @@
     <group android:checkableBehavior="single"
         android:id="@+id/groupOne">
         <item
-            android:id="@+id/categories"
-            android:icon="@drawable/categories_icon"
-            android:title="All Categories"/>
-        <item
-            android:id="@+id/my_orders"
-            android:icon="@drawable/all_orders"
-            android:title="My Orders"/>
-        <item
             android:id="@+id/address"
             android:icon="@drawable/address_box"
             android:title="My Address"/>
         <item
-            android:id="@+id/notifications"
-            android:icon="@drawable/my_notifications"
-            android:title="My Notifications"/>
+            android:id="@+id/shareApp"
+            android:icon="@drawable/share_icon"
+            android:title="Share App"/>
+        <item
+            android:icon="@drawable/rate_icon"
+            android:title="Rate us"
+            android:id="@+id/rate_us"/>
+        <item
+            android:icon="@drawable/about_icon"
+            android:title="Help"
+            android:id="@+id/about_us"/>
+        <item
+            android:icon="@drawable/iprivacy_policy"
+            android:title="Privacy Policy"
+            android:id="@+id/privacy"/>
     </group>
 
-    <item android:title="Info">
-        <menu>
-            <item
-                android:id="@+id/shareApp"
-                android:icon="@drawable/share_icon"
-                android:title="Share App"/>
-            <item
-                android:icon="@drawable/rate_icon"
-                android:title="Rate us"
-                android:id="@+id/rate_us"/>
-            <item
-                android:icon="@drawable/about_icon"
-                android:title="Help"
-                android:id="@+id/about_us"/>
-            <item
-                android:icon="@drawable/iprivacy_policy"
-                android:title="Privacy Policy"
-                android:id="@+id/privacy"/>
-        </menu>
-    </item>
 
 
 </menu>

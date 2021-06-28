@@ -34,9 +34,8 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_weight="1"
-                android:fontFamily="@font/roboto_regular"
                 android:text="@string/order_summary"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                style="@style/Pop_TextView_small"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -68,15 +67,15 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_bold"
+                    style="@style/Pop_TextView_small"
                     android:text="Delivery Address" />
 
                 <TextView
                     android:id="@+id/addressTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="No Address Found" />
+                    style="@style/Pop_TextView_small"
+                    android:text="@string/no_address_found" />
 
                 <Button
                     android:id="@+id/change_address"
@@ -86,7 +85,7 @@
                     android:layout_marginStart="@dimen/_40sdp"
                     android:layout_marginEnd="@dimen/_40sdp"
                     android:background="@drawable/btn_bg"
-                    android:fontFamily="@font/roboto_black"
+                    style="@style/Pop_TextView_small"
                     android:onClick="openAddressBook"
                     android:padding="10dp"
                     android:text="Change or Add Address"
@@ -105,6 +104,58 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white"
+                android:layout_marginTop="@dimen/_20sdp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_10sdp">
+
+                    <TextView
+                        style="@style/Pop_TextView_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Payment Method" />
+
+                    <View
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="3dp"
+                        android:background="@color/colorPrimaryDark" />
+
+                </LinearLayout>
+                <RadioGroup
+                    android:id="@+id/profile_radioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_10sdp"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/insurence_yes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Online"
+                        android:saveEnabled="false"
+                        android:checked="true"
+                        android:theme="@style/RadioButtonStyle"/>
+
+                    <RadioButton
+                        android:id="@+id/insurence_no"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cash on delivery"
+                        android:saveEnabled="false"
+                        android:layout_marginLeft="5dp"
+                        android:clickable="false"
+                        android:theme="@style/RadioButtonStyle"/>
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:background="@color/white"
                 android:orientation="vertical">
@@ -112,7 +163,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_medium"
+                    style="@style/Pop_TextView_small"
                     android:padding="@dimen/_10sdp"
                     android:text="PRICE DETAILS" />
 
@@ -137,7 +188,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            android:fontFamily="@font/roboto_regular"
+                            style="@style/Pop_TextView_small"
                             android:text="Price ( 1 item )" />
 
                         <TextView
@@ -145,8 +196,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginRight="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            android:id="@+id/itemsTotalPrice"
-                            android:fontFamily="@font/roboto_regular"
+                            android:id="@+id/allItemsPriceText"
+                            style="@style/Pop_TextView_small"
                             android:gravity="end"
                             android:text="350" />
                     </LinearLayout>
@@ -162,7 +213,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            android:fontFamily="@font/roboto_regular"
+                            style="@style/Pop_TextView_small"
                             android:text="Discount" />
 
                         <TextView
@@ -170,8 +221,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginRight="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            android:id="@+id/discountText"
-                            android:fontFamily="@font/roboto_regular"
+                            android:id="@+id/discountPriceText"
+                            style="@style/Pop_TextView_small"
                             android:gravity="end"
                             android:text="50"
                             android:textColor="@color/greeen" />
@@ -188,7 +239,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            android:fontFamily="@font/roboto_regular"
+                            style="@style/Pop_TextView_small"
                             android:text="Delivery charges" />
 
                         <TextView
@@ -197,7 +248,7 @@
                             android:layout_marginRight="@dimen/_10sdp"
                             android:layout_weight="0.50"
                             android:id="@+id/deliveryCharges"
-                            android:fontFamily="@font/roboto_regular"
+                            style="@style/Pop_TextView_small"
                             android:gravity="end"
                             android:text="FREE"
                             android:textColor="@color/greeen" />
@@ -219,16 +270,16 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            android:fontFamily="@font/roboto_regular"
-                            android:text="Total" />
+                            style="@style/Pop_TextView_small"
+                            android:text="@string/amount_payable" />
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            android:id="@+id/finalPrice"
-                            android:fontFamily="@font/roboto_regular"
+                            android:id="@+id/subTotalPriceText"
+                            style="@style/Pop_TextView_small"
                             android:gravity="end"
                             android:text="350" />
                     </LinearLayout>
@@ -258,12 +309,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:fontFamily="@font/roboto_bold"
+                style="@style/Pop_TextView_small"
                 android:gravity="center"
                 android:id="@+id/totalPrice"
                 android:paddingLeft="@dimen/_10sdp"
-                android:text="350 Rs"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                android:text="350 Rs" />
         </LinearLayout>
 
 
@@ -273,8 +323,9 @@
             android:layout_height="match_parent"
             android:layout_weight="0.50"
             android:background="@color/orange"
-            android:fontFamily="@font/roboto_bold"
+            style="@style/Pop_TextView_small"
             android:text="@string/pay_now"
+            android:onClick="placeOrder"
             android:textColor="@color/white" />
     </LinearLayout>
 

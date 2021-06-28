@@ -120,7 +120,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
             Long mrp_price = productModel.getMrp_price();
             Long selling_price = productModel.getProduct_price();
             float res = StaticUtills.discountPercentage(selling_price, mrp_price);
-            binding.sellingPrice.setText(context.getResources().getString(R.string.Rs) + CheckUtill.FormatCost(Math.round(selling_price)));
+            binding.sellingPrice.setText(context.getResources().getString(R.string.rs_symbol) + CheckUtill.FormatCost(Math.round(selling_price)));
             binding.mrpPrice.setText(CheckUtill.FormatCost(Math.round(mrp_price)) + context.getResources().getString(R.string.Rs));
             binding.mrpPrice.setPaintFlags(binding.mrpPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             binding.discount.setText(String.valueOf(res).substring(0, 2) + " %OFF");
