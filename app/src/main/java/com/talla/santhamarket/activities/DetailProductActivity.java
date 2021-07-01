@@ -349,19 +349,19 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     }
 
     private void getCartItemsCount() {
-        Query query = firestore.collection("CART_ITEMS").whereEqualTo("user_id", UID);
-        query.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e(TAG, "Error :" + error.getMessage());
-                } else {
-                    totalCart_items = value.getDocuments().size();
-                    binding.cartInclude.cartCount.setText(totalCart_items + "");
-                }
+    Query query = firestore.collection("CART_ITEMS").whereEqualTo("user_id", UID);
+    query.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+        @Override
+        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+            if (error != null) {
+                Log.e(TAG, "Error :" + error.getMessage());
+            } else {
+                totalCart_items = value.getDocuments().size();
+                binding.cartInclude.cartCount.setText(totalCart_items + "");
             }
-        });
-    }
+        }
+    });
+}
 
     private void showSnackBar(String message) {
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
@@ -423,7 +423,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void getProdBasedOnProdId() {
         progressDialog.show();
-        firestore.collection("PRODUCTS").whereEqualTo("product_id", productId).addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+        firestore.collection("PRODUCTS").whereEqualTo("product_id", productId).addSnapshotListener( new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
