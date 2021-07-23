@@ -40,8 +40,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         notifyDataSetChanged();
     }
 
-    public void setProductModel(ProductModel productModel) {
-        productModelList.add(productModel);
+    public void setProductModelList(List<ProductModel> productModelList) {
+        this.productModelList = productModelList;
         notifyDataSetChanged();
     }
 
@@ -61,7 +61,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailProductActivity.class);
-                intent.putExtra("product_id", productModelList.get(position).getProduct_id());
+                intent.putExtra(context.getString(R.string.intent_product_id), productModelList.get(position).getProduct_id());
                 context.startActivity(intent);
             }
         });
@@ -109,21 +109,20 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         public MyViewHolder(ProductItemBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
-
-
         }
 
         public void onBindView(ProductModel productModel) {
-            Glide.with(context).load(productModel.getProduct_images().get(0).getProduct_image()).fitCenter().into(binding.productImage);
+            binding.productImage.setBackgroundColor(Integer.parseInt(productModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_bg_color()));
+            Glide.with(context).load(productModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_image()).fitCenter().into(binding.productImage);
             binding.productTitle.setText(productModel.getProduct_name());
             binding.sellerName.setText(productModel.getSeller_name());
-            Long mrp_price = productModel.getMrp_price();
-            Long selling_price = productModel.getProduct_price();
-            float res = StaticUtills.discountPercentage(selling_price, mrp_price);
-            binding.sellingPrice.setText(context.getResources().getString(R.string.rs_symbol) + CheckUtill.FormatCost(Math.round(selling_price)));
-            binding.mrpPrice.setText(CheckUtill.FormatCost(Math.round(mrp_price)) + context.getResources().getString(R.string.Rs));
+            double mrp_price = productModel.getMrp_price();
+            double selling_price = productModel.getProduct_price();
+            int res = StaticUtills.discountPercentage(selling_price, mrp_price);
+            binding.sellingPrice.setText(context.getResources().getString(R.string.rs_symbol) + CheckUtill.FormatCost((int) Math.round(selling_price)));
+            binding.mrpPrice.setText(CheckUtill.FormatCost((int) Math.round(mrp_price)) + context.getResources().getString(R.string.Rs));
             binding.mrpPrice.setPaintFlags(binding.mrpPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            binding.discount.setText(String.valueOf(res).substring(0, 2) + " %OFF");
+            binding.discount.setText(String.valueOf(res)+ "%OFF");
         }
 
     }

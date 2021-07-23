@@ -21,6 +21,8 @@
         android:layout_height="wrap_content"
         android:text="Anchovies"
         android:id="@+id/catTitle"
-        style="@style/Pop_TextView_mini_small"/>
+        android:gravity="center"
+        android:textStyle="bold"
+        style="@style/Roboto_TextView_Light"/>
 
 </LinearLayout>

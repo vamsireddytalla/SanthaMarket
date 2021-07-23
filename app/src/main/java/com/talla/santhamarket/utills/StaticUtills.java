@@ -4,13 +4,13 @@ import java.text.SimpleDateFormat;
 
 public class StaticUtills
 {
-    public static float discountPercentage(float selling_price, float max_price)
+    public static int discountPercentage(double selling_price, double max_price)
     {
         // Calculating discount
-        float discount = max_price - selling_price;
+        double discount = max_price - selling_price;
         // Calculating discount percentage
-        float disPercent = (discount / max_price) * 100;
-        return disPercent;
+        double disPercent = (discount / max_price) * 100;
+        return (int) disPercent;
     }
 
     public static String getTimeStamp()

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.talla.santhamarket.R;
 import com.talla.santhamarket.activities.ViewProductsActivity;
 import com.talla.santhamarket.databinding.DashCatLayoutBinding;
 import com.talla.santhamarket.models.CategoryModel;
@@ -56,15 +57,15 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, ViewProductsActivity.class);
-                    intent.putExtra("categoryId",categoryModelList.get(getAdapterPosition()).getIndex());
+                    intent.putExtra(context.getResources().getString(R.string.intent_cat_id),categoryModelList.get(getAdapterPosition()).getId());
                     context.startActivity(intent);
                 }
             });
         }
 
         public void onBindView(CategoryModel categoryModel) {
-            Glide.with(context).load(categoryModel.getIcon()).fitCenter().into(binding.imageIcon);
-            binding.catTitle.setText(categoryModel.getCategoryName() + "");
+            Glide.with(context).load(categoryModel.getCat_logo()).fitCenter().into(binding.imageIcon);
+            binding.catTitle.setText(categoryModel.getCat_name());
         }
 
     }

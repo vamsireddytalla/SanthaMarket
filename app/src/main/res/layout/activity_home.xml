@@ -26,7 +26,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:theme="@style/botton_nav_style"
-        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
         app:itemIconTint="@drawable/bot_draw_item_color"
         app:itemTextColor="@drawable/bot_draw_item_color"
         app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"

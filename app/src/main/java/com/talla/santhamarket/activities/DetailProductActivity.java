@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -63,6 +64,8 @@ import com.talla.santhamarket.models.FavouriteModel;
 import com.talla.santhamarket.models.ProductImageModel;
 import com.talla.santhamarket.models.ProductModel;
 import com.talla.santhamarket.models.RatingModel;
+import com.talla.santhamarket.models.SpecificationModel;
+import com.talla.santhamarket.models.SubProductModel;
 import com.talla.santhamarket.utills.CheckUtill;
 import com.talla.santhamarket.utills.StaticUtills;
 
@@ -74,8 +77,7 @@ import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
 import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
 import static com.google.firebase.firestore.DocumentChange.Type.REMOVED;
 
-public class DetailProductActivity extends AppCompatActivity implements ChartsClickListner
-{
+public class DetailProductActivity extends AppCompatActivity implements ChartsClickListner {
     private ActivityDetailProductBinding binding;
     private AddCartItemBinding addCartItemBinding;
     private ViewPager2 viewPagerPrductImages;
@@ -83,9 +85,10 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     private ViewPager2 viewPagerDescription;
     private TabLayout descriptionTabLayout;
     private ProductImagesAdapter poductImagesAdapter;
+    private ProductSizeAdapter productSizeAdapter;
     private List<ProductImageModel> productsImagesList = new ArrayList<>();
+    private List<SubProductModel> subProductModelList;
     private boolean isFavItem = false;
-    private ProgressDialog progressDialog;
     private String productId, key;
     private ProductModel productModel;
     private int selectedQty = 1;
@@ -93,7 +96,11 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private DocumentReference documentReference;
+    private Dialog progressDialog;
     private FavouriteModel favModel;
+    private SpecificationModel specificationModel;
+    List<String> productColors = new ArrayList<>();
+    List<String> productSizes = new ArrayList<>();
     private boolean isFirstTime = true;
     private View view;
     int totalCart_items = 0;
@@ -106,17 +113,14 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         setContentView(binding.getRoot());
         view = binding.getRoot();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(getString(R.string.processing_request));
-        progressDialog.setMessage(getString(R.string.please_wait));
-        progressDialog.setCancelable(false);
+        dialogIninit();
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         UID = auth.getCurrentUser().getUid();
-        documentReference = firestore.collection("FAVOURITES").document(UID);
+        documentReference = firestore.collection(getString(R.string.FAVOURITES)).document(UID);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            productId = bundle.getString(getString(R.string.pro_id));
+            productId = bundle.getString(getString(R.string.intent_product_id));
             getCartItemsCount();
             Log.d(TAG, "CategoryId from Intent :" + productId);
         } else {
@@ -137,7 +141,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DetailProductActivity.this, PoductDescriptionActivity.class);
-                intent.putExtra("descObj", productModel);
+                intent.putExtra(getString(R.string.intent_poductDetails), productModel);
                 startActivity(intent);
             }
         });
@@ -174,7 +178,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
             public void onClick(View view) {
                 if (binding.toggleBtn.isChecked()) {
                     if (auth.getCurrentUser() != null) {
-                        documentReference = firestore.collection("FAVOURITES").document();
+                        documentReference = firestore.collection(getString(R.string.FAVOURITES)).document();
                         FavouriteModel insertFavModel = new FavouriteModel();
                         insertFavModel.setProduct_id(productId);
                         insertFavModel.setUserId(UID);
@@ -204,7 +208,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                 } else {
                     if (auth.getCurrentUser() != null) {
                         Log.d(TAG, "Reference Id Times Check----------------- " + "UN-Checked");
-                        firestore.collection("FAVOURITES").document(favModel.getFavId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        firestore.collection(getString(R.string.FAVOURITES)).document(favModel.getFavId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Toast.makeText(DetailProductActivity.this, "Removed as Favourites", Toast.LENGTH_SHORT).show();
@@ -213,7 +217,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 binding.toggleBtn.setChecked(true);
-                                Toast.makeText(DetailProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                showSnackBar(e.getMessage());
                             }
                         });
 
@@ -229,7 +233,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
             @Override
             public void onClick(View view) {
                 progressDialog.show();
-                key=getString(R.string.add_to_cart);
+                key = getString(R.string.add_to_cart);
                 checkItemIsExists(key);
             }
         });
@@ -239,7 +243,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void addItemToCart() {
         progressDialog.show();
-        DocumentReference ref = firestore.collection("CART_ITEMS").document();
+        DocumentReference ref = firestore.collection(getString(R.string.CART_ITEMS)).document();
         CartModel cartModel = new CartModel();
         cartModel.setCart_doc_id(ref.getId());
         cartModel.setCart_product_id(productModel.getProduct_id());
@@ -275,7 +279,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void updateItemToCart(String docId) {
         progressDialog.show();
-        DocumentReference ref = firestore.collection("CART_ITEMS").document(docId);
+        DocumentReference ref = firestore.collection(getString(R.string.CART_ITEMS)).document(docId);
         CartModel cartModel = new CartModel();
         cartModel.setCart_doc_id(ref.getId());
         cartModel.setCart_product_id(productModel.getProduct_id());
@@ -306,7 +310,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void checkItemIsExists(final String key) {
         progressDialog.show();
-        CollectionReference docref = firestore.collection("CART_ITEMS");
+        CollectionReference docref = firestore.collection(getString(R.string.CART_ITEMS));
         docref.whereEqualTo("cart_product_id", productModel.getProduct_id()).whereEqualTo("user_id", UID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -349,19 +353,20 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     }
 
     private void getCartItemsCount() {
-    Query query = firestore.collection("CART_ITEMS").whereEqualTo("user_id", UID);
-    query.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
-        @Override
-        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-            if (error != null) {
-                Log.e(TAG, "Error :" + error.getMessage());
-            } else {
-                totalCart_items = value.getDocuments().size();
-                binding.cartInclude.cartCount.setText(totalCart_items + "");
+        Query query = firestore.collection(getString(R.string.CART_ITEMS)).whereEqualTo("user_id", UID);
+        query.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, "Error :" + error.getMessage());
+                } else {
+                    totalCart_items = value.getDocuments().size();
+                    Log.d(TAG, "Cart Items " + totalCart_items);
+                    binding.cartInclude.cartCount.setText(totalCart_items + "");
+                }
             }
-        }
-    });
-}
+        });
+    }
 
     private void showSnackBar(String message) {
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
@@ -385,7 +390,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void isFavOrNot() {
         if (auth.getCurrentUser() != null) {
-            Query query = firestore.collection("FAVOURITES");
+            Query query = firestore.collection(getString(R.string.FAVOURITES));
             query = query.whereEqualTo("product_id", productId);
             query = query.whereEqualTo("userId", UID);
             query.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -423,16 +428,32 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void getProdBasedOnProdId() {
         progressDialog.show();
-        firestore.collection("PRODUCTS").whereEqualTo("product_id", productId).addSnapshotListener( new EventListener<QuerySnapshot>() {
+        final DocumentReference docRef = firestore.collection(getString(R.string.PRODUCTS)).document(productId);
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
-                    Log.d(TAG, "ERROR :" + error.getLocalizedMessage());
+                    showDialog(error.getMessage());
                 } else {
-                    for (DocumentChange dc : value.getDocumentChanges()) {
-                        productModel = dc.getDocument().toObject(ProductModel.class);
+                    if (value != null && value.exists()) {
+                        productModel = value.toObject(ProductModel.class);
                         Log.d(TAG, "Product Model :" + productModel.toString());
+                        docRef.collection(getString(R.string.SPECIFICATIONS)).document(productModel.getProduct_id()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                if (error != null) {
+                                    showDialog(error.getMessage());
+                                } else {
+                                    if (value != null && value.exists()) {
+                                        specificationModel = value.toObject(SpecificationModel.class);
+                                        productModel.setSpecificationModel(specificationModel);
+                                    }
+                                }
+                            }
+                        });
                         setDataToUi(productModel);
+                    } else {
+                        showDialog("Product Removed From Server");
                     }
                 }
                 progressDialog.dismiss();
@@ -442,31 +463,55 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void setDataToUi(ProductModel productModel) {
         productsImagesList.clear();
-        productsImagesList.addAll(productModel.getProduct_images());
+//        productsImagesList.addAll(productModel.get());
+
+        subProductModelList = productModel.getSubProductModelList();
+        productColors.clear();
+        for (int f = 0; f < subProductModelList.size(); f++) {
+            SubProductModel subProductModel = subProductModelList.get(f);
+            if (subProductModel.getProduct_color() != null) {
+                productColors.add(subProductModel.getProduct_color());
+            }
+        }
+
+        if (subProductModelList.get(0).getProduct_sizes() != null) {
+            productSizes = subProductModelList.get(0).getProduct_sizes();
+        }
+
+
+        if (subProductModelList.get(0).getProduct_images() != null) {
+
+            for (int g = 0; g < subProductModelList.get(0).getProduct_images().size(); g++) {
+                productsImagesList.add(subProductModelList.get(0).getProduct_images().get(g));
+            }
+        }
+
+
         poductImagesAdapter.setProductImageModelList(productsImagesList);
-        List<Map.Entry<String, Object>> sizeChartList = new ArrayList(productModel.getProduct_sizes().entrySet());
-        if (!sizeChartList.isEmpty()) {
+        if (!productSizes.isEmpty()) {
             binding.tempView.setVisibility(View.VISIBLE);
             binding.sizeRoot.setVisibility(View.VISIBLE);
-            ProductSizeAdapter productSizeAdapter = new ProductSizeAdapter(this, sizeChartList, this);
+            productSizeAdapter = new ProductSizeAdapter(this, productSizes, this);
             binding.sizeRCV.setAdapter(productSizeAdapter);
         }
-        List<Map.Entry<String, Object>> colorChartList = new ArrayList(productModel.getProduct_colors().entrySet());
-        if (!colorChartList.isEmpty()) {
+
+        if (!productColors.isEmpty()) {
             binding.tempView.setVisibility(View.VISIBLE);
             binding.colorRoot.setVisibility(View.VISIBLE);
-            ColorChartAdapter colorChartAdapter = new ColorChartAdapter(this, colorChartList, this);
+            ColorChartAdapter colorChartAdapter = new ColorChartAdapter(this, productColors, this);
             binding.colorChartRCV.setAdapter(colorChartAdapter);
         }
 
         binding.productName.setText(productModel.getProduct_name());
-        binding.productPrice.setText(CheckUtill.FormatCost(Math.round(productModel.getProduct_price())) + getString(R.string.Rs));
-        binding.mrpPrice.setText(CheckUtill.FormatCost(Math.round(productModel.getMrp_price())) + getString(R.string.Rs));
+        binding.productPrice.setText(CheckUtill.FormatCost((int) Math.round(productModel.getProduct_price())) + getString(R.string.Rs));
+        binding.mrpPrice.setText(CheckUtill.FormatCost((int) Math.round(productModel.getMrp_price())) + getString(R.string.Rs));
         binding.mrpPrice.setPaintFlags(binding.mrpPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-        Long mrp_price = productModel.getMrp_price();
-        Long selling_price = productModel.getProduct_price();
-        float res = StaticUtills.discountPercentage(selling_price, mrp_price);
-        binding.discount.setText(String.valueOf(res).substring(0, 2) + "%OFF");
+        double mrp_price = productModel.getMrp_price();
+        double selling_price = productModel.getProduct_price();
+        binding.myRatingBar.setRating((float) productModel.getAvgRatings());
+        binding.totalRatings.setText(productModel.getTotal_ratings() + "(Reviews)");
+        int res = StaticUtills.discountPercentage(selling_price, mrp_price);
+        binding.discount.setText(String.valueOf(res) + "%OFF");
         if (productModel.isOut_of_stock()) {
             binding.continueBtn.setBackgroundColor(getResources().getColor(R.color.orange));
             binding.continueText.setText("Out of Stock");
@@ -481,6 +526,25 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     public void onSelectionCLick(String selectionVal, String key) {
         if (key.equals(getString(R.string.Selected_Color))) {
             productModel.setSelectedColor(selectionVal);
+            for (int f = 0; f < subProductModelList.size(); f++) {
+                SubProductModel subProductModel = subProductModelList.get(f);
+                if (subProductModel.getProduct_color().equals(selectionVal)) {
+
+                    if (subProductModelList.get(f).getProduct_sizes() != null) {
+                        productSizes = subProductModelList.get(f).getProduct_sizes();
+                        productSizeAdapter.setSizeList(productSizes);
+                    }
+
+                    if (subProductModelList.get(f).getProduct_images() != null) {
+                        productsImagesList.clear();
+                        for (int g = 0; g < subProductModelList.get(f).getProduct_images().size(); g++) {
+                            productsImagesList.add(subProductModelList.get(f).getProduct_images().get(g));
+                        }
+                        poductImagesAdapter.setProductImageModelList(productsImagesList);
+                    }
+
+                }
+            }
 //            showSnackBar("Selected Color " + selectionVal);
         } else {
             productModel.setSelectedSize(selectionVal);
@@ -496,6 +560,13 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     private void openIntent() {
         Intent intent = new Intent(this, OrderSummaryActivity.class);
         startActivity(intent);
+    }
+
+    public void dialogIninit() {
+        progressDialog = new Dialog(this);
+        com.talla.santhamarket.databinding.CustomProgressDialogBinding customProgressDialogBinding = com.talla.santhamarket.databinding.CustomProgressDialogBinding.inflate(this.getLayoutInflater());
+        progressDialog.setContentView(customProgressDialogBinding.getRoot());
+        progressDialog.setCancelable(false);
     }
 
 }

@@ -20,13 +20,12 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/toolbar_title"
-                style="@style/Pop_TextView_Medium"
+                style="@style/Roboto_TextView_Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Orders"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_20sdp" />
+                android:textColor="@color/white" />
         </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
@@ -51,7 +50,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Pop_TextView_Medium"
+            style="@style/Roboto_TextView_Medium"
             android:id="@+id/noOrdersFound"
             android:text="@string/no_orders_found"
             android:layout_centerInParent="true"

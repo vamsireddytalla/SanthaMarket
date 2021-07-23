@@ -31,13 +31,13 @@
                     android:src="@drawable/ic_left_arrow" />
 
                 <TextView
+                    style="@style/Roboto_TextView_Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/roboto_regular"
                     android:layout_marginLeft="@dimen/_30sdp"
-                    android:text="Search Products" />
+                    android:text="Search Products"
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
 
@@ -50,7 +50,7 @@
             app:iconifiedByDefault="false" />
     </FrameLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layoutOne"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -58,12 +58,23 @@
         android:visibility="visible">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/categoryRCV"
+            android:id="@+id/seacheItemsRCV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
-            android:orientation="vertical" />
-    </LinearLayout>
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <TextView
+            android:id="@+id/noProdFound"
+            style="@style/Roboto_TextView_Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="No Products Found !"
+            android:visibility="visible" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/includeLayoutViewProducts"

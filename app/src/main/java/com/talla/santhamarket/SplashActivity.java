@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.talla.santhamarket.activities.AuthenticationActivity;
@@ -30,10 +31,11 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            statusBarColor();
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            statusBarColor();
+        }
         auth = FirebaseAuth.getInstance();
+        Glide.with(this).load("https://1.bp.blogspot.com/-nBYsCwqNsCQ/YPaSpPOVjCI/AAAAAAAABkc/WxMK-8gQNYorX59p72SzcooZdUnBsmNBwCLcBGAsYHQ/s400/banner-48962_1280.png").fitCenter().into(binding.splImgOne);
         if (auth.getCurrentUser() != null) {
             Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
             startActivity(intent);
@@ -60,7 +62,7 @@ public class SplashActivity extends AppCompatActivity {
         // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
     }
 

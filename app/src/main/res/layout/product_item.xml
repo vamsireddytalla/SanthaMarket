@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/productRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/_5sdp"
-    android:layout_marginRight="@dimen/_5sdp"
     android:background="@color/white"
-    android:id="@+id/productRoot"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_margin="@dimen/_5sdp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,69 +18,69 @@
             android:layout_centerInParent="true"
             android:scaleType="fitCenter"
             android:src="@color/cement" />
-
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/_5sdp">
+
+        <TextView
+            android:id="@+id/product_title"
+            style="@style/Roboto_TextView_Light_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:drawablePadding="@dimen/_10sdp"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:textStyle="bold"
+            android:text="Monte Carlo Shirt" />
+
+        <TextView
+            android:id="@+id/seller_name"
+            style="@style/Roboto_TextView_Light_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Seller Name"
+            android:textColor="@color/light_cement" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/_5sdp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/product_title"
+                android:id="@+id/selling_price"
+                style="@style/Roboto_TextView_Light_dark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:drawablePadding="@dimen/_10sdp"
-                style="@style/Pop_TextView_small"
-                android:gravity="start"
-                android:maxLength="20"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Monte Carlo Shirt" />
+                android:text="350 rs"
+                android:textColor="@color/black" />
 
             <TextView
-                android:id="@+id/seller_name"
+                android:id="@+id/mrp_price"
+                style="@style/Roboto_TextView_Light_dark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/Pop_TextView_small"
-                android:text="Seller Name"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/light_cement" />
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:text="350 rs"
+                android:textColor="@color/black" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/selling_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/Pop_TextView_small"
-                    android:text="350 rs"
-                    android:textColor="@color/black" />
-
-                <TextView
-                    android:id="@+id/mrp_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_10sdp"
-                    style="@style/Pop_TextView_small"
-                    android:text="350 rs"
-                    android:textColor="@color/black" />
-
-                <TextView
-                    android:id="@+id/discount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginLeft="@dimen/_10sdp"
-                    style="@style/Pop_TextView_small"
-                    android:text="40% off"
-                    android:textColor="@color/greeen" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/discount"
+                style="@style/Roboto_TextView_Light_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:text="40% off"
+                android:textColor="@color/greeen" />
         </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

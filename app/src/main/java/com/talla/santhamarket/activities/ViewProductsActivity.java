@@ -2,11 +2,13 @@ package com.talla.santhamarket.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -16,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,20 +50,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ViewProductsActivity extends AppCompatActivity
-{
+public class ViewProductsActivity extends AppCompatActivity {
     private ActivityViewProductsBinding binding;
     private CheckInternetBinding checkInternetBinding;
-    private Long categoryId;
-    private String tagsQuery = "";
+    private String categoryId;
     private FirebaseFirestore firebaseFirestore;
     private ProductAdapter productAdapter;
     private List<ProductModel> productModelList = new ArrayList<>();
-    private static final String TAG = "VIEW_PRODUCT_ACTIVITY";
-    private ProgressDialog progressDialog;
+    private Dialog progressDialog;
     private int sortItemPos = -1;
     private Dialog dialog;
-    private int priceRangeStart = 10, priceRangeEnd = 50000;
+    private int priceRangeStart = 10, priceRangeEnd = 5000;
+    private static final String TAG = "VIEW_PRODUCT_ACTIVITY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,16 +75,12 @@ public class ViewProductsActivity extends AppCompatActivity
         binding.toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            categoryId = bundle.getLong(getString(R.string.categoryId));
-            tagsQuery = bundle.getString(getString(R.string.Tags));
+            categoryId = (String) bundle.get(getString(R.string.intent_cat_id));
             Log.d(TAG, "CategoryId from Intent :" + categoryId);
         } else {
             finish();
         }
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Fetching Data");
-        progressDialog.setMessage("Please Wait . . .");
-        progressDialog.setCancelable(false);
+        dialogIninit();
         //firebase instance
         firebaseFirestore = FirebaseFirestore.getInstance();
 
@@ -110,19 +107,14 @@ public class ViewProductsActivity extends AppCompatActivity
             }
         });
 
-
     }
 
     private void checkInternetAndMakeServerCall() {
         if (CheckInternet.checkInternet(this)) {
             binding.includeLayoutViewProducts.setVisibility(View.GONE);
-            binding.layoutOne.setVisibility(View.VISIBLE);
             binding.noProductsAvail.setVisibility(View.GONE);
-            if (tagsQuery != null && !tagsQuery.isEmpty()) {
-                searchData(tagsQuery);
-            } else {
-                getProductsBasedOnCategory();
-            }
+            binding.layoutOne.setVisibility(View.VISIBLE);
+            getProductsBasedOnCategory();
         } else {
             binding.layoutOne.setVisibility(View.GONE);
             binding.includeLayoutViewProducts.setVisibility(View.VISIBLE);
@@ -158,14 +150,42 @@ public class ViewProductsActivity extends AppCompatActivity
         if (productModelList != null) {
             productModelList.clear();
         }
-        firebaseFirestore.collection("PRODUCTS").whereEqualTo("category_id", categoryId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firebaseFirestore.collection(getString(R.string.PRODUCTS)).whereEqualTo("category_id", categoryId)
+                .whereEqualTo("itemTypeModel.local", false).orderBy("product_date").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        ProductModel productModel = document.toObject(ProductModel.class);
-                        Log.d(TAG, "getProductsBasedOnCategory---> " + productModel.toString());
-                        productModelList.add(productModel);
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    showDialog(getString(R.string.error_occured), error.getMessage());
+                } else {
+                    for (DocumentChange dc : value.getDocumentChanges()) {
+                        switch (dc.getType()) {
+                            case ADDED:
+                                ProductModel productModel = dc.getDocument().toObject(ProductModel.class);
+                                productModelList.add(productModel);
+                                Log.d(TAG, "Product data added to list: " + productModel.toString());
+                                break;
+                            case MODIFIED:
+                                ProductModel productModelModified = dc.getDocument().toObject(ProductModel.class);
+                                Log.d(TAG, "Product data modified to list: " + productModelModified.toString());
+                                for (int i = 0; i < productModelList.size(); i++) {
+                                    if (productModelList.get(i).getProduct_id().equalsIgnoreCase(productModelModified.getProduct_id())) {
+                                        productModelList.remove(i);
+                                        productModelList.add(i, productModelModified);
+                                        break;
+                                    }
+                                }
+                                break;
+                            case REMOVED:
+                                ProductModel productModelRemoved = dc.getDocument().toObject(ProductModel.class);
+                                Log.d(TAG, "Product data removed to list: " + productModelRemoved.toString());
+                                for (int i = 0; i < productModelList.size(); i++) {
+                                    if (productModelList.get(i).getProduct_id().equalsIgnoreCase(productModelRemoved.getProduct_id())) {
+                                        productModelList.remove(i);
+                                        break;
+                                    }
+                                }
+                                break;
+                        }
                     }
                     binding.productRCV.setHasFixedSize(true);
                     binding.productRCV.setLayoutManager(new GridLayoutManager(ViewProductsActivity.this, 2));
@@ -174,103 +194,26 @@ public class ViewProductsActivity extends AppCompatActivity
                     progressDialog.dismiss();
                     if (productModelList.size() == 0) {
                         Log.d(TAG, "No Related Products Available");
-                        showSnackBar("No Related Products Available !");
+                        showSnackBar("No Products Available !");
                         binding.noProductsAvail.setVisibility(View.VISIBLE);
                     }
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        });
-    }
-
-    private void searchData(String query) {
-        progressDialog.show();
-        if (productModelList != null) {
-            productModelList.clear();
-        }
-        CollectionReference docref = firebaseFirestore.collection("PRODUCTS");
-        docref.whereArrayContains("Tags", query.toLowerCase()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
-                        ProductModel productModel = document.toObject(ProductModel.class);
-                        Log.d(TAG, "Searched Products ---> " + productModel.toString());
-                        productModelList.add(productModel);
-                    }
-                    binding.productRCV.setHasFixedSize(true);
-                    binding.productRCV.setLayoutManager(new GridLayoutManager(ViewProductsActivity.this, 2));
-                    productAdapter = new ProductAdapter(ViewProductsActivity.this, productModelList);
-                    binding.productRCV.setAdapter(productAdapter);
-                    progressDialog.dismiss();
-                    if (productModelList.size() == 0) {
-                        Log.d(TAG, "No Related Products Available");
-                        showSnackBar("No Related Products Available !");
-                        binding.noProductsAvail.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    Log.d(TAG, task.getException().toString());
                 }
             }
         });
     }
 
     private void priceRangeProducts() {
-        progressDialog.show();
-        if (productModelList != null) {
-            productModelList.clear();
+        List<ProductModel> filteredList = new ArrayList<>();
+        for (int j = 0; j < productModelList.size(); j++) {
+            if (productModelList.get(j).getProduct_price() >= priceRangeStart && productModelList.get(j).getProduct_price() <= priceRangeEnd) {
+                filteredList.add(productModelList.get(j));
+            }
         }
-        binding.noProductsAvail.setVisibility(View.GONE);
-        firebaseFirestore.collection("PRODUCTS").whereEqualTo("category_id", categoryId)
-                .whereGreaterThanOrEqualTo("product_price", priceRangeStart).whereLessThanOrEqualTo("product_price", priceRangeEnd).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        ProductModel productModel = document.toObject(ProductModel.class);
-                        Log.d(TAG, "priceRangeProducts---> " + productModel.toString());
-                        productModelList.add(productModel);
-                    }
-                    binding.productRCV.setHasFixedSize(true);
-                    binding.productRCV.setLayoutManager(new GridLayoutManager(ViewProductsActivity.this, 2));
-                    productAdapter = new ProductAdapter(ViewProductsActivity.this, productModelList);
-                    binding.productRCV.setAdapter(productAdapter);
-                    progressDialog.dismiss();
-                    if (productModelList.size() == 0) {
-                        Log.d(TAG, "No Related Products Available");
-                        binding.noProductsAvail.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        });
-    }
-
-    private void GetProductDataChangeListner() {
-        productAdapter = new ProductAdapter(ViewProductsActivity.this, productModelList);
-        firebaseFirestore.collection("PRODUCTS").whereEqualTo("category_id", categoryId).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.d(TAG, "ERROR :" + error.getLocalizedMessage());
-                } else {
-                    for (DocumentChange dc : value.getDocumentChanges()) {
-                        ProductModel productModel = dc.getDocument().toObject(ProductModel.class);
-                        Log.d(TAG, "PRoduct MODEl :" + productModel.toString());
-                        productAdapter.setProductModel(productModel);
-                    }
-                    binding.productRCV.setHasFixedSize(true);
-                    binding.productRCV.setLayoutManager(new GridLayoutManager(ViewProductsActivity.this, 2));
-                    binding.productRCV.setAdapter(productAdapter);
-                }
-            }
-        });
+        productAdapter.setProductModelList(filteredList);
     }
 
     public void sortItems(View view) {
-        String[] itemList = new String[]{"Price---Low to high", "Price---High to Low"};
+        String[] itemList = new String[]{"Price -- Low - high", "Price -- High - Low"};
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_DayNight_Dialog_MinWidth);
         builder.setTitle("SORT BY");
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -288,20 +231,23 @@ public class ViewProductsActivity extends AppCompatActivity
                         if (sortItemPos == 0) {
                             // return obj1.firstName.compareToIgnoreCase(obj2.firstName); // To compare string values
                             Log.d(TAG, "Ascending_toDesc");
-                            return Integer.valueOf(String.valueOf(obj1.getProduct_price())).compareTo(Integer.valueOf(String.valueOf(obj2.getProduct_price()))); // To compare integer values
+                            int a = (int) obj1.getProduct_price();
+                            int b = (int) obj2.getProduct_price();
+                            return Integer.valueOf(a).compareTo(b);// To compare integer values
                         }
                         // ## Descending order
                         else {
                             // return obj2.firstName.compareToIgnoreCase(obj1.firstName); // To compare string values
                             Log.d(TAG, "Descending to Ascending");
-                            return Integer.valueOf(String.valueOf(obj2.getProduct_price())).compareTo(Integer.valueOf(String.valueOf(obj1.getProduct_price()))); // To compare integer values
+                            int a = (int) obj2.getProduct_price();
+                            int b = (int) obj1.getProduct_price();
+                            return Integer.valueOf(a).compareTo(b); // To compare integer values
                         }
-
                     }
                 });
                 dialogInterface.dismiss();
-                productAdapter.notifyDataSetChanged();
-                Log.d(TAG, "AFTE FILTER" + productModelList.toString());
+
+                productAdapter.setProductModelList(productModelList);
             }
         }).setSingleChoiceItems(itemList, sortItemPos, new DialogInterface.OnClickListener() {
             @Override
@@ -311,11 +257,6 @@ public class ViewProductsActivity extends AppCompatActivity
             }
         });
         builder.show();
-    }
-
-    private void showSnackBar(String message) {
-        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
-        snackbar.show();
     }
 
     private void showFilterDialog(String shownMesssage) {
@@ -359,6 +300,13 @@ public class ViewProductsActivity extends AppCompatActivity
 
     }
 
+    public void dialogIninit() {
+        progressDialog = new Dialog(this);
+        com.talla.santhamarket.databinding.CustomProgressDialogBinding customProgressDialogBinding = com.talla.santhamarket.databinding.CustomProgressDialogBinding.inflate(this.getLayoutInflater());
+        progressDialog.setContentView(customProgressDialogBinding.getRoot());
+        progressDialog.setCancelable(false);
+    }
+
     @Override
     public void onBackPressed() {
         if (binding.searchView.isSearchOpen()) {
@@ -366,6 +314,31 @@ public class ViewProductsActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void showDialog(final String title, String message) {
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(title);
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (title.equalsIgnoreCase(getString(R.string.error_occured))) {
+                    dialogInterface.dismiss();
+                    finish();
+                } else {
+                    dialogInterface.dismiss();
+                }
+
+            }
+        });
+        alertDialogBuilder.show();
+    }
+
+    private void showSnackBar(String message) {
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+        snackbar.show();
     }
 
 

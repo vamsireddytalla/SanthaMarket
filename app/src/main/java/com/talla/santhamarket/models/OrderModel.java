@@ -9,8 +9,8 @@ public class OrderModel implements Serializable
     private String product_id;
     private String product_name;
     private String seller_name;
-    private Long product_price;
-    private Long mrp_price;
+    private double product_price;
+    private double mrp_price;
     private String product_image;
     private String selectedColor;
     private String selectedSize;
@@ -63,19 +63,20 @@ public class OrderModel implements Serializable
         this.seller_name = seller_name;
     }
 
-    public Long getProduct_price() {
+
+    public double getProduct_price() {
         return product_price;
     }
 
-    public void setProduct_price(Long product_price) {
+    public void setProduct_price(double product_price) {
         this.product_price = product_price;
     }
 
-    public Long getMrp_price() {
+    public double getMrp_price() {
         return mrp_price;
     }
 
-    public void setMrp_price(Long mrp_price) {
+    public void setMrp_price(double mrp_price) {
         this.mrp_price = mrp_price;
     }
 

@@ -277,15 +277,15 @@ public class OrderSummaryActivity extends AppCompatActivity implements QuantityC
         totalDiscount = 0;
         for (int i = 0; i < productModelList.size(); i++) {
             ProductModel productModel1 = productModelList.get(i);
-            Long mrp_price = productModel1.getMrp_price();
-            Long selling_price = productModel1.getProduct_price();
+            double mrp_price = productModel1.getMrp_price();
+            double selling_price = productModel1.getProduct_price();
 
             Long a = productModelList.get(i).getTemp_qty();
-            float sellingPrice = (selling_price * a);
-            float mrpPrice = (mrp_price * productModelList.get(i).getTemp_qty());
-            totalMrpPrice = totalMrpPrice + Math.round(mrpPrice);
+            double sellingPrice = (selling_price * a);
+            double mrpPrice = (mrp_price * productModelList.get(i).getTemp_qty());
+            totalMrpPrice = (int) (totalMrpPrice + Math.round(mrpPrice));
             Log.d(TAG, sellingPrice + "\n" + mrpPrice);
-            totalDiscount = totalDiscount + (mrpPrice - sellingPrice);
+            totalDiscount = (float) (totalDiscount + (mrpPrice - sellingPrice));
 
         }
         String deliveryCharges = binding.deliveryCharges.getText().toString();
@@ -463,7 +463,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements QuantityC
                 orderModel.setSeller_name(proModel.getSeller_name());
                 orderModel.setProduct_price(proModel.getProduct_price());
                 orderModel.setMrp_price(proModel.getMrp_price());
-                orderModel.setProduct_image(proModel.getProduct_images().get(0).getProduct_image());
+                orderModel.setProduct_image(proModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_image());
                 orderModel.setSelectedColor(proModel.getSelectedColor());
                 orderModel.setSelectedSize(proModel.getSelectedSize());
                 orderModel.setTemp_qty(proModel.getTemp_qty());

@@ -3,10 +3,14 @@ package com.talla.santhamarket.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.adapters.ProductDetailsViewPagerAdapter;
 import com.talla.santhamarket.databinding.ActivityPoductDescriptionBinding;
@@ -24,6 +28,7 @@ public class PoductDescriptionActivity extends AppCompatActivity {
     private ProductDescriptionLayoutBinding productDescriptionLayoutBinding;
     private ProductDetailsViewPagerAdapter productDetailsViewPagerAdapter;
     private ProductModel productModel;
+    private Dialog progressDialog;
     private static String TAG="PoductDescriptionActivity";
 
     @Override
@@ -31,8 +36,9 @@ public class PoductDescriptionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityPoductDescriptionBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        productModel = (ProductModel) getIntent().getSerializableExtra("descObj");
+        productModel = (ProductModel) getIntent().getSerializableExtra(getString(R.string.intent_poductDetails));
         productDescriptionLayoutBinding = ProductDescriptionLayoutBinding.bind(binding.getRoot());
+        dialogIninit();
         binding.backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,9 +50,9 @@ public class PoductDescriptionActivity extends AppCompatActivity {
         {
             fragmentList.add(new DescriptionFragment(productModel.getDescription()));
         }
-        if (productModel.getSpecifications()!=null)
+        if (productModel.getSpecificationModel()!=null)
         {
-            List<Map.Entry<String, Object>> specList = new ArrayList(productModel.getSpecifications().entrySet());
+            List<Map.Entry<String, Object>> specList = new ArrayList(productModel.getSpecificationModel().getSpecMap().entrySet());
             fragmentList.add(new SpecificationFragment(specList));
         }
         productDetailsViewPagerAdapter = new ProductDetailsViewPagerAdapter(getSupportFragmentManager(),fragmentList, productDescriptionLayoutBinding.specificationTabLayout.getTabCount());
@@ -64,7 +70,28 @@ public class PoductDescriptionActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+    }
 
+    private void showDialog(String message) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage(message);
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
+    public void dialogIninit() {
+        progressDialog = new Dialog(this);
+        com.talla.santhamarket.databinding.CustomProgressDialogBinding customProgressDialogBinding = com.talla.santhamarket.databinding.CustomProgressDialogBinding.inflate(this.getLayoutInflater());
+        progressDialog.setContentView(customProgressDialogBinding.getRoot());
+        progressDialog.setCancelable(false);
     }
 
 }

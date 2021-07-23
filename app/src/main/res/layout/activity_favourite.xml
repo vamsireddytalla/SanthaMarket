@@ -24,18 +24,16 @@
                 android:layout_height="@dimen/_24sdp"
                 android:src="@drawable/ic_left_arrow" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/toolbar_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_weight="1"
-                android:fontFamily="@font/roboto_regular"
                 android:text="Favourites"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_20sdp" />
+                style="@style/Roboto_TextView_Medium"/>
 
         </LinearLayout>
 
@@ -51,14 +49,14 @@
         android:id="@+id/favRCV"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/noItemFound"
-        style="@style/Pop_TextView_Medium"
-        android:text="No Favourites Found"/>
+        style="@style/Roboto_TextView_Medium"
+        android:text="No favourites found !"/>
 
 
 </LinearLayout>

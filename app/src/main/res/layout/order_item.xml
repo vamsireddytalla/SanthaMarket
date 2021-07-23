@@ -32,7 +32,9 @@
             android:id="@+id/order_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Pop_TextView_Medium"
+            style="@style/Roboto_TextView_Light_dark"
+            android:textStyle="bold"
+            android:textColor="@color/black"
             android:text="Ice Cream"
             android:ellipsize="end"
             android:singleLine="true" />
@@ -41,19 +43,14 @@
             android:id="@+id/order_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Pop_TextView_small"
+            style="@style/Roboto_TextView_Light_dark"
+            android:textStyle="bold"
+            android:textColor="@color/light_cement"
             android:ellipsize="end"
             android:singleLine="true"
+            android:layout_marginTop="@dimen/_3sdp"
             android:text="Ordered At: 25-06-2021" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Pop_TextView_small"
-            android:id="@+id/delivery_date"
-            android:text="Delivered At: 25-06-2021"
-            android:ellipsize="end"
-            android:singleLine="true" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -62,7 +59,10 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:id="@+id/order_payment_method"
-            style="@style/Pop_TextView_small" />
+            style="@style/Roboto_TextView_Light_dark"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:textColor="@color/light_cement" />
 
 
         <TextView
@@ -73,8 +73,9 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:id="@+id/deliveryTxt"
-            android:layout_marginTop="@dimen/_10sdp"
-            style="@style/Pop_TextView_small" />
+            android:layout_marginTop="@dimen/_3sdp"
+            style="@style/Roboto_TextView_Light_dark"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

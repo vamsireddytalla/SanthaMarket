@@ -19,15 +19,15 @@ import java.util.Map;
 
 public class ColorChartAdapter extends RecyclerView.Adapter<ColorChartAdapter.MyViewHolder> {
     private Context context;
-    private List<Map.Entry<String, Object>> sizeList;
+    private List<String> sizeList;
     private int itemIndex = 0;
     private ChartsClickListner listner;
-    private boolean isFirstTime=true;
+    private boolean isFirstTime = true;
 
-    public ColorChartAdapter(Context context, List<Map.Entry<String, Object>> sizeList,ChartsClickListner listner) {
+    public ColorChartAdapter(Context context, List<String> sizeList, ChartsClickListner listner) {
         this.context = context;
         this.sizeList = sizeList;
-        this.listner=listner;
+        this.listner = listner;
         notifyDataSetChanged();
     }
 
@@ -48,14 +48,14 @@ public class ColorChartAdapter extends RecyclerView.Adapter<ColorChartAdapter.My
             @Override
             public void onClick(View view) {
                 itemIndex = position;
-                listner.onSelectionCLick(sizeList.get(position).getValue().toString(),context.getString(R.string.Selected_Color));
+                listner.onSelectionCLick(sizeList.get(position),context.getString(R.string.Selected_Color));
                 notifyDataSetChanged();
             }
         });
 
         if (itemIndex == position) {
             holder.binding.colorRoot.setBackground(context.getResources().getDrawable(R.drawable.color_slected_item));
-            listner.onSelectionCLick(sizeList.get(position).getValue().toString(),context.getString(R.string.Selected_Color));
+            listner.onSelectionCLick(sizeList.get(position),context.getString(R.string.Selected_Color));
         } else {
             holder.binding.colorRoot.setBackground(context.getResources().getDrawable(R.drawable.linear_border));
         }
@@ -75,8 +75,8 @@ public class ColorChartAdapter extends RecyclerView.Adapter<ColorChartAdapter.My
             this.binding = itemView;
         }
 
-        public void onBindView(Map.Entry<String, Object> colorObj) {
-            binding.colorItem.setBackgroundColor(Color.parseColor(colorObj.getValue().toString()));
+        public void onBindView(String colorCode) {
+            binding.colorItem.setBackgroundColor(Integer.parseInt(colorCode));
         }
 
     }

@@ -47,7 +47,7 @@
 
     <TextView
         android:id="@+id/textView2"
-        style="@style/Pop_TextView_Medium"
+        style="@style/Roboto_TextView_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -99,6 +99,7 @@
                 android:hint="Enter Phone Number"
                 android:inputType="phone"
                 android:maxLength="10"
+                style="@style/Roboto_TextView_Medium"
                 android:paddingLeft="10dp"
                 android:textColor="@color/black" />
         </LinearLayout>
@@ -117,7 +118,7 @@
         android:layout_marginRight="30dp"
         android:layout_marginBottom="60dp"
         android:background="@drawable/btn_bg"
-        style="@style/Pop_TextView_small"
+        style="@style/Roboto_TextView_Medium"
         android:text="Get OTP"
         android:textColor="@color/white"
         android:textStyle="bold"

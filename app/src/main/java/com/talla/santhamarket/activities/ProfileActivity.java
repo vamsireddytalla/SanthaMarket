@@ -72,9 +72,9 @@ public class ProfileActivity extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         UID = auth.getCurrentUser().getUid();
-        documentReference = firestore.collection("Users").document(UID);
+        documentReference = firestore.collection(getString(R.string.USERS)).document(UID);
         firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference("Profile Photos");
+        storageReference = firebaseStorage.getReference(getString(R.string.PROFILE_PICS));
         getProfileData();
         checkRadioGroup();
     }
@@ -109,7 +109,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void getAddressData() {
-        firestore.collection("Address Book").whereEqualTo("userId", UID).whereEqualTo("defaultAddress", true).get().addOnCompleteListener(this, new OnCompleteListener<QuerySnapshot>() {
+        firestore.collection(getString(R.string.ADDRESS_BOOK)).whereEqualTo("userId", UID).whereEqualTo("defaultAddress", true).get().addOnCompleteListener(this, new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {

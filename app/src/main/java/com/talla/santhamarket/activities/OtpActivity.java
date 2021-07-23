@@ -137,7 +137,7 @@ public class OtpActivity extends AppCompatActivity {
                             FirebaseUserMetadata metadata = auth.getCurrentUser().getMetadata();
                             boolean isNewUser = task.getResult().getAdditionalUserInfo().isNewUser();
                             if (isNewUser) {
-                                documentReference = firestore.collection("Users").document(user.getUid());
+                                documentReference = firestore.collection(getString(R.string.USERS)).document(user.getUid());
                                 UserModel userModel = new UserModel();
                                 userModel.setUser_number(phnNumber);
                                 userModel.setUser_alter_no("");

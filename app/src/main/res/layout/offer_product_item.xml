@@ -18,7 +18,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Pop_TextView_small"
+        style="@style/Roboto_TextView_Medium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="Oppo Reno 5G Mobile" />

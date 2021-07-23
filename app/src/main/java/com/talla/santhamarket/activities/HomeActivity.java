@@ -40,6 +40,8 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
         if (auth.getCurrentUser()!=null)
         {
             UID = auth.getCurrentUser().getUid();
+        }else {
+            finish();
         }
 
         binding.bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -53,6 +55,8 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
                         replacefragment(new HomeFragment(), "HomeFag");
                         return true;
                     case R.id.orders:
+                        if (currentFrag instanceof MyOrdersFragment)
+                            return true;
                         replacefragment(new MyOrdersFragment(), "MyOrderFrag");
                         return true;
                     case R.id.favourite:

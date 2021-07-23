@@ -93,7 +93,7 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
                                         favouriteModelList.remove(i);
                                        for(int j = 0; j < productModelList.size(); j++)
                                        {
-                                           if (favModelRemoved.getFavId().equalsIgnoreCase(productModelList.get(j).getExtra_filed())) {
+                                           if (favModelRemoved.getFavId().equalsIgnoreCase(productModelList.get(j).getExtra_field())) {
                                                productModelList.remove(j);
                                                Log.d(TAG, "After Product Model Removed List Updated " + j + " Remaining Products List For Recycle Items " + productModelList.size());
                                                favouriteAdapter.setFavouriteModelList(productModelList);
@@ -124,7 +124,7 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
                 Log.d(TAG, " Fav Item Id in getProdBasedOnProdId()---> " + favouriteModelList.get(i).getFavId());
 
                 final int finalI = i;
-                firestore.collection("PRODUCTS").document(favouriteModelList.get(i).getProduct_id()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                firestore.collection(getString(R.string.PRODUCTS)).document(favouriteModelList.get(i).getProduct_id()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
@@ -133,7 +133,7 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
 //                                Log.d(TAG, " getProdBasedOnProdId()---> DocumentSnapshot data: " + document.getData());
                                 ProductModel productModel = document.toObject(ProductModel.class);
                                 if (productModel != null) {
-                                    productModel.setExtra_filed(favouriteModelList.get(finalI).getFavId());
+                                    productModel.setExtra_field(favouriteModelList.get(finalI).getFavId());
                                     productModelList.add(productModel);
                                     favouriteAdapter.setFavouriteModelList(productModelList);
                                 } else {
@@ -172,7 +172,7 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
     public void toggleChangeListner(final int pos, int type) {
         if (type == 0) {
             alertDialog.show();
-            firestore.collection("FAVOURITES").document(productModelList.get(pos).getExtra_filed()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            firestore.collection("FAVOURITES").document(productModelList.get(pos).getExtra_field()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {

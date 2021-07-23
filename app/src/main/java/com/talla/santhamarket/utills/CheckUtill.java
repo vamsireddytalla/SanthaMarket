@@ -47,6 +47,13 @@ public class CheckUtill {
         return simpleDateFormat.format(date);
     }
 
+    public static String getSystemTime(Context context) {
+        Date date = new Date(System.currentTimeMillis());
+        String pattern = context.getResources().getString(R.string.date_format);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(date);
+    }
+
     public static boolean isValidPassword(final String password) {
 
         Pattern pattern;
@@ -78,6 +85,20 @@ public class CheckUtill {
         cal.add(Calendar.DAY_OF_MONTH, days);
         Date today30 = cal.getTime();
         return new SimpleDateFormat("dd-MMM-yyyy").format(today30);
+    }
+
+
+    public String FormatCost(Double cost) {
+        try {
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+            symbols.setDecimalSeparator(',');
+            DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###", symbols);
+            String result = decimalFormat.format(cost);
+            Log.d("FORMAT_COST", result);
+            return result;
+        } catch (Exception e) {
+            return cost + "0";
+        }
     }
 
 }

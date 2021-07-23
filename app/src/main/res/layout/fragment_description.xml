@@ -16,7 +16,8 @@
             android:layout_height="wrap_content"
             android:text="Description"
             android:textStyle="bold"
-            android:fontFamily="@font/poppins_medium"/>
+            android:textColor="@color/black"
+            style="@style/Roboto_TextView_Light_dark"/>
         <View
             android:layout_width="@dimen/_50sdp"
             android:layout_height="2dp"
@@ -27,7 +28,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/desc"
         android:layout_marginTop="@dimen/_5sdp"
-        android:text="----------------"
-        android:fontFamily="@font/poppins_regular"/>
+        style="@style/Roboto_TextView_Light_dark"/>
 
 </LinearLayout>

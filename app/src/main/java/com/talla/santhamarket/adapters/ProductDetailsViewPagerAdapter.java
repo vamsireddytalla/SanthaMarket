@@ -25,14 +25,7 @@ public class ProductDetailsViewPagerAdapter extends FragmentPagerAdapter
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-               return fragmentList.get(position);
-            case 1:
-               return fragmentList.get(position);
-            default:
-                return null;
-        }
+       return fragmentList.get(position);
     }
 
     @Override

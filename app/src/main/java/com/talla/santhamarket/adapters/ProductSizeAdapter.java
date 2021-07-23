@@ -23,14 +23,19 @@ import java.util.Map;
 
 public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.MyViewHolder> {
     private Context context;
-    private List<Map.Entry<String, Object>> sizeList;
+    private List<String> sizeList;
     private int itemIndex=0;
     private ChartsClickListner listner;
 
-    public ProductSizeAdapter(Context context, List<Map.Entry<String, Object>> sizeList,ChartsClickListner listner) {
+    public ProductSizeAdapter(Context context, List<String> sizeList,ChartsClickListner listner) {
         this.context = context;
         this.sizeList = sizeList;
         this.listner=listner;
+        notifyDataSetChanged();
+    }
+
+    public void setSizeList(List<String> sizeList) {
+        this.sizeList = sizeList;
         notifyDataSetChanged();
     }
 
@@ -51,7 +56,7 @@ public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.
             @Override
             public void onClick(View view) {
                 itemIndex=position;
-                listner.onSelectionCLick(sizeList.get(position).getValue().toString(),context.getString(R.string.Selected_Size));
+                listner.onSelectionCLick(sizeList.get(position),context.getString(R.string.Selected_Size));
                 notifyDataSetChanged();
             }
         });
@@ -59,7 +64,7 @@ public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.
         if (itemIndex==position)
         {
             holder.binding.sizeItemRoot.setBackground(context.getResources().getDrawable(R.drawable.linear_border_color));
-            listner.onSelectionCLick(sizeList.get(position).getValue().toString(),context.getString(R.string.Selected_Size));
+            listner.onSelectionCLick(sizeList.get(position),context.getString(R.string.Selected_Size));
         }else {
             holder.binding.sizeItemRoot.setBackground(context.getResources().getDrawable(R.drawable.linear_border));
         }
@@ -79,8 +84,8 @@ public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.
             this.binding = itemView;
         }
 
-        public void onBindView(Map.Entry<String, Object> sizeObj) {
-            binding.sizeItem.setText(sizeObj.getValue().toString());
+        public void onBindView(String sizeObj) {
+            binding.sizeItem.setText(sizeObj);
             Log.d("DetailProductActivity","  Adapter : "+sizeObj.toString());
         }
 

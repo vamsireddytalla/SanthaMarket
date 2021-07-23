@@ -118,14 +118,14 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
         public void onBindView(ProductModel productModel) {
             binding.sumTitle.setText(productModel.getProduct_name());
             binding.sumSellerName.setText(productModel.getSeller_name());
-            binding.productPrice.setText(CheckUtill.FormatCost(Math.round(productModel.getProduct_price())) + context.getString(R.string.Rs));
-            binding.mrpPrice.setText(CheckUtill.FormatCost(Math.round(productModel.getMrp_price())) + context.getString(R.string.Rs));
+            binding.productPrice.setText(CheckUtill.FormatCost((int) Math.round(productModel.getProduct_price())) + context.getString(R.string.Rs));
+            binding.mrpPrice.setText(CheckUtill.FormatCost((int) Math.round(productModel.getMrp_price())) + context.getString(R.string.Rs));
             binding.mrpPrice.setPaintFlags(binding.mrpPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            Long mrp_price = productModel.getMrp_price();
-            Long selling_price = productModel.getProduct_price();
-            float res = StaticUtills.discountPercentage(selling_price, mrp_price);
+            double mrp_price = productModel.getMrp_price();
+            double selling_price = productModel.getProduct_price();
+            double res = StaticUtills.discountPercentage(selling_price, mrp_price);
             binding.discount.setText(String.valueOf(res).substring(0, 2) + "%OFF");
-            Glide.with(context).load(productModel.getProduct_images().get(0).getProduct_image()).fitCenter().into(binding.sumPic);
+            Glide.with(context).load(productModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_image()).fitCenter().into(binding.sumPic);
             String selectedColor = productModel.getSelectedColor();
             if (selectedColor != null && !selectedColor.isEmpty()) {
                 binding.itemColor.setVisibility(View.VISIBLE);

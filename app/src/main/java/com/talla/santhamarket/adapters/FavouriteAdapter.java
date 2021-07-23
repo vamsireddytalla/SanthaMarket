@@ -72,9 +72,12 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
         holder.binding.buyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent in=new Intent(context, DetailProductActivity.class);
-                in.putExtra(context.getString(R.string.pro_id),favouriteModelList.get(position).getProduct_id());
-                context.startActivity(in);
+                String val = holder.binding.buyNow.getText().toString();
+                if (val.equalsIgnoreCase(context.getString(R.string.buy_now))) {
+                    Intent in = new Intent(context, DetailProductActivity.class);
+                    in.putExtra(context.getString(R.string.pro_id), favouriteModelList.get(position).getProduct_id());
+                    context.startActivity(in);
+                }
             }
         });
 
@@ -82,7 +85,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
 
     @Override
     public int getItemCount() {
-        return favouriteModelList.isEmpty()?0:favouriteModelList.size();
+        return favouriteModelList.isEmpty() ? 0 : favouriteModelList.size();
     }
 
     @Override
@@ -116,18 +119,23 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
 
 
         public void onBindView(ProductModel favouriteModel) {
-            Glide.with(context).load(favouriteModel.getProduct_images().get(0).getProduct_image()).fitCenter().into(binding.imageIcon);
+            Glide.with(context).load(favouriteModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_image()).fitCenter().into(binding.imageIcon);
             binding.productName.setText(favouriteModel.getProduct_name());
             binding.productDesc.setText(favouriteModel.getSeller_name());
-            binding.productPrice.setText(CheckUtill.FormatCost(Math.round(favouriteModel.getProduct_price())) + " Rs");
-            binding.mrpPrice.setText(CheckUtill.FormatCost(Math.round(favouriteModel.getMrp_price())) + " Rs");
+            binding.productPrice.setText(CheckUtill.FormatCost((int) Math.round(favouriteModel.getProduct_price())) + " Rs");
+            binding.mrpPrice.setText(CheckUtill.FormatCost((int) Math.round(favouriteModel.getMrp_price())) + " Rs");
             binding.mrpPrice.setPaintFlags(binding.mrpPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            Long mrp_price = favouriteModel.getMrp_price();
-            Long selling_price = favouriteModel.getProduct_price();
-            float res = StaticUtills.discountPercentage(selling_price, mrp_price);
-            binding.discount.setText(String.valueOf(res).substring(0, 2) + "%OFF");
-            ;
+            double mrp_price = favouriteModel.getMrp_price();
+            double selling_price = favouriteModel.getProduct_price();
+            int res = StaticUtills.discountPercentage(selling_price, mrp_price);
+            binding.discount.setText(String.valueOf(res) + "%OFF");
             binding.toggleBtn.setChecked(true);
+
+            if (favouriteModel.isOut_of_stock() || (favouriteModel.getTotalStock().equals(favouriteModel.getSelled_items()))) {
+                binding.buyNow.setText("Sold Out");
+                binding.buyNow.setTextColor(context.getResources().getColor(R.color.orange));
+            }
+
         }
 
         public void setNoItemFound(String va) {

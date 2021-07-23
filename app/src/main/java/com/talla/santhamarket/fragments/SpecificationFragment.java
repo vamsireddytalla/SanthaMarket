@@ -10,11 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.activities.PoductDescriptionActivity;
 import com.talla.santhamarket.adapters.SpecificationAdapter;
 import com.talla.santhamarket.databinding.FragmentHomeBinding;
 import com.talla.santhamarket.databinding.FragmentSpecificationBinding;
+import com.talla.santhamarket.models.ProductModel;
 
 import java.util.List;
 import java.util.Map;
@@ -44,5 +46,6 @@ public class SpecificationFragment extends Fragment {
         super.onAttach(activity);
         this.activity = (PoductDescriptionActivity) activity;
     }
+
 
 }

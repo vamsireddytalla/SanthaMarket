@@ -69,7 +69,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         {
             Glide.with(context).load(orderModel.getProduct_image()).fitCenter().into(binding.orderImage);
             binding.orderTitle.setText(orderModel.getProduct_name());
-            binding.deliveryDate.setText("Delivery At: "+orderModel.getDelivered_date());
             binding.orderDate.setText("Ordered At: "+orderModel.getOrdered_date());
             binding.orderPaymentMethod.setText("Payment Mode : "+orderModel.getPayment_method());
             boolean isDelivered=orderModel.isDelivered();

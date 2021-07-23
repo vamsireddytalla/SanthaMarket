@@ -21,22 +21,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.activities.AddressBookActivity;
 import com.talla.santhamarket.activities.DetailProductActivity;
 import com.talla.santhamarket.activities.HomeActivity;
+import com.talla.santhamarket.activities.LocalShopActivity;
 import com.talla.santhamarket.activities.OrderSummaryActivity;
 import com.talla.santhamarket.activities.SearchProductActivity;
 import com.talla.santhamarket.adapters.HomeBannerAdapter;
@@ -44,6 +54,10 @@ import com.talla.santhamarket.adapters.HomeCategoryAdapter;
 import com.talla.santhamarket.databinding.FragmentHomeBinding;
 import com.talla.santhamarket.interfaces.OnFragmentListner;
 import com.talla.santhamarket.models.CategoryModel;
+import com.talla.santhamarket.models.GraphView;
+import com.talla.santhamarket.utills.CheckInternet;
+import com.talla.santhamarket.utills.CheckUtill;
+import com.talla.santhamarket.utills.SharedEncryptUtills;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,10 +78,10 @@ public class HomeFragment extends Fragment {
     private ListenerRegistration listenerRegistration;
     private OnFragmentListner fragmentListner;
     private int totalCart_items;
+    private SharedEncryptUtills sharedEncryptUtills;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.homeToolbar);
         binding.homeToolbar.setTitleTextColor(getResources().getColor(R.color.white));
@@ -79,8 +93,9 @@ public class HomeFragment extends Fragment {
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         UID = auth.getUid();
+        sharedEncryptUtills = SharedEncryptUtills.getInstance(homeActivity);
         List<String> stringList = new ArrayList<>();
-        stringList.add("https://cdni.iconscout.com/illustration/premium/thumb/halloween-offer-banner-997852.png");
+        stringList.add("https://1.bp.blogspot.com/-9zFjk2JH4H0/YPaSpGN27SI/AAAAAAAABkk/uWlTx8ZiESgTmAXk13ShrqcMdi2a8edXQCLcBGAsYHQ/s400/discount-3078216.jpg");
         stringList.add("https://previews.123rf.com/images/alhovik/alhovik1708/alhovik170800009/84049519-weekend-sale-banner-this-weekend-special-offer-banner-template.jpg");
         stringList.add("https://www.bannerbatterien.com/upload/filecache/Banner-Batterien-Windrder2-web_06b2d8d686e91925353ddf153da5d939.webp");
         stringList.add("https://cdn.pixabay.com/photo/2017/12/28/15/06/background-3045402__340.png");
@@ -113,7 +128,7 @@ public class HomeFragment extends Fragment {
                             Intent shareIntent = new Intent(Intent.ACTION_SEND);
                             shareIntent.setType("text/plain");
                             shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name");
-                            shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + getActivity().getPackageName() + "\n\n";
+                            shareMessage = shareMessage + homeActivity.getString(R.string.PLAYSTORE_BASE_URL) + getActivity().getPackageName() + "\n\n";
                             shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
                             startActivity(Intent.createChooser(shareIntent, "choose one"));
                         } catch (Exception e) {
@@ -128,7 +143,7 @@ public class HomeFragment extends Fragment {
                         try {
                             startActivity(myAppLinkToMarket);
                         } catch (ActivityNotFoundException e) {
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getActivity().getPackageName())));
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(homeActivity.getString(R.string.PLAYSTORE_BASE_URL) + getActivity().getPackageName())));
                         }
                         break;
                     case R.id.about_us:
@@ -147,10 +162,10 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        binding.productItem.getRoot().setOnClickListener(new View.OnClickListener() {
+        binding.localShop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), DetailProductActivity.class);
+                Intent intent = new Intent(getContext(), LocalShopActivity.class);
                 startActivity(intent);
             }
         });
@@ -169,9 +184,8 @@ public class HomeFragment extends Fragment {
         binding.cartItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (totalCart_items>0)
-                {
-                    Intent intent=new Intent(homeActivity, OrderSummaryActivity.class);
+                if (totalCart_items > 0) {
+                    Intent intent = new Intent(homeActivity, OrderSummaryActivity.class);
                     startActivity(intent);
                 }
             }
@@ -180,9 +194,8 @@ public class HomeFragment extends Fragment {
         binding.cartItem2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (totalCart_items>0)
-                {
-                    Intent intent=new Intent(homeActivity, OrderSummaryActivity.class);
+                if (totalCart_items > 0) {
+                    Intent intent = new Intent(homeActivity, OrderSummaryActivity.class);
                     startActivity(intent);
                 }
             }
@@ -204,7 +217,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void getCartItemsCount() {
-        Query query = firestore.collection("CART_ITEMS").whereEqualTo("user_id", UID);
+        Query query = firestore.collection(homeActivity.getString(R.string.CART_ITEMS)).whereEqualTo("user_id", UID);
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -222,7 +235,7 @@ public class HomeFragment extends Fragment {
         if (categoryModelList != null) {
             categoryModelList.clear();
         }
-        firestore.collection("CATEGORIES").orderBy("index").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firestore.collection(homeActivity.getString(R.string.CATEGORIES)).orderBy("timestamp", Query.Direction.ASCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
 
@@ -237,7 +250,7 @@ public class HomeFragment extends Fragment {
                             CategoryModel categoryModel1 = dc.getDocument().toObject(CategoryModel.class);
                             Log.d(TAG, "Category data modified to list: " + categoryModel1.toString());
                             for (int i = 0; i < categoryModelList.size(); i++) {
-                                if (categoryModelList.get(i).getIndex() == categoryModel1.getIndex()) {
+                                if (categoryModelList.get(i).getId().equals(categoryModel1.getId())) {
                                     categoryModelList.remove(i);
                                     categoryModelList.add(i, categoryModel1);
                                     break;
@@ -248,7 +261,7 @@ public class HomeFragment extends Fragment {
                             CategoryModel categoryModel2 = dc.getDocument().toObject(CategoryModel.class);
                             Log.d(TAG, "Category data removed to list: " + categoryModel2.toString());
                             for (int i = 0; i < categoryModelList.size(); i++) {
-                                if (categoryModelList.get(i).getIndex() == categoryModel2.getIndex()) {
+                                if (categoryModelList.get(i).getId().equals(categoryModel2.getId())) {
                                     categoryModelList.remove(i);
                                     break;
                                 }
@@ -260,9 +273,67 @@ public class HomeFragment extends Fragment {
                 binding.categoryRCV.setLayoutManager(new GridLayoutManager(getContext(), 3));
                 homeCategoryAdapter = new HomeCategoryAdapter(getContext(), categoryModelList);
                 binding.categoryRCV.setAdapter(homeCategoryAdapter);
+                sendVisitorsCount();
 
             }
         });
+    }
+
+    private void sendVisitorsCount() {
+        String data = sharedEncryptUtills.getData(SharedEncryptUtills.DAY_FIRST_TIME);
+        if (!data.equalsIgnoreCase(CheckUtill.getSystemTime(homeActivity))) {
+            if (CheckInternet.checkInternet(homeActivity)) {
+                //this is for auto increment value
+                checkDocument();
+            } else {
+                Toast.makeText(homeActivity, "Check Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void checkDocument() {
+        DocumentReference docIdRef = firestore.collection(homeActivity.getResources().getString(R.string.DAILY_VIEWS)).document(CheckUtill.getSystemTime(homeActivity));
+        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "Document exists!");
+                        final DocumentReference cref1 = firestore.collection(homeActivity.getResources().getString(R.string.DAILY_VIEWS)).document(CheckUtill.getSystemTime(homeActivity));
+                        cref1.update("appViews", FieldValue.increment(1));
+                        sharedEncryptUtills.saveData(SharedEncryptUtills.DAY_FIRST_TIME, CheckUtill.getSystemTime(homeActivity));
+                        showSnackBar("Welcome !");
+                    } else {
+                        Log.d(TAG, "Document does not exist!");
+                        GraphView graphView = new GraphView();
+                        graphView.setAppViews(1);
+                        graphView.setDailyDate(CheckUtill.getSystemTime(homeActivity));
+                        final DocumentReference cref = firestore.collection(homeActivity.getResources().getString(R.string.DAILY_VIEWS)).document(CheckUtill.getSystemTime(homeActivity));
+                        cref.set(graphView).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                showSnackBar("Welcome !");
+                                sharedEncryptUtills.saveData(SharedEncryptUtills.DAY_FIRST_TIME, CheckUtill.getSystemTime(homeActivity));
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                showSnackBar(e.getMessage());
+                            }
+                        });
+                    }
+                } else {
+                    Log.d(TAG, "Failed with: ", task.getException());
+                }
+            }
+        });
+
+    }
+
+    private void showSnackBar(String message) {
+        Snackbar snackbar = Snackbar.make(homeActivity.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+        snackbar.show();
     }
 
     @Override

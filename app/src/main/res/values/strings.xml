@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Santha Market</string>
-    <string name="enter_mobile_number_to_sign_in">Enter your Mobile Number to SignIn</string>
+    <string name="enter_mobile_number_to_sign_in">Enter your mobile number to Sign-In</string>
     <string name="an_otp_desc"><![CDATA[ OTP sent to your Mobile Number \n Enter OTP here]]></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -39,6 +39,7 @@
     <string name="product_id">product_id</string>
     <string name="add_or_change">Add or Change Address</string>
     <string name="date_time_min">dd-M-yyyy hh:mm:ss</string>
+    <string name="date_format">yyyy-MM-dd</string>
     <string name="add_to_cart">Add to Cart</string>
     <string name="pay_now">PAY NOW</string>
     <string name="remove_item">Remove</string>
@@ -46,13 +47,6 @@
     <string name="remove_ad_fav">Remove as Favourite</string>
     <string name="add_to_fav">Add to Favourite</string>
 
-    <string name="ADDRESS_BOOK">Address Book</string>
-    <string name="CART_ITEMS">CART_ITEMS</string>
-    <string name="CATEGORIES">CATEGORIES</string>
-    <string name="FAVOURITES">FAVOURITES</string>
-    <string name="PRODUCTS">PRODUCTS</string>
-    <string name="USERS">Users</string>
-    <string name="ORDERS">ORDERS</string>
     <string name="no_address_found">No Address Found</string>
     <string name="no_orders_found">No Orders Found !</string>
     <string name="order_status">Order Status</string>
@@ -60,6 +54,41 @@
     <string name="pro_id">product_id</string>
     <string name="address_book">Address Book</string>
     <string name="amount_payable">Amount Payable</string>
+
+    //Server Collections
+    <string name="ADDRESS_BOOK">ADDRESS_BOOK</string>
+    <string name="CART_ITEMS">CART_ITEMS</string>
+    <string name="CATEGORIES">CATEGORIES</string>
+    <string name="SUB_CATEGORIES">SUB_CATEGORIES</string>
+    <string name="FAVOURITES">FAVOURITES</string>
+    <string name="PRODUCTS">PRODUCTS</string>
+    <string name="USERS">USERS</string>
+    <string name="TAGS">TAGS</string>
+    <string name="SPECIFICATIONS">SPECIFICATIONS</string>
+    <string name="ORDERS">ORDERS</string>
+    <string name="SHOP_OWNERS">SHOP_OWNERS</string>
+    <string name="PRODUCT_IMAGES">PRODUCT_IMAGES</string>
+    <string name="DEVICE_INFO">DEVICE_INFO</string>
+    <string name="FCM_TOKENS">FCM_TOKENS</string>
+    <string name="PROFILE_PICS">FCM_TOKENS</string>
+    <string name="DAILY_VIEWS">DAILY_VIEWS</string>
+
+    //bullets selections
+    <string name="OUT_OF_STOCK">Out-of-Stock</string>
+    <string name="IN_STOCK">In-Stock</string>
+    <string name="LOCAL">Local</string>
+    <string name="GLOBAL">Global</string>
+    <string name="CASH_ON_DELIVERY">Cash-On-Delivery</string>
+    <string name="ONLINE_PAYMENT">Online-Payment</string>
+
+    //playstoe base url
+    <string name="PLAYSTORE_BASE_URL">https://play.google.com/store/apps/details?id=</string>
+    <string name="intent_cat_id">categoryId</string>
+    <string name="error_occured">Error Occured !</string>
+    <string name="intent_product_id">product_id</string>
+    <string name="intent_poductDetails">productDetails</string>
+    <string name="buy_now">Buy Now</string>
+
 
     <string-array name="india_states">
         <item>Andhra Pradesh</item>

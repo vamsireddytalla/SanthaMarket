@@ -6,45 +6,36 @@ import java.util.Map;
 
 public class ProductModel implements Serializable
 {
-    private Long category_id;
-    private String product_id;
     private String product_name;
     private String seller_name;
+    private String product_id;
     private String description;
-    private Long product_price;
-    private Long mrp_price;
+    private double product_price;
+    private double mrp_price;
     private Long max_quantity;
-    private Long product_weight;
+    private double product_weight;
     private boolean cod_available;
-    private Map<String, Object> product_colors;
-    private Map<String, Object> product_sizes;
-    private Map<String, Object> specifications;
-    private List<ProductImageModel> product_images;
-    private List<String> tags;
-    private String extra_filed;
+    private String category_id;
+    private String sub_cat_id;
+    private List<SubProductModel> subProductModelList;
     private boolean out_of_stock;
+    private Long selled_items=0l;
+    private String product_date;
+    private String sellerId;
+    private ItemTypeModel itemTypeModel;
+    private List<String> tagsList;
+    private double total_ratings=0;
+    private double avgRatings=0;
+    private String video_link;
+    private Long totalStock;
     private String selectedColor;
     private String selectedSize;
     private Long temp_qty;
     private boolean temp_favourite=false;
     private String temp_favouriteId;
+    private String extra_field;
+    private SpecificationModel specificationModel;
 
-
-    public Long getCategory_id() {
-        return category_id;
-    }
-
-    public void setCategory_id(Long category_id) {
-        this.category_id = category_id;
-    }
-
-    public String getProduct_id() {
-        return product_id;
-    }
-
-    public void setProduct_id(String product_id) {
-        this.product_id = product_id;
-    }
 
     public String getProduct_name() {
         return product_name;
@@ -62,6 +53,14 @@ public class ProductModel implements Serializable
         this.seller_name = seller_name;
     }
 
+    public String getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -70,19 +69,19 @@ public class ProductModel implements Serializable
         this.description = description;
     }
 
-    public Long getProduct_price() {
+    public double getProduct_price() {
         return product_price;
     }
 
-    public void setProduct_price(Long product_price) {
+    public void setProduct_price(double product_price) {
         this.product_price = product_price;
     }
 
-    public Long getMrp_price() {
+    public double getMrp_price() {
         return mrp_price;
     }
 
-    public void setMrp_price(Long mrp_price) {
+    public void setMrp_price(double mrp_price) {
         this.mrp_price = mrp_price;
     }
 
@@ -94,11 +93,11 @@ public class ProductModel implements Serializable
         this.max_quantity = max_quantity;
     }
 
-    public Long getProduct_weight() {
+    public double getProduct_weight() {
         return product_weight;
     }
 
-    public void setProduct_weight(Long product_weight) {
+    public void setProduct_weight(double product_weight) {
         this.product_weight = product_weight;
     }
 
@@ -110,53 +109,28 @@ public class ProductModel implements Serializable
         this.cod_available = cod_available;
     }
 
-    public Map<String, Object> getProduct_colors() {
-        return product_colors;
+    public String getCategory_id() {
+        return category_id;
     }
 
-    public void setProduct_colors(Map<String, Object> product_colors) {
-        this.product_colors = product_colors;
+    public void setCategory_id(String category_id) {
+        this.category_id = category_id;
     }
 
-    public Map<String, Object> getProduct_sizes() {
-        return product_sizes;
+    public String getSub_cat_id() {
+        return sub_cat_id;
     }
 
-    public void setProduct_sizes(Map<String, Object> product_sizes) {
-        this.product_sizes = product_sizes;
+    public void setSub_cat_id(String sub_cat_id) {
+        this.sub_cat_id = sub_cat_id;
     }
 
-
-    public List<ProductImageModel> getProduct_images() {
-        return product_images;
+    public List<SubProductModel> getSubProductModelList() {
+        return subProductModelList;
     }
 
-    public void setProduct_images(List<ProductImageModel> product_images) {
-        this.product_images = product_images;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-
-    public Map<String, Object> getSpecifications() {
-        return specifications;
-    }
-
-    public void setSpecifications(Map<String, Object> specifications) {
-        this.specifications = specifications;
-    }
-
-    public String getExtra_filed() {
-        return extra_filed;
-    }
-
-    public void setExtra_filed(String extra_filed) {
-        this.extra_filed = extra_filed;
+    public void setSubProductModelList(List<SubProductModel> subProductModelList) {
+        this.subProductModelList = subProductModelList;
     }
 
     public boolean isOut_of_stock() {
@@ -165,6 +139,78 @@ public class ProductModel implements Serializable
 
     public void setOut_of_stock(boolean out_of_stock) {
         this.out_of_stock = out_of_stock;
+    }
+
+    public Long getSelled_items() {
+        return selled_items;
+    }
+
+    public void setSelled_items(Long selled_items) {
+        this.selled_items = selled_items;
+    }
+
+    public String getProduct_date() {
+        return product_date;
+    }
+
+    public void setProduct_date(String product_date) {
+        this.product_date = product_date;
+    }
+
+    public String getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
+    }
+
+    public ItemTypeModel getItemTypeModel() {
+        return itemTypeModel;
+    }
+
+    public void setItemTypeModel(ItemTypeModel itemTypeModel) {
+        this.itemTypeModel = itemTypeModel;
+    }
+
+    public List<String> getTagsList() {
+        return tagsList;
+    }
+
+    public void setTagsList(List<String> tagsList) {
+        this.tagsList = tagsList;
+    }
+
+    public double getTotal_ratings() {
+        return total_ratings;
+    }
+
+    public void setTotal_ratings(double total_ratings) {
+        this.total_ratings = total_ratings;
+    }
+
+    public double getAvgRatings() {
+        return avgRatings;
+    }
+
+    public void setAvgRatings(double avgRatings) {
+        this.avgRatings = avgRatings;
+    }
+
+    public String getVideo_link() {
+        return video_link;
+    }
+
+    public void setVideo_link(String video_link) {
+        this.video_link = video_link;
+    }
+
+    public Long getTotalStock() {
+        return totalStock;
+    }
+
+    public void setTotalStock(Long totalStock) {
+        this.totalStock = totalStock;
     }
 
     public String getSelectedColor() {
@@ -191,7 +237,6 @@ public class ProductModel implements Serializable
         this.temp_qty = temp_qty;
     }
 
-
     public boolean isTemp_favourite() {
         return temp_favourite;
     }
@@ -208,31 +253,54 @@ public class ProductModel implements Serializable
         this.temp_favouriteId = temp_favouriteId;
     }
 
+    public String getExtra_field() {
+        return extra_field;
+    }
+
+    public void setExtra_field(String extra_field) {
+        this.extra_field = extra_field;
+    }
+
+    public SpecificationModel getSpecificationModel() {
+        return specificationModel;
+    }
+
+    public void setSpecificationModel(SpecificationModel specificationModel) {
+        this.specificationModel = specificationModel;
+    }
+
     @Override
     public String toString() {
         return "ProductModel{" +
-                "category_id=" + category_id +
-                ", product_id='" + product_id + '\'' +
-                ", product_name='" + product_name + '\'' +
+                "product_name='" + product_name + '\'' +
                 ", seller_name='" + seller_name + '\'' +
+                ", product_id='" + product_id + '\'' +
                 ", description='" + description + '\'' +
                 ", product_price=" + product_price +
                 ", mrp_price=" + mrp_price +
                 ", max_quantity=" + max_quantity +
                 ", product_weight=" + product_weight +
                 ", cod_available=" + cod_available +
-                ", product_colors=" + product_colors +
-                ", product_sizes=" + product_sizes +
-                ", specifications=" + specifications +
-                ", product_images=" + product_images +
-                ", tags=" + tags +
-                ", extra_filed='" + extra_filed + '\'' +
+                ", category_id='" + category_id + '\'' +
+                ", sub_cat_id='" + sub_cat_id + '\'' +
+                ", subProductModelList=" + subProductModelList +
                 ", out_of_stock=" + out_of_stock +
+                ", selled_items=" + selled_items +
+                ", product_date='" + product_date + '\'' +
+                ", sellerId='" + sellerId + '\'' +
+                ", itemTypeModel=" + itemTypeModel +
+                ", tagsList=" + tagsList +
+                ", total_ratings=" + total_ratings +
+                ", avgRatings=" + avgRatings +
+                ", video_link='" + video_link + '\'' +
+                ", totalStock=" + totalStock +
                 ", selectedColor='" + selectedColor + '\'' +
                 ", selectedSize='" + selectedSize + '\'' +
                 ", temp_qty=" + temp_qty +
                 ", temp_favourite=" + temp_favourite +
                 ", temp_favouriteId='" + temp_favouriteId + '\'' +
+                ", extra_field='" + extra_field + '\'' +
+                ", specificationModel=" + specificationModel +
                 '}';
     }
 }

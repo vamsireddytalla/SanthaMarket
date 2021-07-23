@@ -16,7 +16,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.30"
             android:id="@+id/keyName"
-            android:fontFamily="@font/poppins_regular"
+            style="@style/Roboto_TextView_Light_dark"
+            android:textColor="@color/black"
             android:text="Error"/>
         <TextView
             android:layout_width="wrap_content"
@@ -28,8 +29,8 @@
             android:layout_weight="0.70"
             android:id="@+id/valueDesc"
             android:layout_marginLeft="@dimen/_10sdp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_regular"
+            style="@style/Roboto_TextView_Light_dark"
+            android:textColor="@color/black"
             android:text="NoInternet"/>
     </LinearLayout>
     <View
