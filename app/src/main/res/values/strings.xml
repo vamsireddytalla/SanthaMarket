@@ -54,6 +54,7 @@
     <string name="pro_id">product_id</string>
     <string name="address_book">Address Book</string>
     <string name="amount_payable">Amount Payable</string>
+    <string name="admin_email">santhamarketonline@gmail.com</string>
 
     //Server Collections
     <string name="ADDRESS_BOOK">ADDRESS_BOOK</string>
@@ -92,7 +93,10 @@
     <string name="Continue">Continue</string>
     <string name="cart_items">Cart Items</string>
     <string name="proceed">Proceed</string>
+    <string name="cart_typ_key">cart_typ_key</string>
     <string name="no_items_found">No Items Found !</string>
+    <string name="help_message">For Help or any Extra cash back contact us at santhamarketonline@gmail.com</string>
+    <string name="final_no_data_found">No Final Data Found ! Contact Customer care</string>
 
 
     <string-array name="india_states">

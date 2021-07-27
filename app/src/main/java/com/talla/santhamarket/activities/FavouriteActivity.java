@@ -20,6 +20,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.talla.santhamarket.R;
@@ -38,13 +39,14 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
     private String UID;
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
-    private DocumentReference documentReference;
+
     private CustomProgressDialogBinding customProgressDialogBinding;
     private androidx.appcompat.app.AlertDialog alertDialog;
     private FavouriteAdapter favouriteAdapter;
     List<ProductModel> productModelList = new ArrayList<>();
     List<FavouriteModel> favouriteModelList = new ArrayList<>();
     private boolean isFirstTime = true;
+    private ListenerRegistration favDataListner;
     private static final String TAG = "FavouriteActivity";
 
     @Override
@@ -56,10 +58,14 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         UID = auth.getCurrentUser().getUid();
-        documentReference = firestore.collection("FAVOURITES").document(UID);
         favouriteAdapter = new FavouriteAdapter(this, productModelList, this);
         binding.favRCV.setAdapter(favouriteAdapter);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         //get ALl Fav Data Based on UID
         getFavData();
     }
@@ -67,7 +73,7 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
     private void getFavData() {
         favouriteModelList.clear();
         productModelList.clear();
-        firestore.collection("FAVOURITES").whereEqualTo("userId", UID).addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+        favDataListner = firestore.collection(getString(R.string.FAVOURITES)).whereEqualTo("userId", UID).addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -91,16 +97,15 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
                                 for (int i = 0; i < favouriteModelList.size(); i++) {
                                     if (favModelRemoved.getFavId().equalsIgnoreCase(favouriteModelList.get(i).getFavId())) {
                                         favouriteModelList.remove(i);
-                                       for(int j = 0; j < productModelList.size(); j++)
-                                       {
-                                           if (favModelRemoved.getFavId().equalsIgnoreCase(productModelList.get(j).getExtra_field())) {
-                                               productModelList.remove(j);
-                                               Log.d(TAG, "After Product Model Removed List Updated " + j + " Remaining Products List For Recycle Items " + productModelList.size());
-                                               favouriteAdapter.setFavouriteModelList(productModelList);
-                                               if (productModelList.isEmpty())
-                                                   binding.noItemFound.setVisibility(View.VISIBLE);
-                                           }
-                                       }
+                                        for (int j = 0; j < productModelList.size(); j++) {
+                                            if (favModelRemoved.getFavId().equalsIgnoreCase(productModelList.get(j).getExtra_field())) {
+                                                productModelList.remove(j);
+                                                Log.d(TAG, "After Product Model Removed List Updated " + j + " Remaining Products List For Recycle Items " + productModelList.size());
+                                                favouriteAdapter.setFavouriteModelList(productModelList);
+                                                if (productModelList.isEmpty())
+                                                    binding.noItemFound.setVisibility(View.VISIBLE);
+                                            }
+                                        }
                                     }
                                 }
                                 break;
@@ -182,5 +187,11 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        favDataListner.remove();
     }
 }

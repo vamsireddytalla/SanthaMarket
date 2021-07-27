@@ -31,18 +31,23 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.razorpay.Checkout;
+import com.razorpay.PaymentResultListener;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.adapters.CartTabsAdapter;
 import com.talla.santhamarket.databinding.ActivityMultiCartBinding;
 import com.talla.santhamarket.fragments.GlobalItemsFragment;
 import com.talla.santhamarket.fragments.LocalItemsFragment;
 import com.talla.santhamarket.interfaces.PaymentListner;
+import com.talla.santhamarket.models.DeliveryModel;
 import com.talla.santhamarket.models.FinalPayTransferModel;
+import com.talla.santhamarket.models.OrderModel;
 import com.talla.santhamarket.models.ProductModel;
 import com.talla.santhamarket.models.ServerModel;
 import com.talla.santhamarket.models.SpecificationModel;
 import com.talla.santhamarket.models.UserAddress;
 import com.talla.santhamarket.utills.CheckInternet;
+import com.talla.santhamarket.utills.CheckUtill;
+import com.talla.santhamarket.utills.StaticUtills;
 
 import org.json.JSONObject;
 
@@ -50,7 +55,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MultiCartActivity extends AppCompatActivity implements PaymentListner {
+public class MultiCartActivity extends AppCompatActivity implements PaymentListner, PaymentResultListener {
     private ActivityMultiCartBinding binding;
     private CartTabsAdapter cartTabsAdapter;
     private List<Fragment> fragmentList;
@@ -60,11 +65,13 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
     private FirebaseFirestore firestore;
     private DocumentReference documentReference;
     private int totalAddress = 0;
-    private int selectedTabPosition = 0;
+    private int selectedTabPosition = 0, tabSelection = 0;
     private ServerModel serverModel;
     private UserAddress userAddress;
+    private FinalPayTransferModel finalPay;
     private ListenerRegistration serverListner;
-    private FinalPayTransferModel finalPayTransferModel;
+    private String transactionID = "COD", orderID;
+    private List<String> localDocList = new ArrayList<>();
     private static String TAG = "MultiCartActivity";
 
     @Override
@@ -79,6 +86,13 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
         UID = auth.getCurrentUser().getUid();
         documentReference = firestore.collection(this.getResources().getString(R.string.FAVOURITES)).document(UID);
         Checkout.preload(this);
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            tabSelection = bundle.getInt(getString(R.string.cart_typ_key));
+        }
+
+
         if (CheckInternet.checkInternet(this) && !CheckInternet.checkVPN(this)) {
             getAddressCount();
 
@@ -109,10 +123,18 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
 
                 }
             });
-
+            binding.cartItemsViewPager.setCurrentItem(tabSelection);
         } else {
             showDialog("Check Internet Connection", "Invalid Network Connection");
         }
+
+
+        binding.backbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -142,7 +164,7 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                         userAddress = document.toObject(UserAddress.class);
                         userAddress.setDocID(document.getId());
                         binding.changeAddress.setText(R.string.add_or_change);
-                        binding.addressTxt.setText(userAddress.getUser_name() + "\n" + userAddress.getUser_country() + "\n" + userAddress.getUser_state() + "\n" + userAddress.getUser_city() + "\n" + userAddress.getUser_pincode() + "\n" + userAddress.getUser_streetAddress());
+                        binding.addressTxt.setText(userAddress.getUser_name() + "\n" + userAddress.getUser_country()+" , "+ userAddress.getUser_state() + "\n" + userAddress.getUser_city() + " , " + userAddress.getUser_pincode() + "\n" + userAddress.getUser_streetAddress());
                         progressDialog.dismiss();
                     }
                 } else {
@@ -211,21 +233,21 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
         alertDialogBuilder.show();
     }
 
-    public void startPayment() {
+    public void startPayment(int totalAmount) {
 
         Checkout checkout = new Checkout();
-        checkout.setKeyID("rzp_test_icAel9lvJ5HjQ3");
-        checkout.setImage(R.drawable.btn_bg);
+        checkout.setKeyID("rzp_test_8nwGNuKgx0Zk5H");
+//        checkout.setImage(R.drawable.btn_bg);
         try {
             JSONObject options = new JSONObject();
             options.put("name", userAddress.getUser_name());
-            options.put("description", "Reference No. #123456");
+            options.put("description", "cgchcjh");
 //            options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
-            String id = UUID.randomUUID().toString();
-            options.put("order_id", id);
+            orderID = UUID.randomUUID().toString();
+            options.put("order_id", "hvjhvjhvkhjvjv");
             options.put("currency", "INR");
-            options.put("amount", "");
-            options.put("prefill.email", "");
+            options.put("amount", "30000");
+            options.put("prefill.email", "vamsip140@gmail.com");
             String userPhone = "";
             if (userAddress.getUser_phone() != null || !userAddress.getUser_phone().isEmpty()) {
                 userPhone = userAddress.getUser_phone();
@@ -266,18 +288,168 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
 
     @Override
     public void paymentClickListen(FinalPayTransferModel finalPayTransferModel) {
-
+        if (finalPayTransferModel != null) {
+            boolean isLocal = finalPayTransferModel.getProductModelsList().get(0).getItemTypeModel().isLocal();
+            if (isLocal) {
+                localFinalStep(finalPayTransferModel);
+            } else {
+                finalPay = finalPayTransferModel;
+                startPayment(finalPay.getTotalPayment());
+            }
+        } else {
+            showSnackBar(getString(R.string.final_no_data_found));
+        }
     }
 
-    private void finalStep()
-    {
-        String defaultAddress = binding.addressTxt.getText().toString();
-        if (defaultAddress.equalsIgnoreCase(getString(R.string.no_address_found))) {
+    private void onlineFinalStep(FinalPayTransferModel finalModel) {
+        localDocList.clear();
+        if (userAddress == null) {
             showSnackBar("Add Address First");
-        }else {
+        } else {
+            progressDialog.show();
+            final List<ProductModel> productModelList = finalModel.getProductModelsList();
+            for (int i = 0; i < productModelList.size(); i++) {
+                ProductModel productModel = productModelList.get(i);
+                OrderModel orderModel = new OrderModel();
+                orderModel.setProduct_id(productModel.getProduct_id());
+                orderModel.setProduct_name(productModel.getProduct_name());
+                orderModel.setProduct_image(productModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_image());
+                orderModel.setSelectedColor(productModel.getSelectedColor());
+                orderModel.setSelectedSize(productModel.getSelectedSize());
+                orderModel.setSelected_quantity(productModel.getTemp_qty());
+                orderModel.setProduct_price(productModel.getProduct_price());
+                orderModel.setMrp_price(productModel.getMrp_price());
+                orderModel.setTotalProductPrice(finalModel.getTotalPayment());
+                orderModel.setUserId(UID);
+                orderModel.setSeller_name(productModel.getSeller_name());
+                orderModel.setSeller_id(productModel.getSellerId());
+                orderModel.setOrdered_date(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
+                orderModel.setPayment_method("Online");
+                orderModel.setDelvery_address(userAddress);
+                orderModel.setTransaction_id(transactionID);
+                orderModel.setDelivered_date(CheckUtill.getSystemTime(this));
+                orderModel.setDelivered(false);
+                orderModel.setWebUrl("");
+                orderModel.setDeliveryCharges((int) productModel.getDelivery_charges());
+                orderModel.setPaidOrNot(true);
+                List<DeliveryModel> deliveryModelList = new ArrayList<>();
+                DeliveryModel deliveryModel = new DeliveryModel();
+                deliveryModel.setDeliveryDate(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
+                deliveryModel.setDeliveryTitle("Order Placed");
+                deliveryModel.setDeliveryMessage("Order has been placed sucessfully");
+                deliveryModelList.add(deliveryModel);
+                orderModel.setDeliveryModelList(deliveryModelList);
+                //after for loop this
+                final DocumentReference docRef = firestore.collection(getString(R.string.ORDERS)).document();
+                orderModel.setOrder_id(docRef.getId());
+                localDocList.add(docRef.getId());
+                docRef.set(orderModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if (localDocList.size() > 0) {
+                            localDocList.remove(0);
+                        }
+                    }
+                });
+
+            }
+
+            if (localDocList.size() == productModelList.size()) {
+                progressDialog.dismiss();
+                Toast.makeText(MultiCartActivity.this, "Sucess", Toast.LENGTH_SHORT).show();
+            } else {
+                progressDialog.dismiss();
+                Toast.makeText(MultiCartActivity.this, "Error occured", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+    }
+
+    private void localFinalStep(FinalPayTransferModel finalModel) {
+        localDocList.clear();
+        if (userAddress == null) {
+            showSnackBar("Add Address First");
+        } else {
+            progressDialog.show();
+            final List<ProductModel> productModelList = finalModel.getProductModelsList();
+            for (int i = 0; i < productModelList.size(); i++) {
+                ProductModel productModel = productModelList.get(i);
+                OrderModel orderModel = new OrderModel();
+                orderModel.setProduct_id(productModel.getProduct_id());
+                orderModel.setProduct_name(productModel.getProduct_name());
+                orderModel.setProduct_image(productModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_image());
+                orderModel.setSelectedColor(productModel.getSelectedColor());
+                orderModel.setSelectedSize(productModel.getSelectedSize());
+                orderModel.setSelected_quantity(productModel.getTemp_qty());
+                orderModel.setProduct_price(productModel.getProduct_price());
+                orderModel.setMrp_price(productModel.getMrp_price());
+                orderModel.setTotalProductPrice(finalModel.getTotalPayment());
+                orderModel.setUserId(UID);
+                orderModel.setSeller_name(productModel.getSeller_name());
+                orderModel.setSeller_id(productModel.getSellerId());
+                orderModel.setOrdered_date(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
+                orderModel.setPayment_method("COD");
+                orderModel.setDelvery_address(userAddress);
+                orderModel.setTransaction_id(transactionID);
+                orderModel.setDelivered_date(CheckUtill.getSystemTime(this));
+                orderModel.setDelivered(false);
+                orderModel.setWebUrl("");
+                int deliveryCharges = (int) (((productModel.getProduct_price() * productModel.getTemp_qty()) * 10) / 100);
+                orderModel.setDeliveryCharges(deliveryCharges);
+                orderModel.setPaidOrNot(false);
+                List<DeliveryModel> deliveryModelList = new ArrayList<>();
+                DeliveryModel deliveryModel = new DeliveryModel();
+                deliveryModel.setDeliveryDate(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
+                deliveryModel.setDeliveryTitle("Order Placed");
+                deliveryModel.setDeliveryMessage("Order has been placed sucessfully");
+                deliveryModelList.add(deliveryModel);
+                orderModel.setDeliveryModelList(deliveryModelList);
+                //after for loop this
+                final DocumentReference docRef = firestore.collection(getString(R.string.ORDERS)).document();
+                orderModel.setOrder_id(docRef.getId());
+                localDocList.add(docRef.getId());
+                docRef.set(orderModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if (localDocList.size() > 0) {
+                            localDocList.remove(0);
+                        }
+                    }
+                });
+
+            }
+
+            if (localDocList.size() == productModelList.size()) {
+                progressDialog.dismiss();
+                Toast.makeText(MultiCartActivity.this, "Sucess", Toast.LENGTH_SHORT).show();
+            } else {
+                progressDialog.dismiss();
+                Toast.makeText(MultiCartActivity.this, "Error occured", Toast.LENGTH_SHORT).show();
+            }
+
 
         }
     }
 
 
+    @Override
+    public void onPaymentSuccess(String s) {
+        onlineFinalStep(finalPay);
+    }
+
+    @Override
+    public void onPaymentError(int i, String s) {
+        showDialog("Payment Error Occured", s);
+    }
 }

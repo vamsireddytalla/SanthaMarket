@@ -83,7 +83,7 @@
                             android:layout_marginLeft="5dp"
                             android:clickable="false"
                             android:saveEnabled="false"
-                            android:text="Cash on delivery"
+                            android:text="@string/CASH_ON_DELIVERY"
                             android:theme="@style/RadioButtonStyle" />
                     </RadioGroup>
                 </LinearLayout>
@@ -102,7 +102,7 @@
                     android:ellipsize="marquee"
                     android:textStyle="bold"
                     style="@style/Roboto_TextView_Light_dark"
-                    android:text="For Help or any Extra cash back contact us at santhamarketonline@gmail.com"
+                    android:text="@string/help_message"
                     android:textColor="@color/colorPrimaryDark" />
 
                 <LinearLayout

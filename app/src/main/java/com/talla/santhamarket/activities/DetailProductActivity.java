@@ -102,7 +102,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     List<String> productColors = new ArrayList<>();
     List<String> productSizes = new ArrayList<>();
     private View view;
-    private int totalCart_items = 0,selectedQty=1;
+    private int totalCart_items = 0;
     private ListenerRegistration cartitemCountListner, productListner, favListner;
     private static final String TAG = "DetailProductActivity";
 
@@ -254,7 +254,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     }
 
     private void addItemToCart() {
-        progressDialog.show();
         DocumentReference ref = firestore.collection(getString(R.string.CART_ITEMS)).document();
         CartModel cartModel = new CartModel();
         cartModel.setCart_doc_id(ref.getId());
@@ -291,7 +290,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     }
 
     private void updateItemToCart(String docId) {
-        progressDialog.show();
         DocumentReference ref = firestore.collection(getString(R.string.CART_ITEMS)).document(docId);
         CartModel cartModel = new CartModel();
         cartModel.setCart_doc_id(ref.getId());
@@ -335,18 +333,20 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                     }
                     if (cartModel == null) {
                         Log.d(TAG, "No Doc Available");
-                        progressDialog.dismiss();
-                        if (totalCart_items < 10 || key.equalsIgnoreCase("Continue")) {
+
+                        if (totalCart_items < 50 || !productModel.isOut_of_stock() && !productModel.getTotalStock().equals(productModel.getSelled_items())) {
                             addItemToCart();
                         } else {
+                            progressDialog.dismiss();
                             showDialog("Cart Items limit Exceeded...");
                         }
 
                     } else {
-                        progressDialog.dismiss();
+
                         if (key.equalsIgnoreCase("Continue")) {
                             updateItemToCart(cartModel.getCart_doc_id());
                         } else {
+                            progressDialog.dismiss();
                             showDialog("Already Added Item to Cart!");
                         }
                         Log.d(TAG, "Doc Available");
@@ -565,7 +565,10 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     public void nextStep(View view) {
         key = binding.continueText.getText().toString();
-        if (!key.equalsIgnoreCase(getString(R.string.out_of_stock))) {
+        if (productModel.isOut_of_stock() && (productModel.getTotalStock().equals(productModel.getSelled_items()))) {
+            showSnackBar("Out Of Stock");
+            binding.continueText.setText(R.string.out_of_stock);
+        } else {
             checkItemIsExists(key);
         }
 
@@ -573,6 +576,12 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void openIntent() {
         Intent intent = new Intent(this, MultiCartActivity.class);
+        int itemKey=0;
+        if (productModel.getItemTypeModel().isLocal())
+        {
+            itemKey=1;
+        }
+        intent.putExtra(getString(R.string.cart_typ_key),itemKey);
         startActivity(intent);
     }
 
@@ -588,7 +597,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        progressDialog = new Dialog(this);
+        progressDialog = new Dialog(this, R.style.MaterialTheme);
         com.talla.santhamarket.databinding.CustomProgressDialogBinding customProgressDialogBinding = com.talla.santhamarket.databinding.CustomProgressDialogBinding.inflate(this.getLayoutInflater());
         progressDialog.setContentView(customProgressDialogBinding.getRoot());
         progressDialog.setCancelable(false);

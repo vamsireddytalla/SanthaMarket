@@ -46,11 +46,10 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
         binding.bottomNav.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_LABELED);
         addFragment(new HomeFragment());
         auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser()!=null)
-        {
+        if (auth.getCurrentUser() != null) {
             UID = auth.getCurrentUser().getUid();
             sendFCMToken();
-        }else {
+        } else {
             finish();
         }
 
@@ -60,28 +59,28 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
                 Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.rootFrame);
                 switch (item.getItemId()) {
                     case R.id.home:
-                        if (currentFrag instanceof HomeFragment)
-                        {
+                        if (currentFrag instanceof HomeFragment) {
                             return true;
-                        }else {
+                        } else {
                             replacefragment(new HomeFragment(), "HomeFag");
                             return true;
                         }
                     case R.id.orders:
-                        if (currentFrag instanceof MyOrdersFragment)
+                        if (currentFrag instanceof MyOrdersFragment) {
                             return true;
-                        replacefragment(new MyOrdersFragment(), "MyOrderFrag");
-                        return true;
+                        } else {
+                            replacefragment(new MyOrdersFragment(), "MyOrderFrag");
+                            return true;
+                        }
                     case R.id.favourite:
                         Intent favIntent = new Intent(HomeActivity.this, FavouriteActivity.class);
                         startActivity(favIntent);
                         return false;
                     case R.id.profile:
-                        if (auth.getCurrentUser()!=null)
-                        {
+                        if (auth.getCurrentUser() != null) {
                             Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                             startActivity(intent);
-                        }else {
+                        } else {
                             Intent intent = new Intent(HomeActivity.this, AuthenticationActivity.class);
                             startActivity(intent);
                         }
@@ -103,7 +102,6 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
     private void replacefragment(Fragment fragment, String tagName) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.rootFrame, fragment);
-        ft.addToBackStack(tagName);
         ft.commit();
     }
 
@@ -146,8 +144,7 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
         binding.bottomNav.getMenu().getItem(fragNo).setChecked(true);
     }
 
-    private void sendFCMToken()
-    {
+    private void sendFCMToken() {
         FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(new OnCompleteListener<InstallationTokenResult>() {
             @Override
             public void onComplete(@NonNull Task<InstallationTokenResult> task) {

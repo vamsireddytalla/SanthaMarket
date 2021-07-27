@@ -160,6 +160,8 @@
                     android:padding="@dimen/_5sdp"
                     android:id="@+id/removeQty"
                     android:layout_marginRight="@dimen/_10sdp"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
                     android:src="@drawable/remove_black" />
 
                 <TextView
@@ -178,6 +180,8 @@
                     android:background="@drawable/gray_circle"
                     android:padding="@dimen/_5sdp"
                     android:id="@+id/addQty"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
                     android:src="@drawable/add_black" />
             </LinearLayout>
         </LinearLayout>
@@ -240,10 +244,10 @@
     <LinearLayout
         android:id="@+id/soldOut"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_35sdp"
-        android:layout_centerInParent="true"
+        android:layout_height="match_parent"
         android:background="@color/transparent"
-        android:visibility="gone">
+        android:layout_marginBottom="@dimen/_50sdp"
+        android:visibility="visible">
 
         <TextView
             style="@style/Roboto_TextView_Light_dark"

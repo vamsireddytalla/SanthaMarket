@@ -5,7 +5,7 @@ import java.util.List;
 public class FinalPayTransferModel
 {
     private List<ProductModel> productModelsList;
-    private String totalPayment;
+    private int totalPayment;
 
     public List<ProductModel> getProductModelsList() {
         return productModelsList;
@@ -15,11 +15,11 @@ public class FinalPayTransferModel
         this.productModelsList = productModelsList;
     }
 
-    public String getTotalPayment() {
+    public int getTotalPayment() {
         return totalPayment;
     }
 
-    public void setTotalPayment(String totalPayment) {
+    public void setTotalPayment(int totalPayment) {
         this.totalPayment = totalPayment;
     }
 

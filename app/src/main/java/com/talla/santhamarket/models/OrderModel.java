@@ -1,6 +1,7 @@
 package com.talla.santhamarket.models;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class OrderModel implements Serializable
 {
@@ -9,7 +10,7 @@ public class OrderModel implements Serializable
     private String product_image;
     private String selectedColor;
     private String selectedSize;
-    private String selected_quantity;
+    private int selected_quantity;
     private double product_price;
     private double mrp_price;
     private double totalProductPrice;
@@ -19,6 +20,7 @@ public class OrderModel implements Serializable
     private String order_id;
     private String ordered_date;
     private String payment_method;
+    private int deliveryCharges;
     private String cancelReason;
     private UserAddress delvery_address;
     private String transaction_id;
@@ -26,6 +28,7 @@ public class OrderModel implements Serializable
     private boolean isDelivered = false;
     private String webUrl;
     private boolean paidOrNot = false;
+    private List<DeliveryModel> deliveryModelList;
 
 
     public String getProduct_id() {
@@ -68,11 +71,12 @@ public class OrderModel implements Serializable
         this.selectedSize = selectedSize;
     }
 
-    public String getSelected_quantity() {
+
+    public int getSelected_quantity() {
         return selected_quantity;
     }
 
-    public void setSelected_quantity(String selected_quantity) {
+    public void setSelected_quantity(int selected_quantity) {
         this.selected_quantity = selected_quantity;
     }
 
@@ -202,5 +206,53 @@ public class OrderModel implements Serializable
 
     public void setPaidOrNot(boolean paidOrNot) {
         this.paidOrNot = paidOrNot;
+    }
+
+
+    public List<DeliveryModel> getDeliveryModelList() {
+        return deliveryModelList;
+    }
+
+    public void setDeliveryModelList(List<DeliveryModel> deliveryModelList) {
+        this.deliveryModelList = deliveryModelList;
+    }
+
+
+    public int getDeliveryCharges() {
+        return deliveryCharges;
+    }
+
+    public void setDeliveryCharges(int deliveryCharges) {
+        this.deliveryCharges = deliveryCharges;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderModel{" +
+                "product_id='" + product_id + '\'' +
+                ", product_name='" + product_name + '\'' +
+                ", product_image='" + product_image + '\'' +
+                ", selectedColor='" + selectedColor + '\'' +
+                ", selectedSize='" + selectedSize + '\'' +
+                ", selected_quantity=" + selected_quantity +
+                ", product_price=" + product_price +
+                ", mrp_price=" + mrp_price +
+                ", totalProductPrice=" + totalProductPrice +
+                ", userId='" + userId + '\'' +
+                ", seller_name='" + seller_name + '\'' +
+                ", seller_id='" + seller_id + '\'' +
+                ", order_id='" + order_id + '\'' +
+                ", ordered_date='" + ordered_date + '\'' +
+                ", payment_method='" + payment_method + '\'' +
+                ", deliveryCharges=" + deliveryCharges +
+                ", cancelReason='" + cancelReason + '\'' +
+                ", delvery_address=" + delvery_address +
+                ", transaction_id='" + transaction_id + '\'' +
+                ", delivered_date='" + delivered_date + '\'' +
+                ", isDelivered=" + isDelivered +
+                ", webUrl='" + webUrl + '\'' +
+                ", paidOrNot=" + paidOrNot +
+                ", deliveryModelList=" + deliveryModelList +
+                '}';
     }
 }

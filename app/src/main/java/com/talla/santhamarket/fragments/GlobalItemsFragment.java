@@ -56,7 +56,6 @@ public class GlobalItemsFragment extends Fragment implements QuantityClickListne
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private DocumentReference documentReference;
-    private int totalAddress = 0;
     private SummaryAdapter summaryAdapter;
     private List<CartModel> cartModelsList = new ArrayList<>();
     private List<ProductModel> productModelList = new ArrayList<>();
@@ -66,7 +65,7 @@ public class GlobalItemsFragment extends Fragment implements QuantityClickListne
     private HashMap<String, Object> totalItemsList = new HashMap<>();
     private MultiCartActivity homeActivity;
     private PaymentListner paymentListner;
-    private FinalPayTransferModel finalPayTransferModel;
+    private FinalPayTransferModel finalPayTransferModel = new FinalPayTransferModel();
     private static String TAG = "GlobalItemsFragment";
 
 
@@ -96,9 +95,15 @@ public class GlobalItemsFragment extends Fragment implements QuantityClickListne
             @Override
             public void onClick(View v) {
                 if (!CheckInternet.checkVPN(homeActivity) && CheckInternet.checkInternet(homeActivity)) {
-                    paymentListner.paymentClickListen(finalPayTransferModel);
+                    if (finalPrice <= 0) {
+                        showSnackBar("Error Occured Contact Customer Care " + homeActivity.getResources().getString(R.string.admin_email));
+                    } else {
+                        finalPayTransferModel.setProductModelsList(productModelList);
+                        finalPayTransferModel.setTotalPayment(finalPrice);
+                        paymentListner.paymentClickListen(finalPayTransferModel);
+                    }
                 } else {
-                    showSnackBar("Check Internet Connection");
+                    showSnackBar("Check Internet Connection/Disconnect VPN");
                 }
             }
         });
@@ -375,19 +380,21 @@ public class GlobalItemsFragment extends Fragment implements QuantityClickListne
         deliveryCharges = 0;
         for (int i = 0; i < productModelList.size(); i++) {
             ProductModel productModel1 = productModelList.get(i);
-            double mrp_price = productModel1.getMrp_price();
-            double selling_price = productModel1.getProduct_price();
+            if (!productModel1.isOut_of_stock() && !(productModel1.getTotalStock().equals(productModel1.getSelled_items()))) {
+                double mrp_price = productModel1.getMrp_price();
+                double selling_price = productModel1.getProduct_price();
 
-            int a = productModelList.get(i).getTemp_qty();
-            double sellingPrice = (selling_price * a);
-            double mrpPrice = (mrp_price * productModelList.get(i).getTemp_qty());
-            totalMrpPrice = (int) (totalMrpPrice + Math.round(mrpPrice));
-            Log.d(TAG, sellingPrice + "\n" + mrpPrice);
-            totalDiscount = (float) (totalDiscount + (mrpPrice - sellingPrice));
-            deliveryCharges = (int) (deliveryCharges + productModel1.getDelivery_charges());
+                int a = productModelList.get(i).getTemp_qty();
+                double sellingPrice = (selling_price * a);
+                double mrpPrice = (mrp_price * productModelList.get(i).getTemp_qty());
+                totalMrpPrice = (int) (totalMrpPrice + Math.round(mrpPrice));
+                Log.d(TAG, sellingPrice + "\n" + mrpPrice);
+                totalDiscount = (float) (totalDiscount + (mrpPrice - sellingPrice));
+                deliveryCharges = (int) (deliveryCharges + productModel1.getDelivery_charges());
+            }
         }
         totalItems = productModelList.size();
-        finalPrice = ((int) totalMrpPrice - (int) totalDiscount);
+        finalPrice = deliveryCharges + ((int) totalMrpPrice - (int) totalDiscount);
         binding.pricItemTitle.setText("Price ( " + totalItems + " Items )");
         binding.allItemsPriceText.setText(getString(R.string.rs_symbol) + CheckUtill.FormatCost(totalMrpPrice));
         binding.discountPriceText.setText("-" + CheckUtill.FormatCost((int) totalDiscount) + getString(R.string.rs_symbol));

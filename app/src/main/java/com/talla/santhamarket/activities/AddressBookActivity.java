@@ -32,6 +32,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.talla.santhamarket.R;
@@ -53,16 +54,15 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     private ProfileDialogBinding profileDialogBinding;
     private Dialog dialog;
     private String userId, userName, userPhone, alterPhone, country, state, city, pincode, streetAddress, latitude, longitude;
-    private boolean isDefault = false;
     private String UID;
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
-    private DocumentReference documentReference;
     private Dialog progressDialog;
     private AddressAdapter addressAdapter;
     List<UserAddress> userAddressList = new ArrayList<>();
     private String clickerAction = "Add";
     private int itemClickedPos, totalAddress = 0;
+    private ListenerRegistration addressListner, addressCountListner;
     private static final String TAG = "AddressBookActivity";
 
     @Override
@@ -75,14 +75,19 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
         auth = FirebaseAuth.getInstance();
         UID = auth.getCurrentUser().getUid();
 
-        getAddressCount();
-        getAddressBookListner();
         binding.backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getAddressCount();
+        getAddressBookListner();
     }
 
     public void addAddress(View view) {
@@ -124,7 +129,6 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
         profileDialogBinding.saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.show();
                 addDataToDb();
 
             }
@@ -147,31 +151,24 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
         if (userName.length() == 0) {
             profileDialogBinding.userName.setError("Empty");
             profileDialogBinding.userName.requestFocus();
-            return;
         } else if (country.length() == 0) {
             profileDialogBinding.country.setError("Empty");
             profileDialogBinding.country.requestFocus();
-            return;
         } else if (state.length() == 0) {
             profileDialogBinding.state.setError("Empty");
             profileDialogBinding.state.requestFocus();
-            return;
         } else if (city.length() == 0) {
             profileDialogBinding.city.setError("Empty");
             profileDialogBinding.city.requestFocus();
-            return;
         } else if (userPhone.length() == 0 && alterPhone.length() == 0) {
             profileDialogBinding.phoneNumber.setError("Empty");
             profileDialogBinding.phoneNumber.requestFocus();
-            return;
         } else if (pincode.length() == 0) {
             profileDialogBinding.pincode.setError("Empty");
             profileDialogBinding.pincode.requestFocus();
-            return;
         } else if (streetAddress.length() == 0) {
             profileDialogBinding.streetAddress.setError("Empty");
             profileDialogBinding.streetAddress.requestFocus();
-            return;
         } else {
             progressDialog.show();
             UserAddress userAddress = new UserAddress();
@@ -223,7 +220,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
 
     private void getAddressCount() {
         Query query = firestore.collection(getString(R.string.ADDRESS_BOOK)).whereEqualTo("userId", UID);
-        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        addressCountListner = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -295,7 +292,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     }
 
     private void getAddressBookListner() {
-        firestore.collection(getString(R.string.ADDRESS_BOOK)).whereEqualTo("userId", UID).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        addressListner = firestore.collection(getString(R.string.ADDRESS_BOOK)).whereEqualTo("userId", UID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
 
@@ -312,6 +309,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
                         case MODIFIED:
                             UserAddress userAddress1 = dc.getDocument().toObject(UserAddress.class);
                             userAddress1.setDocID(docId);
+                            Toast.makeText(AddressBookActivity.this, "Address Listner", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "UserModel data modified to list: " + userAddress1.toString());
                             for (int i = 0; i < userAddressList.size(); i++) {
                                 if (userAddressList.get(i).getDocID().equalsIgnoreCase(userAddress1.getDocID())) {
@@ -425,5 +423,10 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
         progressDialog.setCancelable(false);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        addressListner.remove();
+        addressCountListner.remove();
+    }
 }

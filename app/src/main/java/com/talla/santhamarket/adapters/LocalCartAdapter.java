@@ -3,46 +3,35 @@ package com.talla.santhamarket.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.CompoundButton;
-import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.snackbar.Snackbar;
 import com.talla.santhamarket.R;
-import com.talla.santhamarket.databinding.AddressItemBinding;
 import com.talla.santhamarket.databinding.OrderSummaryItemBinding;
-import com.talla.santhamarket.interfaces.AddressItemListner;
 import com.talla.santhamarket.interfaces.ChartsClickListner;
 import com.talla.santhamarket.interfaces.QuantityClickListner;
 import com.talla.santhamarket.models.ProductImageModel;
 import com.talla.santhamarket.models.ProductModel;
 import com.talla.santhamarket.models.SubProductModel;
-import com.talla.santhamarket.models.UserAddress;
 import com.talla.santhamarket.utills.CheckUtill;
 import com.talla.santhamarket.utills.StaticUtills;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHolder> {
+public class LocalCartAdapter extends RecyclerView.Adapter<LocalCartAdapter.MyViewHolder> {
     private Context context;
     private List<ProductModel> productModelList;
     private QuantityClickListner listner;
     private ChartsClickListner chartsClickListner;
 
-    public SummaryAdapter(Context context, List<ProductModel> productModelList, QuantityClickListner listner, ChartsClickListner chartsClickListner) {
+    public LocalCartAdapter(Context context, List<ProductModel> productModelList, QuantityClickListner listner, ChartsClickListner chartsClickListner) {
         this.context = context;
         this.productModelList = productModelList;
         this.chartsClickListner = chartsClickListner;
@@ -57,14 +46,14 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
 
     @NonNull
     @Override
-    public SummaryAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public LocalCartAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         OrderSummaryItemBinding itemBinding = OrderSummaryItemBinding.inflate(layoutInflater, parent, false);
-        return new SummaryAdapter.MyViewHolder(itemBinding);
+        return new LocalCartAdapter.MyViewHolder(itemBinding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final SummaryAdapter.MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final LocalCartAdapter.MyViewHolder holder, final int position) {
         holder.onBindView(productModelList.get(position));
 
         holder.binding.sumRemove.setOnClickListener(new View.OnClickListener() {
@@ -97,9 +86,6 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
                         enteredQuatity += 1;
                         holder.binding.qtyText.setText(String.format("%02d", enteredQuatity));
                         productModelList.get(position).setTemp_qty(enteredQuatity);
-                        double productTotalWeight = (productModel.getProduct_weight() * enteredQuatity);
-                        int finalproductPrice = StaticUtills.productWeightConversion((int) productTotalWeight);
-                        productModelList.get(position).setDelivery_charges(finalproductPrice);
                         listner.quantityClickListener(position, productModel);
                     }
                 }
@@ -119,9 +105,6 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
                         enteredQuatity -= 1;
                         holder.binding.qtyText.setText(String.format("%02d", enteredQuatity));
                         productModelList.get(position).setTemp_qty(enteredQuatity);
-                        double productTotalWeight = (productModel.getProduct_weight() * enteredQuatity);
-                        int finalproductPrice = StaticUtills.productWeightConversion((int) productTotalWeight);
-                        productModelList.get(position).setDelivery_charges(finalproductPrice);
                         listner.quantityClickListener(position, productModel);
                     }
                 }
@@ -158,18 +141,18 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
             String selectedColor = productModel.getSelectedColor();
             if (selectedColor != null && !selectedColor.isEmpty()) {
                 binding.itemColor.setVisibility(View.VISIBLE);
-                binding.colorItem.setBackgroundColor(Integer.parseInt(selectedColor));
+                binding.colorItem.setBackgroundColor(Integer.parseInt(productModel.getSelectedColor()));
             } else {
                 binding.itemColor.setVisibility(View.GONE);
             }
             Glide.with(context).load(getSelectedProductImage(productModel.getSubProductModelList(), selectedColor)).fitCenter().into(binding.sumPic);
             String selectedSize = productModel.getSelectedSize();
-            if (selectedSize != null && !selectedSize.isEmpty()) {
+            if (selectedColor != null && !selectedColor.isEmpty()) {
                 binding.itemChart.setText("Size : " + selectedSize);
             } else {
                 binding.itemChart.setVisibility(View.GONE);
             }
-            if (productModel.isOut_of_stock() || (productModel.getTotalStock().equals(productModel.getSelled_items()))) {
+            if (productModel.isOut_of_stock()) {
                 binding.soldOut.setVisibility(View.VISIBLE);
             } else {
                 binding.soldOut.setVisibility(View.INVISIBLE);
@@ -185,21 +168,22 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
 
         }
 
-    }
 
-
-    private String getSelectedProductImage(List<SubProductModel> subProductModelList, String prodColor) {
-        for (int i = 0; i < subProductModelList.size(); i++) {
-            List<ProductImageModel> productImageModelList = subProductModelList.get(i).getProduct_images();
-            if (subProductModelList.get(i).getProduct_color() != null) {
-                if (subProductModelList.get(i).getProduct_color().equalsIgnoreCase(prodColor)) {
-                    Log.d("SUMMARY ADAPTER", prodColor + i);
-                    return productImageModelList.get(i).getProduct_image();
+        private String getSelectedProductImage(List<SubProductModel> subProductModelList, String prodColor) {
+            for (int i = 0; i < subProductModelList.size(); i++) {
+                List<ProductImageModel> productImageModelList = subProductModelList.get(i).getProduct_images();
+                if (subProductModelList.get(i).getProduct_color() != null) {
+                    if (subProductModelList.get(i).getProduct_color().equalsIgnoreCase(prodColor)) {
+                        Log.d("LOCAL ADAPTER", prodColor + i);
+                        return productImageModelList.get(i).getProduct_image();
+                    }
                 }
-            }
 
+            }
+            return subProductModelList.get(0).getProduct_images().get(0).getProduct_image();
         }
-        return subProductModelList.get(0).getProduct_images().get(0).getProduct_image();
+
+
     }
 
     private void showDialog(final ProductModel productModel) {

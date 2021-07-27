@@ -4,6 +4,10 @@ apply plugin: 'com.google.gms.google-services'
 
 repositories {
     mavenCentral()
+
+    flatDir{
+        dirs 'libs'
+    }
 }
 
 android {

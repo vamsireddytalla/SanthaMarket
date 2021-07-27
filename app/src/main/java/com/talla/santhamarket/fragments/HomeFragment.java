@@ -185,7 +185,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (totalCart_items > 0) {
-                    Intent intent = new Intent(homeActivity, OrderSummaryActivity.class);
+                    Intent intent = new Intent(homeActivity, MultiCartActivity.class);
                     startActivity(intent);
                 }
             }
@@ -195,7 +195,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (totalCart_items > 0) {
-                    Intent intent = new Intent(homeActivity, OrderSummaryActivity.class);
+                    Intent intent = new Intent(homeActivity, MultiCartActivity.class);
                     startActivity(intent);
                 }
             }
