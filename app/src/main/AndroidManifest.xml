@@ -6,8 +6,8 @@
     <dist:module dist:instant="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.LocalShopActivity"/>
+        <activity android:name=".activities.MultiCartActivity"></activity>
+        <activity android:name=".activities.LocalShopActivity" />
         <activity android:name=".activities.WebViewActivity" />
         <activity android:name=".activities.OrderSucessActivity" />
         <activity
@@ -33,7 +34,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.DetailProductActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomTheme" />
         <activity
             android:name=".activities.ViewProductsActivity"
             android:screenOrientation="portrait"
@@ -71,6 +73,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".fcm.FirebaseTokenGneration"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

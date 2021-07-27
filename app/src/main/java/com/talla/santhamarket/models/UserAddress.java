@@ -15,6 +15,7 @@ public class UserAddress
     private String user_long;
     private boolean defaultAddress=true;
     private String docID;
+    private String emailId;
 
     public String getUser_country() {
         return user_country;
@@ -123,6 +124,14 @@ public class UserAddress
         this.docID = docID;
     }
 
+    public String getEmailId() {
+        return emailId;
+    }
+
+    public void setEmailId(String emailId) {
+        this.emailId = emailId;
+    }
+
     @Override
     public String toString() {
         return "UserAddress{" +
@@ -139,6 +148,7 @@ public class UserAddress
                 ", user_long='" + user_long + '\'' +
                 ", defaultAddress=" + defaultAddress +
                 ", docID='" + docID + '\'' +
+                ", emailId='" + emailId + '\'' +
                 '}';
     }
 }

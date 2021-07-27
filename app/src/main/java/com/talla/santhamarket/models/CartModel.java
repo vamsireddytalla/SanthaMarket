@@ -7,6 +7,7 @@ public class CartModel
     private String user_id;
     private String size_chart;
     private String selected_color;
+    private ItemTypeModel itemTypeModel;
     private String timestamp;
 
     public String getCart_doc_id() {
@@ -57,6 +58,15 @@ public class CartModel
         this.timestamp = timestamp;
     }
 
+    public ItemTypeModel getItemTypeModel() {
+        return itemTypeModel;
+    }
+
+    public void setItemTypeModel(ItemTypeModel itemTypeModel) {
+        this.itemTypeModel = itemTypeModel;
+    }
+
+
     @Override
     public String toString() {
         return "CartModel{" +
@@ -65,6 +75,7 @@ public class CartModel
                 ", user_id='" + user_id + '\'' +
                 ", size_chart='" + size_chart + '\'' +
                 ", selected_color='" + selected_color + '\'' +
+                ", itemTypeModel=" + itemTypeModel +
                 ", timestamp='" + timestamp + '\'' +
                 '}';
     }

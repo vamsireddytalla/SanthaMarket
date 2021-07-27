@@ -32,6 +32,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -54,6 +55,7 @@ public class LocalShopActivity extends AppCompatActivity {
     private FirebaseFirestore firebaseFirestore;
     private List<ProductModel> productModelList = new ArrayList<>();
     private Dialog progressDialog;
+    private ListenerRegistration localProdListner;
     private static final String TAG = "LocalShopActivity";
 
     @Override
@@ -67,13 +69,24 @@ public class LocalShopActivity extends AppCompatActivity {
         sharedEncryptUtills = SharedEncryptUtills.getInstance(this);
         firebaseFirestore = FirebaseFirestore.getInstance();
         dialogIninit();
-        requestPermissions();
         binding.backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        requestPermissions();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        localProdListner.remove();
     }
 
     private void requestPermissions() {
@@ -168,7 +181,7 @@ public class LocalShopActivity extends AppCompatActivity {
         if (!productModelList.isEmpty()) {
             productModelList.clear();
         }
-        firebaseFirestore.collection(getString(R.string.PRODUCTS)).whereEqualTo("itemTypeModel.local", true).whereEqualTo("itemTypeModel.pincode", "533343").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        localProdListner = firebaseFirestore.collection(getString(R.string.PRODUCTS)).whereEqualTo("itemTypeModel.local", true).whereEqualTo("itemTypeModel.pincode", "533343").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {

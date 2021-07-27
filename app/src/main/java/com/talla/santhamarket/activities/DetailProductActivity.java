@@ -12,11 +12,15 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -40,6 +44,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -55,6 +60,8 @@ import com.talla.santhamarket.adapters.QuantityAdapter;
 import com.talla.santhamarket.adapters.RatingsAdapter;
 import com.talla.santhamarket.databinding.ActivityDetailProductBinding;
 import com.talla.santhamarket.databinding.AddCartItemBinding;
+import com.talla.santhamarket.databinding.CheckInternetBinding;
+import com.talla.santhamarket.databinding.CustomCartBinding;
 import com.talla.santhamarket.databinding.OrderSummaryItemBinding;
 import com.talla.santhamarket.databinding.ProductDescriptionLayoutBinding;
 import com.talla.santhamarket.interfaces.ChartsClickListner;
@@ -79,19 +86,12 @@ import static com.google.firebase.firestore.DocumentChange.Type.REMOVED;
 
 public class DetailProductActivity extends AppCompatActivity implements ChartsClickListner {
     private ActivityDetailProductBinding binding;
-    private AddCartItemBinding addCartItemBinding;
-    private ViewPager2 viewPagerPrductImages;
-    private TabLayout imagesTabLayout;
-    private ViewPager2 viewPagerDescription;
-    private TabLayout descriptionTabLayout;
     private ProductImagesAdapter poductImagesAdapter;
     private ProductSizeAdapter productSizeAdapter;
     private List<ProductImageModel> productsImagesList = new ArrayList<>();
     private List<SubProductModel> subProductModelList;
-    private boolean isFavItem = false;
     private String productId, key;
     private ProductModel productModel;
-    private int selectedQty = 1;
     private String UID;
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
@@ -101,9 +101,9 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     private SpecificationModel specificationModel;
     List<String> productColors = new ArrayList<>();
     List<String> productSizes = new ArrayList<>();
-    private boolean isFirstTime = true;
     private View view;
-    int totalCart_items = 0;
+    private int totalCart_items = 0,selectedQty=1;
+    private ListenerRegistration cartitemCountListner, productListner, favListner;
     private static final String TAG = "DetailProductActivity";
 
     @Override
@@ -121,7 +121,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             productId = bundle.getString(getString(R.string.intent_product_id));
-            getCartItemsCount();
             Log.d(TAG, "CategoryId from Intent :" + productId);
         } else {
             finish();
@@ -145,7 +144,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                 startActivity(intent);
             }
         });
-        getProdBasedOnProdId();
 
 
         binding.backBtn.setOnClickListener(new View.OnClickListener() {
@@ -172,7 +170,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 //        RatingsAdapter ratingsAdapter = new RatingsAdapter(this, ratingModelList);
 //        binding.ratingRCV.setAdapter(ratingsAdapter);
 
-        isFavOrNot();
         binding.toggleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -238,7 +235,22 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
             }
         });
 
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getCartItemsCount();
+        getProdBasedOnProdId();
+        isFavOrNot();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        cartitemCountListner.remove();
+        productListner.remove();
+        favListner.remove();
     }
 
     private void addItemToCart() {
@@ -250,6 +262,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         cartModel.setUser_id(UID);
         cartModel.setTimestamp(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
         cartModel.setSize_chart(productModel.getSelectedSize());
+        cartModel.setItemTypeModel(productModel.getItemTypeModel());
         cartModel.setSelected_color(productModel.getSelectedColor());
         ref.set(cartModel).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -286,6 +299,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         cartModel.setUser_id(UID);
         cartModel.setTimestamp(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
         cartModel.setSize_chart(productModel.getSelectedSize());
+        cartModel.setItemTypeModel(productModel.getItemTypeModel());
         cartModel.setSelected_color(productModel.getSelectedColor());
         ref.set(cartModel).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -354,7 +368,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void getCartItemsCount() {
         Query query = firestore.collection(getString(R.string.CART_ITEMS)).whereEqualTo("user_id", UID);
-        query.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+        cartitemCountListner = query.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -362,7 +376,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                 } else {
                     totalCart_items = value.getDocuments().size();
                     Log.d(TAG, "Cart Items " + totalCart_items);
-                    binding.cartInclude.cartCount.setText(totalCart_items + "");
+                    binding.cartItemsCount.setText(totalCart_items + "");
                 }
             }
         });
@@ -393,7 +407,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
             Query query = firestore.collection(getString(R.string.FAVOURITES));
             query = query.whereEqualTo("product_id", productId);
             query = query.whereEqualTo("userId", UID);
-            query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            favListner = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                     if (error != null) {
@@ -438,7 +452,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                     if (value != null && value.exists()) {
                         productModel = value.toObject(ProductModel.class);
                         Log.d(TAG, "Product Model :" + productModel.toString());
-                        docRef.collection(getString(R.string.SPECIFICATIONS)).document(productModel.getProduct_id()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        productListner = docRef.collection(getString(R.string.SPECIFICATIONS)).document(productModel.getProduct_id()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
                             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                                 if (error != null) {
@@ -463,7 +477,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void setDataToUi(ProductModel productModel) {
         productsImagesList.clear();
-//        productsImagesList.addAll(productModel.get());
 
         subProductModelList = productModel.getSubProductModelList();
         productColors.clear();
@@ -478,14 +491,11 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
             productSizes = subProductModelList.get(0).getProduct_sizes();
         }
 
-
         if (subProductModelList.get(0).getProduct_images() != null) {
-
             for (int g = 0; g < subProductModelList.get(0).getProduct_images().size(); g++) {
                 productsImagesList.add(subProductModelList.get(0).getProduct_images().get(g));
             }
         }
-
 
         poductImagesAdapter.setProductImageModelList(productsImagesList);
         if (!productSizes.isEmpty()) {
@@ -512,12 +522,13 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         binding.totalRatings.setText(productModel.getTotal_ratings() + "(Reviews)");
         int res = StaticUtills.discountPercentage(selling_price, mrp_price);
         binding.discount.setText(String.valueOf(res) + "%OFF");
-        if (productModel.isOut_of_stock()) {
-            binding.continueBtn.setBackgroundColor(getResources().getColor(R.color.orange));
-            binding.continueText.setText("Out of Stock");
+        binding.productWeight.setText("Product Weight : " + productModel.getProduct_weight() + " Kg");
+        if (productModel.isOut_of_stock() || (productModel.getTotalStock().equals(productModel.getSelled_items()))) {
+            binding.continueBtn.setBackgroundColor(getResources().getColor(R.color.red));
+            binding.continueText.setText(getString(R.string.out_of_stock));
         } else {
             binding.continueBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-            binding.continueText.setText("Continue");
+            binding.continueText.setText(R.string.Continue);
         }
         key = binding.continueText.getText().toString();
     }
@@ -554,15 +565,29 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     public void nextStep(View view) {
         key = binding.continueText.getText().toString();
-        checkItemIsExists(key);
+        if (!key.equalsIgnoreCase(getString(R.string.out_of_stock))) {
+            checkItemIsExists(key);
+        }
+
     }
 
     private void openIntent() {
-        Intent intent = new Intent(this, OrderSummaryActivity.class);
+        Intent intent = new Intent(this, MultiCartActivity.class);
         startActivity(intent);
     }
 
     public void dialogIninit() {
+        // In Activity's onCreate() for instance
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            Window w = getWindow();
+//            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//        }
+
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         progressDialog = new Dialog(this);
         com.talla.santhamarket.databinding.CustomProgressDialogBinding customProgressDialogBinding = com.talla.santhamarket.databinding.CustomProgressDialogBinding.inflate(this.getLayoutInflater());
         progressDialog.setContentView(customProgressDialogBinding.getRoot());

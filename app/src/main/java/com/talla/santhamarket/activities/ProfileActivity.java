@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,6 +34,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -52,12 +54,13 @@ public class ProfileActivity extends AppCompatActivity {
     private ActivityProfileBinding binding;
     private FirebaseFirestore firestore;
     private DocumentReference documentReference;
-    private ProgressDialog progressDialog;
     private String UID;
     private FirebaseAuth auth;
     private Uri pickedImageUri;
     private StorageReference storageReference;
     private FirebaseStorage firebaseStorage;
+    private ListenerRegistration jf;
+    private Dialog progressDialog;
     private static final String TAG = "ProfileActivity";
 
     @Override
@@ -65,24 +68,22 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Loading...");
-        progressDialog.setMessage("Please Wait untill finish");
-        progressDialog.setCancelable(false);
+        dialogIninit();
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         UID = auth.getCurrentUser().getUid();
         documentReference = firestore.collection(getString(R.string.USERS)).document(UID);
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference(getString(R.string.PROFILE_PICS));
-        getProfileData();
+
         checkRadioGroup();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         getAddressData();
+        getProfileData();
     }
 
     private void getProfileData() {
@@ -289,6 +290,13 @@ public class ProfileActivity extends AppCompatActivity {
     private void showSnackBar(String message) {
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
         snackbar.show();
+    }
+
+    public void dialogIninit() {
+        progressDialog = new Dialog(this);
+        com.talla.santhamarket.databinding.CustomProgressDialogBinding customProgressDialogBinding = com.talla.santhamarket.databinding.CustomProgressDialogBinding.inflate(this.getLayoutInflater());
+        progressDialog.setContentView(customProgressDialogBinding.getRoot());
+        progressDialog.setCancelable(false);
     }
 
 //    public void updatePhoneNumber(View view) {

@@ -35,7 +35,7 @@
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_weight="1"
                 android:text="@string/order_summary"
-                style="@style/Pop_TextView_small"
+                style="@style/Roboto_TextView_Medium"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -67,14 +67,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/Pop_TextView_small"
+                    style="@style/Roboto_TextView_Medium"
                     android:text="Delivery Address" />
 
                 <TextView
                     android:id="@+id/addressTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/Pop_TextView_small"
+                    style="@style/Roboto_TextView_Light_dark"
+                    android:textStyle="bold"
+                    android:textColor="@color/light_cement"
                     android:text="@string/no_address_found" />
 
                 <Button
@@ -85,7 +87,8 @@
                     android:layout_marginStart="@dimen/_40sdp"
                     android:layout_marginEnd="@dimen/_40sdp"
                     android:background="@drawable/btn_bg"
-                    style="@style/Pop_TextView_small"
+                    style="@style/Roboto_TextView_Light_dark"
+                    android:textStyle="bold"
                     android:onClick="openAddressBook"
                     android:padding="10dp"
                     android:text="Change or Add Address"
@@ -114,15 +117,16 @@
                     android:padding="@dimen/_10sdp">
 
                     <TextView
-                        style="@style/Pop_TextView_small"
+                        style="@style/Roboto_TextView_Light_dark"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textStyle="bold"
                         android:text="Payment Method" />
 
                     <View
                         android:layout_width="@dimen/_80sdp"
                         android:layout_height="3dp"
-                        android:background="@color/colorPrimaryDark" />
+                        android:background="@color/gradi_lemon" />
 
                 </LinearLayout>
                 <RadioGroup
@@ -163,7 +167,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/Pop_TextView_small"
+                    style="@style/Roboto_TextView_Light_dark"
+                    android:textStyle="bold"
                     android:padding="@dimen/_10sdp"
                     android:text="PRICE DETAILS" />
 
@@ -188,7 +193,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            style="@style/Pop_TextView_small"
+                            style="@style/Roboto_TextView_Light_dark"
+                            android:textStyle="bold"
                             android:text="Price ( 1 item )" />
 
                         <TextView
@@ -197,7 +203,8 @@
                             android:layout_marginRight="@dimen/_10sdp"
                             android:layout_weight="0.50"
                             android:id="@+id/allItemsPriceText"
-                            style="@style/Pop_TextView_small"
+                            style="@style/Roboto_TextView_Light_dark"
+                            android:textStyle="bold"
                             android:gravity="end"
                             android:text="350" />
                     </LinearLayout>
@@ -213,7 +220,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            style="@style/Pop_TextView_small"
+                            style="@style/Roboto_TextView_Light_dark"
+                            android:textStyle="bold"
                             android:text="Discount" />
 
                         <TextView
@@ -222,7 +230,8 @@
                             android:layout_marginRight="@dimen/_10sdp"
                             android:layout_weight="0.50"
                             android:id="@+id/discountPriceText"
-                            style="@style/Pop_TextView_small"
+                            style="@style/Roboto_TextView_Light_dark"
+                            android:textStyle="bold"
                             android:gravity="end"
                             android:text="50"
                             android:textColor="@color/greeen" />
@@ -239,7 +248,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            style="@style/Pop_TextView_small"
+                            style="@style/Roboto_TextView_Light_dark"
+                            android:textStyle="bold"
                             android:text="Delivery charges" />
 
                         <TextView
@@ -248,7 +258,8 @@
                             android:layout_marginRight="@dimen/_10sdp"
                             android:layout_weight="0.50"
                             android:id="@+id/deliveryCharges"
-                            style="@style/Pop_TextView_small"
+                            style="@style/Roboto_TextView_Light_dark"
+                            android:textStyle="bold"
                             android:gravity="end"
                             android:text="FREE"
                             android:textColor="@color/greeen" />
@@ -270,7 +281,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_weight="0.50"
-                            style="@style/Pop_TextView_small"
+                            style="@style/Roboto_TextView_Light_dark"
+                            android:textStyle="bold"
                             android:text="@string/amount_payable" />
 
                         <TextView
@@ -279,7 +291,8 @@
                             android:layout_marginRight="@dimen/_10sdp"
                             android:layout_weight="0.50"
                             android:id="@+id/subTotalPriceText"
-                            style="@style/Pop_TextView_small"
+                            style="@style/Roboto_TextView_Light_dark"
+                            android:textStyle="bold"
                             android:gravity="end"
                             android:text="350" />
                     </LinearLayout>
@@ -309,7 +322,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                style="@style/Pop_TextView_small"
+                style="@style/Roboto_TextView_Light_dark"
+                android:textStyle="bold"
                 android:gravity="center"
                 android:id="@+id/totalPrice"
                 android:paddingLeft="@dimen/_10sdp"
@@ -323,7 +337,8 @@
             android:layout_height="match_parent"
             android:layout_weight="0.50"
             android:background="@color/orange"
-            style="@style/Pop_TextView_small"
+            style="@style/Roboto_TextView_Light_dark"
+            android:textStyle="bold"
             android:text="@string/pay_now"
             android:onClick="placeOrder"
             android:textColor="@color/white" />

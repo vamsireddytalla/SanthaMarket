@@ -80,7 +80,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
                 binding.deliveryTxt.setText("Pending");
                 binding.deliveryTxt.setTextColor(context.getResources().getColor(R.color.orange));
             }
-            String cancelProduct=orderModel.getCancel_product();
+            String cancelProduct=orderModel.getCancelReason();
             if (cancelProduct!=null && !cancelProduct.isEmpty())
             {
                 binding.deliveryTxt.setText(cancelProduct);

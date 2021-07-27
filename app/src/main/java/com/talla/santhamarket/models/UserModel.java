@@ -10,6 +10,7 @@ public class UserModel
     private String user_name;
     private String user_gender;
     private String image_url;
+    private String deviceId;
 
     public String getUser_number() {
         return user_number;
@@ -75,6 +76,15 @@ public class UserModel
         this.image_url = image_url;
     }
 
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
     @Override
     public String toString() {
         return "UserModel{" +
@@ -85,7 +95,8 @@ public class UserModel
                 ", user_email='" + user_email + '\'' +
                 ", user_name='" + user_name + '\'' +
                 ", user_gender='" + user_gender + '\'' +
-                ", user_image_url='" + image_url + '\'' +
+                ", image_url='" + image_url + '\'' +
+                ", deviceId='" + deviceId + '\'' +
                 '}';
     }
 }

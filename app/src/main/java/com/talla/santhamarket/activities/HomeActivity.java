@@ -10,15 +10,24 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.installations.InstallationTokenResult;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.databinding.ActivityHomeBinding;
+import com.talla.santhamarket.fcm.FirebaseTokenGneration;
 import com.talla.santhamarket.fragments.HomeFragment;
 import com.talla.santhamarket.fragments.MyOrdersFragment;
 import com.talla.santhamarket.interfaces.OnFragmentListner;
@@ -40,6 +49,7 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
         if (auth.getCurrentUser()!=null)
         {
             UID = auth.getCurrentUser().getUid();
+            sendFCMToken();
         }else {
             finish();
         }
@@ -51,9 +61,12 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
                 switch (item.getItemId()) {
                     case R.id.home:
                         if (currentFrag instanceof HomeFragment)
+                        {
                             return true;
-                        replacefragment(new HomeFragment(), "HomeFag");
-                        return true;
+                        }else {
+                            replacefragment(new HomeFragment(), "HomeFag");
+                            return true;
+                        }
                     case R.id.orders:
                         if (currentFrag instanceof MyOrdersFragment)
                             return true;
@@ -131,6 +144,33 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentListner
     public void fragmentChangeListner(int fragNo) {
         Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.rootFrame);
         binding.bottomNav.getMenu().getItem(fragNo).setChecked(true);
+    }
+
+    private void sendFCMToken()
+    {
+        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(new OnCompleteListener<InstallationTokenResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstallationTokenResult> task) {
+                if (!task.isSuccessful()) {
+                    return;
+                }
+                // Get new Instance ID token
+                FirebaseTokenGneration ftg = new FirebaseTokenGneration();
+                String token = task.getResult().getToken();
+                ftg.updateToken(HomeActivity.this, token);
+            }
+        });
+
+//        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(HomeActivity.this, new OnSuccessListener<InstanceIdResult>() {
+//            @Override
+//            public void onSuccess(InstanceIdResult instanceIdResult) {
+//                String token = instanceIdResult.getToken();
+//                Log.i("FCM Token", token);
+//                // Get new Instance ID token
+//                FirebaseTokenGneration ftg = new FirebaseTokenGneration();
+//                ftg.updateToken(HomeActivity.this, token);
+//            }
+//        });
     }
 
 }

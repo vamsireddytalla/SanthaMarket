@@ -23,7 +23,7 @@
               android:id="@+id/defaultAddress"
               android:gravity="left|center_vertical"
               android:textColor="#34495E"
-              style="@style/Pop_TextView_small"
+              style="@style/Roboto_TextView_Medium"
               android:layoutDirection="rtl"/>
       </LinearLayout>
         <LinearLayout
@@ -37,8 +37,8 @@
                 android:text="&#8942;"
                 android:gravity="center_horizontal"
                 android:textStyle="bold"
-                android:textColor="@color/black"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                style="@style/Roboto_TextView_Medium"
+                android:textColor="@color/black" />
         </LinearLayout>
     </LinearLayout>
 
@@ -46,7 +46,9 @@
         android:id="@+id/add_userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Pop_TextView_small"
+        android:textStyle="bold"
+        style="@style/Roboto_TextView_Light_dark"
+        android:textColor="@color/black"
         android:textAllCaps="true"
         android:text="Name : " />
 
@@ -54,7 +56,9 @@
         android:id="@+id/add_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Pop_TextView_small"
+        android:textStyle="bold"
+        style="@style/Roboto_TextView_Light_dark"
+        android:textColor="@color/black"
         android:textAllCaps="true"
         android:layout_marginTop="@dimen/_3sdp"
         android:text="Contact Number : " />
@@ -63,7 +67,9 @@
         android:id="@+id/add_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Pop_TextView_small"
+        android:textStyle="bold"
+        style="@style/Roboto_TextView_Light_dark"
+        android:textColor="@color/black"
         android:textAllCaps="true"
         android:layout_marginTop="@dimen/_3sdp"
         android:text="Alternate Number : " />
@@ -74,7 +80,9 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/_3sdp"
-          style="@style/Pop_TextView_small"
+          android:textStyle="bold"
+          style="@style/Roboto_TextView_Light_dark"
+          android:textColor="@color/black"
           android:textAllCaps="true"
           android:text="Country : " />
 
@@ -82,7 +90,9 @@
         android:id="@+id/add_state"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Pop_TextView_small"
+        android:textStyle="bold"
+        style="@style/Roboto_TextView_Light_dark"
+        android:textColor="@color/black"
         android:layout_marginTop="@dimen/_3sdp"
         android:textAllCaps="true"
         android:text="State : " />
@@ -96,7 +106,9 @@
             android:id="@+id/add_city"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/Pop_TextView_small"
+            android:textStyle="bold"
+            style="@style/Roboto_TextView_Light_dark"
+            android:textColor="@color/black"
             android:layout_weight="0.50"
             android:textAllCaps="true"
             android:text="City : " />
@@ -106,7 +118,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.50"
-            style="@style/Pop_TextView_small"
+            android:textStyle="bold"
+            style="@style/Roboto_TextView_Light_dark"
+            android:textColor="@color/black"
             android:textAllCaps="true"
             android:text="Pincode : " />
     </LinearLayout>
@@ -115,7 +129,9 @@
         android:id="@+id/add_Address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Pop_TextView_small"
+        android:textStyle="bold"
+        style="@style/Roboto_TextView_Light_dark"
+        android:textColor="@color/black"
         android:textAllCaps="true"
         android:layout_marginTop="@dimen/_3sdp"
         android:text="Address : " />

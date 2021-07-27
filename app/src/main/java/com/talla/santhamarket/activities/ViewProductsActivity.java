@@ -32,6 +32,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -60,6 +61,7 @@ public class ViewProductsActivity extends AppCompatActivity {
     private Dialog progressDialog;
     private int sortItemPos = -1;
     private Dialog dialog;
+    private ListenerRegistration productsListner;
     private int priceRangeStart = 10, priceRangeEnd = 5000;
     private static final String TAG = "VIEW_PRODUCT_ACTIVITY";
 
@@ -99,7 +101,6 @@ public class ViewProductsActivity extends AppCompatActivity {
             }
         });
 
-        checkInternetAndMakeServerCall();
         checkInternetBinding.tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,6 +108,18 @@ public class ViewProductsActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkInternetAndMakeServerCall();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        productsListner.remove();
     }
 
     private void checkInternetAndMakeServerCall() {
@@ -150,56 +163,56 @@ public class ViewProductsActivity extends AppCompatActivity {
         if (productModelList != null) {
             productModelList.clear();
         }
-        firebaseFirestore.collection(getString(R.string.PRODUCTS)).whereEqualTo("category_id", categoryId)
+        productsListner = firebaseFirestore.collection(getString(R.string.PRODUCTS)).whereEqualTo("category_id", categoryId)
                 .whereEqualTo("itemTypeModel.local", false).orderBy("product_date").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    showDialog(getString(R.string.error_occured), error.getMessage());
-                } else {
-                    for (DocumentChange dc : value.getDocumentChanges()) {
-                        switch (dc.getType()) {
-                            case ADDED:
-                                ProductModel productModel = dc.getDocument().toObject(ProductModel.class);
-                                productModelList.add(productModel);
-                                Log.d(TAG, "Product data added to list: " + productModel.toString());
-                                break;
-                            case MODIFIED:
-                                ProductModel productModelModified = dc.getDocument().toObject(ProductModel.class);
-                                Log.d(TAG, "Product data modified to list: " + productModelModified.toString());
-                                for (int i = 0; i < productModelList.size(); i++) {
-                                    if (productModelList.get(i).getProduct_id().equalsIgnoreCase(productModelModified.getProduct_id())) {
-                                        productModelList.remove(i);
-                                        productModelList.add(i, productModelModified);
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            showDialog(getString(R.string.error_occured), error.getMessage());
+                        } else {
+                            for (DocumentChange dc : value.getDocumentChanges()) {
+                                switch (dc.getType()) {
+                                    case ADDED:
+                                        ProductModel productModel = dc.getDocument().toObject(ProductModel.class);
+                                        productModelList.add(productModel);
+                                        Log.d(TAG, "Product data added to list: " + productModel.toString());
                                         break;
-                                    }
-                                }
-                                break;
-                            case REMOVED:
-                                ProductModel productModelRemoved = dc.getDocument().toObject(ProductModel.class);
-                                Log.d(TAG, "Product data removed to list: " + productModelRemoved.toString());
-                                for (int i = 0; i < productModelList.size(); i++) {
-                                    if (productModelList.get(i).getProduct_id().equalsIgnoreCase(productModelRemoved.getProduct_id())) {
-                                        productModelList.remove(i);
+                                    case MODIFIED:
+                                        ProductModel productModelModified = dc.getDocument().toObject(ProductModel.class);
+                                        Log.d(TAG, "Product data modified to list: " + productModelModified.toString());
+                                        for (int i = 0; i < productModelList.size(); i++) {
+                                            if (productModelList.get(i).getProduct_id().equalsIgnoreCase(productModelModified.getProduct_id())) {
+                                                productModelList.remove(i);
+                                                productModelList.add(i, productModelModified);
+                                                break;
+                                            }
+                                        }
                                         break;
-                                    }
+                                    case REMOVED:
+                                        ProductModel productModelRemoved = dc.getDocument().toObject(ProductModel.class);
+                                        Log.d(TAG, "Product data removed to list: " + productModelRemoved.toString());
+                                        for (int i = 0; i < productModelList.size(); i++) {
+                                            if (productModelList.get(i).getProduct_id().equalsIgnoreCase(productModelRemoved.getProduct_id())) {
+                                                productModelList.remove(i);
+                                                break;
+                                            }
+                                        }
+                                        break;
                                 }
-                                break;
+                            }
+                            binding.productRCV.setHasFixedSize(true);
+                            binding.productRCV.setLayoutManager(new GridLayoutManager(ViewProductsActivity.this, 2));
+                            productAdapter = new ProductAdapter(ViewProductsActivity.this, productModelList);
+                            binding.productRCV.setAdapter(productAdapter);
+                            progressDialog.dismiss();
+                            if (productModelList.size() == 0) {
+                                Log.d(TAG, "No Related Products Available");
+                                showSnackBar("No Products Available !");
+                                binding.noProductsAvail.setVisibility(View.VISIBLE);
+                            }
                         }
                     }
-                    binding.productRCV.setHasFixedSize(true);
-                    binding.productRCV.setLayoutManager(new GridLayoutManager(ViewProductsActivity.this, 2));
-                    productAdapter = new ProductAdapter(ViewProductsActivity.this, productModelList);
-                    binding.productRCV.setAdapter(productAdapter);
-                    progressDialog.dismiss();
-                    if (productModelList.size() == 0) {
-                        Log.d(TAG, "No Related Products Available");
-                        showSnackBar("No Products Available !");
-                        binding.noProductsAvail.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-        });
+                });
     }
 
     private void priceRangeProducts() {

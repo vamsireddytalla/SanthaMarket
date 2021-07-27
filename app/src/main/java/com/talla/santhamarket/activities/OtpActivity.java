@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -35,8 +36,11 @@ import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.installations.InstallationTokenResult;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.databinding.ActivityOtpBinding;
+import com.talla.santhamarket.fcm.FirebaseTokenGneration;
 import com.talla.santhamarket.models.UserAddress;
 import com.talla.santhamarket.models.UserModel;
 import com.talla.santhamarket.utills.CheckInternet;
@@ -54,8 +58,9 @@ public class OtpActivity extends AppCompatActivity {
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private CountDownTimer countDownTimer;
     private int count = 60;
+    private String android_id;
     private ProgressDialog progressDialog;
-    private static final String TAG="OtpActivity";
+    private static final String TAG = "OtpActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,8 @@ public class OtpActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        android_id = Settings.Secure.getString(OtpActivity.this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
 
         Bundle bundle = getIntent().getExtras();
         progressDialog = new ProgressDialog(this);
@@ -135,6 +142,7 @@ public class OtpActivity extends AppCompatActivity {
                             Toast.makeText(OtpActivity.this, "Login Sucess", Toast.LENGTH_SHORT).show();
                             final FirebaseUser user = task.getResult().getUser();
                             FirebaseUserMetadata metadata = auth.getCurrentUser().getMetadata();
+
                             boolean isNewUser = task.getResult().getAdditionalUserInfo().isNewUser();
                             if (isNewUser) {
                                 documentReference = firestore.collection(getString(R.string.USERS)).document(user.getUid());
@@ -147,6 +155,8 @@ public class OtpActivity extends AppCompatActivity {
                                 userModel.setUser_name("");
                                 userModel.setUser_gender("");
                                 userModel.setImage_url("");
+                                userModel.setDeviceId(android_id);
+
                                 documentReference.set(userModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -165,14 +175,20 @@ public class OtpActivity extends AppCompatActivity {
                                     }
                                 });
                             } else {
-                                Toast.makeText(OtpActivity.this, "Welcome back", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(OtpActivity.this, HomeActivity.class);
-                                countDownTimer.cancel();
-                                progressDialog.dismiss();
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
+                                DocumentReference ref=firestore.collection(getString(R.string.USERS)).document(auth.getUid());
+                                ref.update("deviceId", android_id).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(OtpActivity.this, "Welcome back", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(OtpActivity.this, HomeActivity.class);
+                                        countDownTimer.cancel();
+                                        progressDialog.dismiss();
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                    }
+                                });
+
                             }
-                            // ...
                         } else {
                             // Sign in failed, display a message and update the UI
                             showSnackBar("Sign-In Failed");
@@ -193,33 +209,35 @@ public class OtpActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 //                Toast.makeText(OtpActivity.this, phoneAuthCredential.getSmsCode() + "code", Toast.LENGTH_SHORT).show();
-                Log.d(TAG,"OnVerificationCompleted : "+phoneAuthCredential.getSmsCode());
+                Log.d(TAG, "OnVerificationCompleted : " + phoneAuthCredential.getSmsCode());
                 progressDialog.dismiss();
                 signInWithPhoneAuthCredential(phoneAuthCredential);
             }
+
             @Override
             public void onVerificationFailed(FirebaseException e) {
                 progressDialog.dismiss();
                 Toast.makeText(OtpActivity.this, "Failed" + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                Log.d(TAG,"FirebaseException  "+e.getMessage());
+                Log.d(TAG, "FirebaseException  " + e.getMessage());
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
-                    Log.d(TAG,"Invalid Request");
+                    Log.d(TAG, "Invalid Request");
                     showSnackBar("Invalid Request");
                 } else if (e instanceof FirebaseTooManyRequestsException) {
                     // The SMS quota for the project has been exceeded
-                    Log.d(TAG,"Too Many Requests attempted retry tomorrow");
+                    Log.d(TAG, "Too Many Requests attempted retry tomorrow");
                     showSnackBar("Too Many Requests attempted retry tomorrow");
                 }
 
             }
+
             @Override
             public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                 super.onCodeSent(s, forceResendingToken);
                 codeSent = s;
                 resendToken = forceResendingToken;
                 Toast.makeText(OtpActivity.this, "Otp Sent", Toast.LENGTH_SHORT).show();
-                Log.d(TAG,"onCodeSent : "+codeSent);
+                Log.d(TAG, "onCodeSent : " + codeSent);
                 progressDialog.dismiss();
                 binding.resendLayout.setVisibility(View.GONE);
             }
@@ -228,7 +246,7 @@ public class OtpActivity extends AppCompatActivity {
             public void onCodeAutoRetrievalTimeOut(@NonNull String s) {
                 super.onCodeAutoRetrievalTimeOut(s);
                 progressDialog.dismiss();
-                Log.d(TAG,"onCodeAutoRetrievalTimeOut   "+s);
+                Log.d(TAG, "onCodeAutoRetrievalTimeOut   " + s);
                 binding.coundDownSms.setVisibility(View.GONE);
                 countDownTimer.cancel();
                 binding.resendLayout.setVisibility(View.VISIBLE);

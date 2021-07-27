@@ -4,40 +4,29 @@ import java.io.Serializable;
 
 public class OrderModel implements Serializable
 {
-    private String order_id;
-    private String transaction_id;
     private String product_id;
     private String product_name;
-    private String seller_name;
-    private double product_price;
-    private double mrp_price;
     private String product_image;
     private String selectedColor;
     private String selectedSize;
-    private Long temp_qty;
-    private String ordered_date;
-    private String delivered_date;
-    private String cancel_product;
-    private boolean isDelivered=false;
-    private String payment_method;
+    private String selected_quantity;
+    private double product_price;
+    private double mrp_price;
+    private double totalProductPrice;
     private String userId;
+    private String seller_name;
+    private String seller_id;
+    private String order_id;
+    private String ordered_date;
+    private String payment_method;
+    private String cancelReason;
+    private UserAddress delvery_address;
+    private String transaction_id;
+    private String delivered_date;
+    private boolean isDelivered = false;
     private String webUrl;
+    private boolean paidOrNot = false;
 
-    public String getOrder_id() {
-        return order_id;
-    }
-
-    public void setOrder_id(String order_id) {
-        this.order_id = order_id;
-    }
-
-    public String getTransaction_id() {
-        return transaction_id;
-    }
-
-    public void setTransaction_id(String transaction_id) {
-        this.transaction_id = transaction_id;
-    }
 
     public String getProduct_id() {
         return product_id;
@@ -53,31 +42,6 @@ public class OrderModel implements Serializable
 
     public void setProduct_name(String product_name) {
         this.product_name = product_name;
-    }
-
-    public String getSeller_name() {
-        return seller_name;
-    }
-
-    public void setSeller_name(String seller_name) {
-        this.seller_name = seller_name;
-    }
-
-
-    public double getProduct_price() {
-        return product_price;
-    }
-
-    public void setProduct_price(double product_price) {
-        this.product_price = product_price;
-    }
-
-    public double getMrp_price() {
-        return mrp_price;
-    }
-
-    public void setMrp_price(double mrp_price) {
-        this.mrp_price = mrp_price;
     }
 
     public String getProduct_image() {
@@ -104,52 +68,36 @@ public class OrderModel implements Serializable
         this.selectedSize = selectedSize;
     }
 
-    public Long getTemp_qty() {
-        return temp_qty;
+    public String getSelected_quantity() {
+        return selected_quantity;
     }
 
-    public void setTemp_qty(Long temp_qty) {
-        this.temp_qty = temp_qty;
+    public void setSelected_quantity(String selected_quantity) {
+        this.selected_quantity = selected_quantity;
     }
 
-    public String getOrdered_date() {
-        return ordered_date;
+    public double getProduct_price() {
+        return product_price;
     }
 
-    public void setOrdered_date(String ordered_date) {
-        this.ordered_date = ordered_date;
+    public void setProduct_price(double product_price) {
+        this.product_price = product_price;
     }
 
-    public String getDelivered_date() {
-        return delivered_date;
+    public double getMrp_price() {
+        return mrp_price;
     }
 
-    public void setDelivered_date(String delivered_date) {
-        this.delivered_date = delivered_date;
+    public void setMrp_price(double mrp_price) {
+        this.mrp_price = mrp_price;
     }
 
-    public String getCancel_product() {
-        return cancel_product;
+    public double getTotalProductPrice() {
+        return totalProductPrice;
     }
 
-    public void setCancel_product(String cancel_product) {
-        this.cancel_product = cancel_product;
-    }
-
-    public boolean isDelivered() {
-        return isDelivered;
-    }
-
-    public void setDelivered(boolean delivered) {
-        isDelivered = delivered;
-    }
-
-    public String getPayment_method() {
-        return payment_method;
-    }
-
-    public void setPayment_method(String payment_method) {
-        this.payment_method = payment_method;
+    public void setTotalProductPrice(double totalProductPrice) {
+        this.totalProductPrice = totalProductPrice;
     }
 
     public String getUserId() {
@@ -160,11 +108,99 @@ public class OrderModel implements Serializable
         this.userId = userId;
     }
 
+    public String getSeller_name() {
+        return seller_name;
+    }
+
+    public void setSeller_name(String seller_name) {
+        this.seller_name = seller_name;
+    }
+
+    public String getSeller_id() {
+        return seller_id;
+    }
+
+    public void setSeller_id(String seller_id) {
+        this.seller_id = seller_id;
+    }
+
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
+    }
+
+    public String getOrdered_date() {
+        return ordered_date;
+    }
+
+    public void setOrdered_date(String ordered_date) {
+        this.ordered_date = ordered_date;
+    }
+
+    public String getPayment_method() {
+        return payment_method;
+    }
+
+    public void setPayment_method(String payment_method) {
+        this.payment_method = payment_method;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
+    public UserAddress getDelvery_address() {
+        return delvery_address;
+    }
+
+    public void setDelvery_address(UserAddress delvery_address) {
+        this.delvery_address = delvery_address;
+    }
+
+    public String getTransaction_id() {
+        return transaction_id;
+    }
+
+    public void setTransaction_id(String transaction_id) {
+        this.transaction_id = transaction_id;
+    }
+
+    public String getDelivered_date() {
+        return delivered_date;
+    }
+
+    public void setDelivered_date(String delivered_date) {
+        this.delivered_date = delivered_date;
+    }
+
+    public boolean isDelivered() {
+        return isDelivered;
+    }
+
+    public void setDelivered(boolean delivered) {
+        isDelivered = delivered;
+    }
+
     public String getWebUrl() {
         return webUrl;
     }
 
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+    }
+
+    public boolean isPaidOrNot() {
+        return paidOrNot;
+    }
+
+    public void setPaidOrNot(boolean paidOrNot) {
+        this.paidOrNot = paidOrNot;
     }
 }

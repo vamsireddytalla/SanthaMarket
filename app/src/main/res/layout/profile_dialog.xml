@@ -35,8 +35,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="0.70"
                 android:text="Edit Address"
-                android:fontFamily="@font/roboto_medium"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                style="@style/Roboto_TextView_Medium" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -58,7 +57,7 @@
                     android:src="@drawable/check_icon"
                     android:text="Save"
                     android:textColor="@color/black"
-                    android:textStyle="bold"
+                    style="@style/Roboto_TextView_Medium"
                     android:theme="?android:attr/borderlessButtonStyle" />
             </LinearLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -173,6 +172,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#D7DBDD"
+                    style="@style/Roboto_TextView_Light_dark"
                     android:text="@string/indicates_any_of_these_is_manadory"
                     android:layout_marginTop="@dimen/_15sdp"/>
 
@@ -234,7 +234,7 @@
                         android:layout_height="wrap_content"
                         android:digits="@string/postcode_digits_allowed"
                         android:imeOptions="actionNext"
-                        android:inputType="textCapWords|textCapSentences|textNoSuggestions"
+                        android:inputType="number"
                         android:maxLength="20"
                         android:maxLines="1" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -278,7 +278,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="10dp"
-                    android:fontFamily="@font/gilroyregular"
+                    android:fontFamily="@font/roboto_medium"
                     android:text="Check Internet Connection"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -289,7 +289,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/btn_bg"
-                    android:fontFamily="@font/circular_book"
+                    android:fontFamily="@font/roboto_medium"
                     android:text="RETRY"
                     android:textColor="@color/white" />
             </LinearLayout>

@@ -20,6 +20,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.activities.DetailOrderActivity;
@@ -46,6 +47,7 @@ public class MyOrdersFragment extends Fragment {
     private String UID;
     private OrdersAdapter ordersAdapter;
     private List<OrderModel> orderModelList = new ArrayList<>();
+    private ListenerRegistration ordersListner;
     private static String TAG = "MyOrdersFragment";
 
 
@@ -56,8 +58,13 @@ public class MyOrdersFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         UID = auth.getUid();
 
-        getOrders();
         return binding.getRoot();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getOrders();
     }
 
     @Override
@@ -85,7 +92,7 @@ public class MyOrdersFragment extends Fragment {
             orderModelList.clear();
         }
         binding.progressCircle.setVisibility(View.VISIBLE);
-        firestore.collection(activity.getResources().getString(R.string.ORDERS)).whereEqualTo("userId", UID).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        ordersListner = firestore.collection(activity.getResources().getString(R.string.ORDERS)).whereEqualTo("userId", UID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -122,8 +129,7 @@ public class MyOrdersFragment extends Fragment {
                                 break;
                         }
                     }
-                    if (orderModelList.isEmpty())
-                    {
+                    if (orderModelList.isEmpty()) {
                         binding.progressCircle.setVisibility(View.GONE);
                         binding.noOrdersFound.setVisibility(View.VISIBLE);
                     }
@@ -137,4 +143,9 @@ public class MyOrdersFragment extends Fragment {
 
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        ordersListner.remove();
+    }
 }

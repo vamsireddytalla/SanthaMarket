@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -52,7 +53,6 @@ import java.util.UUID;
 public class OrderSummaryActivity extends AppCompatActivity implements QuantityClickListner, ChartsClickListner {
     private ActivityOrderSummaryBinding binding;
     private View view;
-    private ProgressDialog progressDialog;
     private String UID;
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
@@ -61,12 +61,11 @@ public class OrderSummaryActivity extends AppCompatActivity implements QuantityC
     private SummaryAdapter summaryAdapter;
     private List<CartModel> cartModelsList = new ArrayList<>();
     private List<ProductModel> productModelList = new ArrayList<>();
-    private List<FavouriteModel> favouriteModelList = new ArrayList<>();
-    private List<OrderModel> orderModelList = new ArrayList<>();
     private int totalMrpPrice = 0;
     private float totalDiscount;
     private int finalPrice;
     private FavouriteModel favouriteModel;
+    private Dialog progressDialog;
     private static String TAG = "ActivityOrderSummaryBinding";
 
     @Override
@@ -76,10 +75,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements QuantityC
         view = binding.getRoot();
         setContentView(view);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(getString(R.string.processing_request));
-        progressDialog.setMessage(getString(R.string.please_wait));
-        progressDialog.setCancelable(false);
+        dialogIninit();
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         UID = auth.getCurrentUser().getUid();
@@ -224,7 +220,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements QuantityC
                                 if (cartModel != null) {
                                     productModel.setSelectedSize(cartModel.getSize_chart());
                                     productModel.setSelectedColor(cartModel.getSelected_color());
-                                    productModel.setTemp_qty(Long.parseLong("1"));
+                                    productModel.setTemp_qty(1);
                                 }
                                 productModelList.add(productModel);
                                 Log.d(TAG, "Product data added to list: " + productModel.toString());
@@ -236,7 +232,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements QuantityC
                                     if (productModelList.get(i).getProduct_id().equalsIgnoreCase(productModel1.getProduct_id())) {
                                         productModel1.setSelectedColor(productModelList.get(i).getSelectedColor());
                                         productModel1.setSelectedSize(productModelList.get(i).getSelectedSize());
-                                        productModel1.setTemp_qty(Long.parseLong("1"));
+                                        productModel1.setTemp_qty(1);
                                         productModelList.remove(i);
                                         productModelList.add(i, productModel1);
                                         break;
@@ -280,7 +276,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements QuantityC
             double mrp_price = productModel1.getMrp_price();
             double selling_price = productModel1.getProduct_price();
 
-            Long a = productModelList.get(i).getTemp_qty();
+            int a = productModelList.get(i).getTemp_qty();
             double sellingPrice = (selling_price * a);
             double mrpPrice = (mrp_price * productModelList.get(i).getTemp_qty());
             totalMrpPrice = (int) (totalMrpPrice + Math.round(mrpPrice));
@@ -294,10 +290,10 @@ public class OrderSummaryActivity extends AppCompatActivity implements QuantityC
         } else {
             finalPrice = (int) totalMrpPrice - (int) totalDiscount;
         }
-        binding.allItemsPriceText.setText(getString(R.string.rs_symbol)+totalMrpPrice);
-        binding.discountPriceText.setText("-" + totalDiscount+getString(R.string.rs_symbol));
-        binding.subTotalPriceText.setText(getString(R.string.rs_symbol)+finalPrice);
-        binding.totalPrice.setText("Total " + finalPrice + " " + getString(R.string.Rs));
+        binding.allItemsPriceText.setText(getString(R.string.rs_symbol) + CheckUtill.FormatCost(totalMrpPrice));
+        binding.discountPriceText.setText("-" + CheckUtill.FormatCost((int) totalDiscount) + getString(R.string.rs_symbol));
+        binding.subTotalPriceText.setText(getString(R.string.rs_symbol) + CheckUtill.FormatCost(finalPrice));
+        binding.totalPrice.setText("Total " + CheckUtill.FormatCost(finalPrice) + " " + getString(R.string.Rs));
     }
 
     @Override
@@ -448,27 +444,27 @@ public class OrderSummaryActivity extends AppCompatActivity implements QuantityC
             showSnackBar("Add Address First");
         } else {
             for (int i = 0; i < productModelList.size(); i++) {
-                ProductModel proModel=productModelList.get(i);
-                DocumentReference ref=firestore.collection(getResources().getString(R.string.ORDERS)).document();
-                String order_doc_id=ref.getId();
+                ProductModel proModel = productModelList.get(i);
+                DocumentReference ref = firestore.collection(getResources().getString(R.string.ORDERS)).document();
+                String order_doc_id = ref.getId();
                 String spliter[] = UUID.randomUUID().toString().split("-");
                 OrderModel orderModel = new OrderModel();
-                orderModel.setOrder_id(order_doc_id);
-                orderModel.setTransaction_id(System.currentTimeMillis() + spliter[0]);
-                orderModel.setOrdered_date(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
-                orderModel.setDelivered_date(CheckUtill.getDateAfterDays(7));
-                orderModel.setPayment_method("Online");
-                orderModel.setProduct_id(proModel.getProduct_id());
-                orderModel.setProduct_name(proModel.getProduct_name());
-                orderModel.setSeller_name(proModel.getSeller_name());
-                orderModel.setProduct_price(proModel.getProduct_price());
-                orderModel.setMrp_price(proModel.getMrp_price());
-                orderModel.setProduct_image(proModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_image());
-                orderModel.setSelectedColor(proModel.getSelectedColor());
-                orderModel.setSelectedSize(proModel.getSelectedSize());
-                orderModel.setTemp_qty(proModel.getTemp_qty());
-                orderModel.setWebUrl("");
-                orderModel.setUserId(UID);
+//                orderModel.setOrder_id(order_doc_id);
+//                orderModel.setTransaction_id(System.currentTimeMillis() + spliter[0]);
+//                orderModel.setOrdered_date(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
+//                orderModel.setDelivered_date(CheckUtill.getDateAfterDays(7));
+//                orderModel.setPayment_method("Online");
+//                orderModel.setProduct_id(proModel.getProduct_id());
+//                orderModel.setProduct_name(proModel.getProduct_name());
+//                orderModel.setSeller_name(proModel.getSeller_name());
+//                orderModel.setProduct_price(proModel.getProduct_price());
+//                orderModel.setMrp_price(proModel.getMrp_price());
+//                orderModel.setProduct_image(proModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_image());
+//                orderModel.setSelectedColor(proModel.getSelectedColor());
+//                orderModel.setSelectedSize(proModel.getSelectedSize());
+//                orderModel.setTemp_qty(proModel.getTemp_qty());
+//                orderModel.setWebUrl("");
+//                orderModel.setUserId(UID);
                 ref.set(orderModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -486,4 +482,12 @@ public class OrderSummaryActivity extends AppCompatActivity implements QuantityC
             startActivity(intent);
         }
     }
+
+    public void dialogIninit() {
+        progressDialog = new Dialog(this);
+        com.talla.santhamarket.databinding.CustomProgressDialogBinding customProgressDialogBinding = com.talla.santhamarket.databinding.CustomProgressDialogBinding.inflate(this.getLayoutInflater());
+        progressDialog.setContentView(customProgressDialogBinding.getRoot());
+        progressDialog.setCancelable(false);
+    }
+
 }

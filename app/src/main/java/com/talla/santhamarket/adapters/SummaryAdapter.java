@@ -40,14 +40,18 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
     private QuantityClickListner listner;
     private ChartsClickListner chartsClickListner;
 
-    public SummaryAdapter(Context context, List<ProductModel> productModelList, QuantityClickListner listner,ChartsClickListner chartsClickListner) {
+    public SummaryAdapter(Context context, List<ProductModel> productModelList, QuantityClickListner listner, ChartsClickListner chartsClickListner) {
         this.context = context;
         this.productModelList = productModelList;
-        this.chartsClickListner=chartsClickListner;
+        this.chartsClickListner = chartsClickListner;
         this.listner = listner;
         notifyDataSetChanged();
     }
 
+    public void setProductModelList(List<ProductModel> productModelList) {
+        this.productModelList = productModelList;
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override
@@ -61,25 +65,6 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
     public void onBindViewHolder(@NonNull final SummaryAdapter.MyViewHolder holder, final int position) {
         holder.onBindView(productModelList.get(position));
 
-        holder.binding.quantitySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                try {
-//                    Long qty= Long.valueOf(i)+1;
-                    String selectedQty = (String) adapterView.getSelectedItem();
-                    productModelList.get(position).setTemp_qty(Long.parseLong(selectedQty));
-                    listner.quantityClickListener(position, productModelList.get(position));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-
         holder.binding.sumRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,14 +74,50 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
         holder.binding.sumFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String favTxt=holder.binding.sumFav.getText().toString();
-                if (favTxt.equalsIgnoreCase(context.getString(R.string.add_to_fav)))
-                {
-                    chartsClickListner.onSelectionCLick(productModelList.get(position).getProduct_id(),context.getString(R.string.add_to_fav));
-                }else {
-                    chartsClickListner.onSelectionCLick(productModelList.get(position).getTemp_favouriteId(),context.getString(R.string.remove_ad_fav));
+                String favTxt = holder.binding.sumFav.getText().toString();
+                if (favTxt.equalsIgnoreCase(context.getString(R.string.add_to_fav))) {
+                    chartsClickListner.onSelectionCLick(productModelList.get(position).getProduct_id(), context.getString(R.string.add_to_fav));
+                } else {
+                    chartsClickListner.onSelectionCLick(productModelList.get(position).getTemp_favouriteId(), context.getString(R.string.remove_ad_fav));
                 }
+            }
+        });
 
+        holder.binding.addQty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProductModel productModel = productModelList.get(position);
+                int maxQty = Math.round(productModel.getMax_quantity());
+                String qty = holder.binding.qtyText.getText().toString();
+                int enteredQuatity = Integer.parseInt(qty);
+                if (enteredQuatity < maxQty) {
+                    enteredQuatity += 1;
+                    holder.binding.qtyText.setText(String.format("%02d", enteredQuatity));
+                    productModelList.get(position).setTemp_qty(enteredQuatity);
+                    double productTotalWeight=(productModel.getProduct_weight()*enteredQuatity);
+                    int finalproductPrice = StaticUtills.productWeightConversion((int) productTotalWeight);
+                    productModelList.get(position).setDelivery_charges(finalproductPrice);
+                    listner.quantityClickListener(position, productModel);
+                }
+            }
+        });
+
+        holder.binding.removeQty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProductModel productModel = productModelList.get(position);
+                int maxQty = Math.round(productModel.getMax_quantity());
+                String qty = holder.binding.qtyText.getText().toString();
+                int enteredQuatity = Integer.parseInt(qty);
+                if (enteredQuatity >= 2) {
+                    enteredQuatity -= 1;
+                    holder.binding.qtyText.setText(String.format("%02d", enteredQuatity));
+                    productModelList.get(position).setTemp_qty(enteredQuatity);
+                    double productTotalWeight=(productModel.getProduct_weight()*enteredQuatity);
+                    int finalproductPrice = StaticUtills.productWeightConversion((int) productTotalWeight);
+                    productModelList.get(position).setDelivery_charges(finalproductPrice);
+                    listner.quantityClickListener(position, productModel);
+                }
             }
         });
 
@@ -129,7 +150,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
             String selectedColor = productModel.getSelectedColor();
             if (selectedColor != null && !selectedColor.isEmpty()) {
                 binding.itemColor.setVisibility(View.VISIBLE);
-                binding.colorItem.setBackgroundColor(Color.parseColor(productModel.getSelectedColor()));
+                binding.colorItem.setBackgroundColor(Integer.parseInt(productModel.getSelectedColor()));
             } else {
                 binding.itemColor.setVisibility(View.GONE);
             }
@@ -144,36 +165,29 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
             } else {
                 binding.soldOut.setVisibility(View.INVISIBLE);
             }
-            Long max_qty = productModel.getMax_quantity();
-            quatitySpin(Math.round(max_qty));
-            if (productModel.isTemp_favourite())
-            {
+            if (productModel.isTemp_favourite()) {
                 binding.sumFav.setText(R.string.remove_ad_fav);
-            }else {
+            } else {
                 binding.sumFav.setText(context.getString(R.string.add_to_fav));
             }
+
+            binding.qtyText.setText(productModel.getTemp_qty() + "");
+            listner.quantityClickListener(getAdapterPosition(), productModel);
+
         }
 
-        private void quatitySpin(int quantity) {
-            List<String> quantityList = new ArrayList<>();
-            for (int i = 1; i <= quantity; i++) {
-                quantityList.add(i + "");
-            }
-            QuantityAdapter quantityAdapter = new QuantityAdapter(quantityList, context);
-            binding.quantitySpin.setAdapter(quantityAdapter);
-        }
 
     }
 
     private void showDialog(final ProductModel productModel) {
-        String itemName=productModel.getProduct_name();
+        String itemName = productModel.getProduct_name();
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-        builder1.setMessage("Are you sure to remove "+itemName+" Item");
+        builder1.setMessage("Are you sure to remove " + itemName + " Item");
         builder1.setCancelable(true);
 
         builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                chartsClickListner.onSelectionCLick(productModel.getProduct_id(),context.getString(R.string.remove_item));
+                chartsClickListner.onSelectionCLick(productModel.getProduct_id(), context.getString(R.string.remove_item));
                 dialog.cancel();
             }
         }).setNegativeButton("No", new DialogInterface.OnClickListener() {

@@ -47,7 +47,9 @@
 
     <TextView
         android:id="@+id/textView2"
-        style="@style/Roboto_TextView_Medium"
+        style="@style/Roboto_TextView_Light_dark"
+        android:textStyle="bold"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -99,7 +101,8 @@
                 android:hint="Enter Phone Number"
                 android:inputType="phone"
                 android:maxLength="10"
-                style="@style/Roboto_TextView_Medium"
+                style="@style/Roboto_TextView_Light_dark"
+                android:textStyle="bold"
                 android:paddingLeft="10dp"
                 android:textColor="@color/black" />
         </LinearLayout>

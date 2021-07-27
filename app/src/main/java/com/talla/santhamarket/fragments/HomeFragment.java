@@ -47,6 +47,7 @@ import com.talla.santhamarket.activities.AddressBookActivity;
 import com.talla.santhamarket.activities.DetailProductActivity;
 import com.talla.santhamarket.activities.HomeActivity;
 import com.talla.santhamarket.activities.LocalShopActivity;
+import com.talla.santhamarket.activities.MultiCartActivity;
 import com.talla.santhamarket.activities.OrderSummaryActivity;
 import com.talla.santhamarket.activities.SearchProductActivity;
 import com.talla.santhamarket.adapters.HomeBannerAdapter;
@@ -75,7 +76,7 @@ public class HomeFragment extends Fragment {
     private HomeCategoryAdapter homeCategoryAdapter;
     private static final String TAG = "HOME_FRAGMENT_DASHBOARD";
     private HomeActivity homeActivity;
-    private ListenerRegistration listenerRegistration;
+    private ListenerRegistration categoriesListner,cartItemsCountListner;
     private OnFragmentListner fragmentListner;
     private int totalCart_items;
     private SharedEncryptUtills sharedEncryptUtills;
@@ -99,7 +100,7 @@ public class HomeFragment extends Fragment {
         stringList.add("https://previews.123rf.com/images/alhovik/alhovik1708/alhovik170800009/84049519-weekend-sale-banner-this-weekend-special-offer-banner-template.jpg");
         stringList.add("https://www.bannerbatterien.com/upload/filecache/Banner-Batterien-Windrder2-web_06b2d8d686e91925353ddf153da5d939.webp");
         stringList.add("https://cdn.pixabay.com/photo/2017/12/28/15/06/background-3045402__340.png");
-        homeBannerAdapter = new HomeBannerAdapter(getContext(), stringList);
+        homeBannerAdapter = new HomeBannerAdapter(homeActivity, stringList);
         binding.viewPagerHome.setOffscreenPageLimit(2);
         binding.viewPagerHome.setAdapter(homeBannerAdapter);
         new TabLayoutMediator(binding.tabIndicator, binding.viewPagerHome, new TabLayoutMediator.TabConfigurationStrategy() {
@@ -178,8 +179,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        getCategoriesData();
-        getCartItemsCount();
+
 
         binding.cartItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,6 +205,13 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        getCategoriesData();
+        getCartItemsCount();
+    }
+
+    @Override
     public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
         homeActivity = (HomeActivity) activity;
@@ -218,7 +225,7 @@ public class HomeFragment extends Fragment {
 
     private void getCartItemsCount() {
         Query query = firestore.collection(homeActivity.getString(R.string.CART_ITEMS)).whereEqualTo("user_id", UID);
-        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        cartItemsCountListner=query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -235,7 +242,7 @@ public class HomeFragment extends Fragment {
         if (categoryModelList != null) {
             categoryModelList.clear();
         }
-        firestore.collection(homeActivity.getString(R.string.CATEGORIES)).orderBy("timestamp", Query.Direction.ASCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        categoriesListner=firestore.collection(homeActivity.getString(R.string.CATEGORIES)).orderBy("timestamp", Query.Direction.ASCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
 
@@ -339,6 +346,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        categoriesListner.remove();
+        cartItemsCountListner.remove();
     }
 
 }

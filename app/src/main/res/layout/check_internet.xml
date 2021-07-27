@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_160sdp"
-        android:src="@drawable/world_icon"/>
+        android:layout_height="@dimen/_150sdp"
+        android:src="@drawable/world_icon" />
 
     <TextView
+        style="@style/Roboto_TextView_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_20sdp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:text="Check Internet Connection"/>
+        android:text="Check Internet Connection" />
 
     <Button
+        android:id="@+id/tryAgain"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/_40sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:background="@drawable/btn_bg"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:id="@+id/tryAgain"
+        style="@style/Roboto_TextView_Light_dark"
+        android:text="Try again"
         android:textAllCaps="false"
-        android:fontFamily="@font/roboto_regular"
-        android:text="Try again"/>
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
 </LinearLayout>

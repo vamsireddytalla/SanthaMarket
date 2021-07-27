@@ -58,7 +58,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private DocumentReference documentReference;
-    private ProgressDialog progressDialog;
+    private Dialog progressDialog;
     private AddressAdapter addressAdapter;
     List<UserAddress> userAddressList = new ArrayList<>();
     private String clickerAction = "Add";
@@ -70,10 +70,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
         super.onCreate(savedInstanceState);
         binding = ActivityAddressBookBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Loading...");
-        progressDialog.setMessage("Please Wait untill finish");
-        progressDialog.setCancelable(false);
+        dialogIninit();
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         UID = auth.getCurrentUser().getUid();
@@ -129,7 +126,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
             public void onClick(View view) {
                 progressDialog.show();
                 addDataToDb();
-                progressDialog.dismiss();
+
             }
         });
 
@@ -189,10 +186,9 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
             userAddress.setUser_streetAddress(streetAddress);
 
             if (clickerAction.equalsIgnoreCase("Add")) {
-                if (totalAddress>0)
-                {
+                if (totalAddress > 0) {
                     userAddress.setDefaultAddress(false);
-                }else {
+                } else {
                     userAddress.setDefaultAddress(true);
                 }
                 insertIntoData(userAddress);
@@ -204,13 +200,14 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     }
 
     private void insertIntoData(UserAddress userAddress) {
-        DocumentReference ref = firestore.collection("Address Book").document();
+        DocumentReference ref = firestore.collection(getString(R.string.ADDRESS_BOOK)).document();
         userAddress.setDocID(ref.getId());
         ref.set(userAddress).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Sucessfully saved Address to server");
                 showSnackBar("Succesfully Added");
+                progressDialog.dismiss();
                 dialog.dismiss();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -218,13 +215,14 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "Error Occured while saving address to server " + e.getMessage());
                 showSnackBar("Error Occured " + e.getMessage());
+                progressDialog.dismiss();
                 dialog.dismiss();
             }
         });
     }
 
     private void getAddressCount() {
-        Query query = firestore.collection("Address Book").whereEqualTo("userId", UID);
+        Query query = firestore.collection(getString(R.string.ADDRESS_BOOK)).whereEqualTo("userId", UID);
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -240,12 +238,13 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
 
     private void updateData(UserAddress userAddress) {
         Log.d(TAG, "UPDATE Documnet Address :" + userAddress.getDocID());
-        firestore.collection("Address Book").document(userAddress.getDocID()).set(userAddress).addOnSuccessListener(new OnSuccessListener<Void>() {
+        firestore.collection(getString(R.string.ADDRESS_BOOK)).document(userAddress.getDocID()).set(userAddress).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Sucessfully Updated Address to server");
                 showSnackBar("Succesfully Updated");
                 Toast.makeText(AddressBookActivity.this, "Succesfully Updated", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
                 dialog.dismiss();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -253,13 +252,14 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "Error Occured while Updating address to server " + e.getMessage());
                 showSnackBar("Error Occured " + e.getMessage());
+                progressDialog.dismiss();
                 dialog.dismiss();
             }
         });
     }
 
     private void deleteItem(UserAddress userAddress) {
-        firestore.collection("Address Book").document(userAddress.getDocID())
+        firestore.collection(getString(R.string.ADDRESS_BOOK)).document(userAddress.getDocID())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -295,7 +295,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     }
 
     private void getAddressBookListner() {
-        firestore.collection("Address Book").whereEqualTo("userId", UID).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firestore.collection(getString(R.string.ADDRESS_BOOK)).whereEqualTo("userId", UID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
 
@@ -348,17 +348,16 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     }
 
     @Override
-    public void addressItemListner(String item, int pos,boolean checkedType) {
+    public void addressItemListner(String item, int pos, boolean checkedType) {
         itemClickedPos = pos;
         if (item.equalsIgnoreCase("Edit")) {
             clickerAction = "Edit";
             showAddressDialog();
             return;
         } else if (item.equalsIgnoreCase("delete")) {
-            if (checkedType)
-            {
+            if (checkedType) {
                 showDialog("You can't Delete default Address Make another address as default and Delete this default Address");
-            }else {
+            } else {
                 deleteItem(userAddressList.get(pos));
             }
             return;
@@ -366,20 +365,19 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
 
             for (int i = 0; i < userAddressList.size(); i++) {
                 progressDialog.show();
-                if (userAddressList.size()>1)
-                {
+                if (userAddressList.size() > 1) {
                     if (userAddressList.get(pos).getDocID().equalsIgnoreCase(userAddressList.get(i).getDocID())) {
                         userAddressList.get(pos).setDefaultAddress(checkedType);
                     } else {
                         userAddressList.get(pos).setDefaultAddress(!checkedType);
                     }
-                    firestore.collection("Address Book").document(userAddressList.get(i).getDocID()).update("defaultAddress", userAddressList.get(pos).isDefaultAddress()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    firestore.collection(getString(R.string.ADDRESS_BOOK)).document(userAddressList.get(i).getDocID()).update("defaultAddress", userAddressList.get(pos).isDefaultAddress()).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             progressDialog.dismiss();
                         }
                     });
-                }else {
+                } else {
                     progressDialog.dismiss();
                     showDialog("Atleast One Address must be Default ! Add another address to remove this as Default Address");
                 }
@@ -403,8 +401,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
         profileDialogBinding.saveBtn.setText("Update");
     }
 
-    private void showDialog(String message)
-    {
+    private void showDialog(String message) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setMessage(message);
         builder1.setCancelable(true);
@@ -419,6 +416,13 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
 
         AlertDialog alert11 = builder1.create();
         alert11.show();
+    }
+
+    public void dialogIninit() {
+        progressDialog = new Dialog(this);
+        com.talla.santhamarket.databinding.CustomProgressDialogBinding customProgressDialogBinding = com.talla.santhamarket.databinding.CustomProgressDialogBinding.inflate(this.getLayoutInflater());
+        progressDialog.setContentView(customProgressDialogBinding.getRoot());
+        progressDialog.setCancelable(false);
     }
 
 

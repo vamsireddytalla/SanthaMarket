@@ -47,7 +47,7 @@
     <string name="remove_ad_fav">Remove as Favourite</string>
     <string name="add_to_fav">Add to Favourite</string>
 
-    <string name="no_address_found">No Address Found</string>
+    <string name="no_address_found">No Address Found !</string>
     <string name="no_orders_found">No Orders Found !</string>
     <string name="order_status">Order Status</string>
     <string name="web_url">https://jaadhutv1.moneyeraaa.workers.dev/samplee.mp4</string>
@@ -88,6 +88,11 @@
     <string name="intent_product_id">product_id</string>
     <string name="intent_poductDetails">productDetails</string>
     <string name="buy_now">Buy Now</string>
+    <string name="out_of_stock">Out of Stock</string>
+    <string name="Continue">Continue</string>
+    <string name="cart_items">Cart Items</string>
+    <string name="proceed">Proceed</string>
+    <string name="no_items_found">No Items Found !</string>
 
 
     <string-array name="india_states">

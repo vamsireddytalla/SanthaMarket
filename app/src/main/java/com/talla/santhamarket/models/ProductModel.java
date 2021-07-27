@@ -30,10 +30,11 @@ public class ProductModel implements Serializable
     private Long totalStock;
     private String selectedColor;
     private String selectedSize;
-    private Long temp_qty;
+    private int temp_qty;
     private boolean temp_favourite=false;
     private String temp_favouriteId;
     private String extra_field;
+    private double delivery_charges;
     private SpecificationModel specificationModel;
 
 
@@ -229,11 +230,12 @@ public class ProductModel implements Serializable
         this.selectedSize = selectedSize;
     }
 
-    public Long getTemp_qty() {
+
+    public int getTemp_qty() {
         return temp_qty;
     }
 
-    public void setTemp_qty(Long temp_qty) {
+    public void setTemp_qty(int temp_qty) {
         this.temp_qty = temp_qty;
     }
 
@@ -269,6 +271,15 @@ public class ProductModel implements Serializable
         this.specificationModel = specificationModel;
     }
 
+
+    public double getDelivery_charges() {
+        return delivery_charges;
+    }
+
+    public void setDelivery_charges(double delivery_charges) {
+        this.delivery_charges = delivery_charges;
+    }
+
     @Override
     public String toString() {
         return "ProductModel{" +
@@ -300,6 +311,7 @@ public class ProductModel implements Serializable
                 ", temp_favourite=" + temp_favourite +
                 ", temp_favouriteId='" + temp_favouriteId + '\'' +
                 ", extra_field='" + extra_field + '\'' +
+                ", delivery_charges='" + delivery_charges + '\'' +
                 ", specificationModel=" + specificationModel +
                 '}';
     }
