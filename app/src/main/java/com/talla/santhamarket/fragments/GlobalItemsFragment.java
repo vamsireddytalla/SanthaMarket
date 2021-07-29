@@ -100,6 +100,7 @@ public class GlobalItemsFragment extends Fragment implements QuantityClickListne
                     } else {
                         finalPayTransferModel.setProductModelsList(productModelList);
                         finalPayTransferModel.setTotalPayment(finalPrice);
+                        finalPayTransferModel.setCartModelList(cartModelsList);
                         paymentListner.paymentClickListen(finalPayTransferModel);
                     }
                 } else {

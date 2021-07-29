@@ -73,6 +73,7 @@
     <string name="FCM_TOKENS">FCM_TOKENS</string>
     <string name="PROFILE_PICS">FCM_TOKENS</string>
     <string name="DAILY_VIEWS">DAILY_VIEWS</string>
+    <string name="PAYMENT_STATUS">PAYMENT_STATUS</string>
 
     //bullets selections
     <string name="OUT_OF_STOCK">Out-of-Stock</string>
@@ -95,8 +96,10 @@
     <string name="proceed">Proceed</string>
     <string name="cart_typ_key">cart_typ_key</string>
     <string name="no_items_found">No Items Found !</string>
-    <string name="help_message">For Help or any Extra cash back contact us at santhamarketonline@gmail.com</string>
-    <string name="final_no_data_found">No Final Data Found ! Contact Customer care</string>
+    <string name="help_message">For Help or any Extra cash back contact us at santhamarketonline@gmail.com If any Error occured In App Please Update App From PlayStore</string>
+    <string name="final_no_data_found">Take ScreenShot and send to customer care santhamarketonline@gmail.com</string>
+    <string name="online">Online</string>
+    <string name="COD">COD</string>
 
 
     <string-array name="india_states">

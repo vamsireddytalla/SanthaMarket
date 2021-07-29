@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
+    android:orientation="vertical"
     tools:context=".activities.OrderSucessActivity">
 
 
@@ -14,37 +13,38 @@
         android:id="@+id/lav_toggle"
         android:layout_width="@dimen/_150sdp"
         android:layout_height="@dimen/_150sdp"
+        android:layout_gravity="center"
         android:layout_marginStart="8dp"
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:layout_gravity="center"
         app:lottie_autoPlay="true"
-        app:lottie_rawRes="@raw/sucess"
         app:lottie_loop="true"
-        app:lottie_speed="1.75"/>
+        app:lottie_rawRes="@raw/sucess"
+        app:lottie_speed="1.75" />
 
     <TextView
+        style="@style/Roboto_TextView_Light_dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Thanque for shopping with Us."
         android:layout_marginTop="@dimen/_20sdp"
-        style="@style/Pop_TextView_Above_Medium"/>
+        android:text="Thanque for shopping with Us." />
 
     <TextView
+        style="@style/Roboto_TextView_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Congratulations!"
-        style="@style/Pop_TextView_Above_Medium"/>
+        android:text="Congratulations!" />
 
     <TextView
+        style="@style/Roboto_TextView_Light_dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Order Sucessfully Placed."
-        style="@style/Pop_TextView_Medium"/>
+        android:text="Order Sucessfully Placed." />
 
     <Button
         android:id="@+id/continueBtn"
+        style="@style/Roboto_TextView_Medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_40sdp"
@@ -54,11 +54,10 @@
         android:background="@drawable/btn_bg"
         android:clickable="true"
         android:focusable="true"
-        android:fontFamily="@font/roboto_black"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:onClick="continueBtn"
         android:padding="15dp"
-        android:text="Continue"
+        android:text="Done"
         android:textColor="#fff"
         tools:ignore="MissingConstraints,OnClick" />
 

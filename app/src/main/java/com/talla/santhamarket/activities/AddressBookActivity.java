@@ -49,7 +49,7 @@ import com.talla.santhamarket.models.UserAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddressBookActivity extends AppCompatActivity implements AddressItemListner {
+public class AddressBookActivity extends AppCompatActivity implements AddressItemListner  {
     private ActivityAddressBookBinding binding;
     private ProfileDialogBinding profileDialogBinding;
     private Dialog dialog;

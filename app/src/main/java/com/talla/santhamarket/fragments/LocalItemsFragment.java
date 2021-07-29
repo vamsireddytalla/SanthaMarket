@@ -91,6 +91,7 @@ public class LocalItemsFragment extends Fragment implements QuantityClickListner
                     } else {
                         finalPayTransferModel.setProductModelsList(productModelList);
                         finalPayTransferModel.setTotalPayment(finalPrice);
+                        finalPayTransferModel.setCartModelList(cartModelsList);
                         paymentListner.paymentClickListen(finalPayTransferModel);
                     }
                 } else {

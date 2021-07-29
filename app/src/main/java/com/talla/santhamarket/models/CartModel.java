@@ -1,6 +1,8 @@
 package com.talla.santhamarket.models;
 
-public class CartModel
+import java.io.Serializable;
+
+public class CartModel implements Serializable
 {
     private String cart_doc_id;
     private String cart_product_id;

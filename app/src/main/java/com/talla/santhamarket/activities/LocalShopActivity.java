@@ -14,6 +14,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -47,6 +52,7 @@ import com.talla.santhamarket.utills.SharedEncryptUtills;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class LocalShopActivity extends AppCompatActivity {
     private ActivityLocalShopBinding binding;
@@ -56,6 +62,7 @@ public class LocalShopActivity extends AppCompatActivity {
     private List<ProductModel> productModelList = new ArrayList<>();
     private Dialog progressDialog;
     private ListenerRegistration localProdListner;
+    private LocationManager locationManager;
     private static final String TAG = "LocalShopActivity";
 
     @Override
@@ -279,5 +286,7 @@ public class LocalShopActivity extends AppCompatActivity {
         });
         alertDialogBuilder.show();
     }
+
+
 
 }

@@ -2,6 +2,7 @@ package com.talla.santhamarket.models;
 
 public class ServerModel {
     private String payment_key;
+    private String payment_secret_key;
     private String app_version;
     private String tags_url;
     private String fcm_server_token;
@@ -38,10 +39,19 @@ public class ServerModel {
         this.fcm_server_token = fcm_server_token;
     }
 
+    public String getPayment_secret_key() {
+        return payment_secret_key;
+    }
+
+    public void setPayment_secret_key(String payment_secret_key) {
+        this.payment_secret_key = payment_secret_key;
+    }
+
     @Override
     public String toString() {
         return "ServerModel{" +
                 "payment_key='" + payment_key + '\'' +
+                ", payment_secret_key='" + payment_secret_key + '\'' +
                 ", app_version='" + app_version + '\'' +
                 ", tags_url='" + tags_url + '\'' +
                 ", fcm_server_token='" + fcm_server_token + '\'' +

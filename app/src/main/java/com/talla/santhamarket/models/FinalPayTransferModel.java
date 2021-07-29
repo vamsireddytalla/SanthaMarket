@@ -6,6 +6,7 @@ public class FinalPayTransferModel
 {
     private List<ProductModel> productModelsList;
     private int totalPayment;
+    private List<CartModel> cartModelList;
 
     public List<ProductModel> getProductModelsList() {
         return productModelsList;
@@ -23,11 +24,20 @@ public class FinalPayTransferModel
         this.totalPayment = totalPayment;
     }
 
+    public List<CartModel> getCartModelList() {
+        return cartModelList;
+    }
+
+    public void setCartModelList(List<CartModel> cartModelList) {
+        this.cartModelList = cartModelList;
+    }
+
     @Override
     public String toString() {
         return "FinalPayTransferModel{" +
                 "productModelsList=" + productModelsList +
-                ", totalPayment='" + totalPayment + '\'' +
+                ", totalPayment=" + totalPayment +
+                ", cartModelList=" + cartModelList +
                 '}';
     }
 }

@@ -4,11 +4,11 @@ apply plugin: 'com.google.gms.google-services'
 
 repositories {
     mavenCentral()
-
     flatDir{
         dirs 'libs'
     }
 }
+
 
 android {
     compileSdkVersion 30
@@ -34,7 +34,10 @@ android {
     buildFeatures {
         viewBinding = true
     }
-
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -48,6 +51,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:19.2.1'
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
     implementation 'androidx.security:security-crypto:1.0.0'
+    implementation 'com.razorpay:checkout:1.6.6'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -73,7 +77,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
-    //razorpay
-    implementation 'com.razorpay:checkout:1.6.6'
+
+    // location play services
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
 
 }

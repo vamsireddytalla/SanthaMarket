@@ -17,7 +17,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.25"
+            android:layout_weight="0.30"
             android:background="@color/colorPrimaryDark">
 
             <ImageView
@@ -57,8 +57,8 @@
 
             <com.mikhaellopez.circularimageview.CircularImageView
                 android:id="@+id/profile_imageView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_centerInParent="true"
                 android:src="@drawable/male_icon"
                 app:civ_border_color="@color/white"/>
@@ -101,7 +101,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.7"
+            android:layout_weight="0.60"
             android:orientation="vertical"
             android:padding="10dp">
 
@@ -258,7 +258,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.05"
+            android:layout_weight="0.10"
             android:gravity="bottom|center_horizontal"
             android:paddingBottom="5dp"
             android:fontFamily="@font/circular_book"

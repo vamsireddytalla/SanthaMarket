@@ -28,6 +28,7 @@ public class OrderModel implements Serializable
     private boolean isDelivered = false;
     private String webUrl;
     private boolean paidOrNot = false;
+    private String payment_status_doc;
     private List<DeliveryModel> deliveryModelList;
 
 
@@ -226,6 +227,15 @@ public class OrderModel implements Serializable
         this.deliveryCharges = deliveryCharges;
     }
 
+
+    public String getPayment_status_doc() {
+        return payment_status_doc;
+    }
+
+    public void setPayment_status_doc(String payment_status_doc) {
+        this.payment_status_doc = payment_status_doc;
+    }
+
     @Override
     public String toString() {
         return "OrderModel{" +
@@ -252,6 +262,7 @@ public class OrderModel implements Serializable
                 ", isDelivered=" + isDelivered +
                 ", webUrl='" + webUrl + '\'' +
                 ", paidOrNot=" + paidOrNot +
+                ", payment_status_doc='" + payment_status_doc + '\'' +
                 ", deliveryModelList=" + deliveryModelList +
                 '}';
     }
