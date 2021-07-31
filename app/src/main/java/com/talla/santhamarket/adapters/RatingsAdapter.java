@@ -57,17 +57,16 @@ public class RatingsAdapter extends RecyclerView.Adapter<RatingsAdapter.MyViewHo
 
         public void onBindView(RatingModel ratingModel)
         {
-            binding.ratingTitle.setText(ratingModel.getRating_title());
-            binding.ratingDesc.setText(ratingModel.getRating_desc());
-            List<ProductImageModel> productImageModelList=ratingModel.getProductImageModelList();
-            if (productImageModelList.size()>0)
-            {
-                binding.productImagesRCV.setVisibility(View.VISIBLE);
-                ProductImagesAdapter productImagesAdapter=new ProductImagesAdapter(context,productImageModelList);
-                binding.productImagesRCV.setAdapter(productImagesAdapter);
-            }else {
-                binding.productImagesRCV.setVisibility(View.GONE);
-            }
+            binding.ratingTitle.setText(ratingModel.getRatingMessage());
+//            List<ProductImageModel> productImageModelList=ratingModel.getProductImageModelList();
+//            if (productImageModelList.size()>0)
+//            {
+//                binding.productImagesRCV.setVisibility(View.VISIBLE);
+//                ProductImagesAdapter productImagesAdapter=new ProductImagesAdapter(context,productImageModelList);
+//                binding.productImagesRCV.setAdapter(productImagesAdapter);
+//            }else {
+//                binding.productImagesRCV.setVisibility(View.GONE);
+//            }
 
         }
 

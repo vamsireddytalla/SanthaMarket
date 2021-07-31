@@ -1,8 +1,9 @@
 package com.talla.santhamarket.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class FinalPayTransferModel
+public class FinalPayTransferModel implements Serializable
 {
     private List<ProductModel> productModelsList;
     private int totalPayment;

@@ -78,7 +78,7 @@ public class LocalCartAdapter extends RecyclerView.Adapter<LocalCartAdapter.MyVi
             @Override
             public void onClick(View v) {
                 ProductModel productModel = productModelList.get(position);
-                if (!productModel.isOut_of_stock() && (!productModel.getTotalStock().equals(productModel.getSelled_items()))) {
+                if (!productModel.isOut_of_stock() && (productModel.getTotalStock()>0)) {
                     int maxQty = Math.round(productModel.getMax_quantity());
                     String qty = holder.binding.qtyText.getText().toString();
                     int enteredQuatity = Integer.parseInt(qty);
@@ -97,7 +97,7 @@ public class LocalCartAdapter extends RecyclerView.Adapter<LocalCartAdapter.MyVi
             @Override
             public void onClick(View v) {
                 ProductModel productModel = productModelList.get(position);
-                if (!productModel.isOut_of_stock() && (!productModel.getTotalStock().equals(productModel.getSelled_items()))) {
+                if (!productModel.isOut_of_stock() && (productModel.getTotalStock()>0)) {
                     int maxQty = Math.round(productModel.getMax_quantity());
                     String qty = holder.binding.qtyText.getText().toString();
                     int enteredQuatity = Integer.parseInt(qty);

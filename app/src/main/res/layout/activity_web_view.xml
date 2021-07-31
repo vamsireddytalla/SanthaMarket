@@ -35,7 +35,7 @@
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_weight="1"
                 android:text="@string/order_status"
-                style="@style/Pop_TextView_small"
+                style="@style/Roboto_TextView_Medium"
                 android:textColor="@color/white" />
 
         </LinearLayout>

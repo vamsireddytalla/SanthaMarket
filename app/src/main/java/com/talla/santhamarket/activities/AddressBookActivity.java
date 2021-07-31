@@ -81,14 +81,10 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
                 finish();
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         getAddressCount();
         getAddressBookListner();
     }
+
 
     public void addAddress(View view) {
         clickerAction = "Add";

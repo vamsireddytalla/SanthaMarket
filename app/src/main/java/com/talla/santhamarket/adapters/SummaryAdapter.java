@@ -89,7 +89,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
             @Override
             public void onClick(View v) {
                 ProductModel productModel = productModelList.get(position);
-                if (!productModel.isOut_of_stock() && (!productModel.getTotalStock().equals(productModel.getSelled_items()))) {
+                if (!productModel.isOut_of_stock() && (productModel.getTotalStock()>0)) {
                     int maxQty = Math.round(productModel.getMax_quantity());
                     String qty = holder.binding.qtyText.getText().toString();
                     int enteredQuatity = Integer.parseInt(qty);
@@ -111,7 +111,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
             @Override
             public void onClick(View v) {
                 ProductModel productModel = productModelList.get(position);
-                if (!productModel.isOut_of_stock() && (!productModel.getTotalStock().equals(productModel.getSelled_items()))) {
+                if (!productModel.isOut_of_stock() && (productModel.getTotalStock()>0)) {
                     int maxQty = Math.round(productModel.getMax_quantity());
                     String qty = holder.binding.qtyText.getText().toString();
                     int enteredQuatity = Integer.parseInt(qty);
@@ -169,7 +169,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.MyViewHo
             } else {
                 binding.itemChart.setVisibility(View.GONE);
             }
-            if (productModel.isOut_of_stock() || (productModel.getTotalStock().equals(productModel.getSelled_items()))) {
+            if (productModel.isOut_of_stock() || (productModel.getTotalStock()<=0)) {
                 binding.soldOut.setVisibility(View.VISIBLE);
             } else {
                 binding.soldOut.setVisibility(View.INVISIBLE);

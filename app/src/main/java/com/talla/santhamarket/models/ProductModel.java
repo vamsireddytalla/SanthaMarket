@@ -12,14 +12,14 @@ public class ProductModel implements Serializable
     private String description;
     private double product_price;
     private double mrp_price;
-    private Long max_quantity;
+    private int max_quantity;
     private double product_weight;
     private boolean cod_available;
     private String category_id;
     private String sub_cat_id;
     private List<SubProductModel> subProductModelList;
     private boolean out_of_stock;
-    private Long selled_items=0l;
+    private int selled_items;
     private String product_date;
     private String sellerId;
     private ItemTypeModel itemTypeModel;
@@ -27,7 +27,7 @@ public class ProductModel implements Serializable
     private double total_ratings=0;
     private double avgRatings=0;
     private String video_link;
-    private Long totalStock;
+    private int totalStock;
     private String selectedColor;
     private String selectedSize;
     private int temp_qty;
@@ -86,14 +86,6 @@ public class ProductModel implements Serializable
         this.mrp_price = mrp_price;
     }
 
-    public Long getMax_quantity() {
-        return max_quantity;
-    }
-
-    public void setMax_quantity(Long max_quantity) {
-        this.max_quantity = max_quantity;
-    }
-
     public double getProduct_weight() {
         return product_weight;
     }
@@ -142,13 +134,6 @@ public class ProductModel implements Serializable
         this.out_of_stock = out_of_stock;
     }
 
-    public Long getSelled_items() {
-        return selled_items;
-    }
-
-    public void setSelled_items(Long selled_items) {
-        this.selled_items = selled_items;
-    }
 
     public String getProduct_date() {
         return product_date;
@@ -206,13 +191,6 @@ public class ProductModel implements Serializable
         this.video_link = video_link;
     }
 
-    public Long getTotalStock() {
-        return totalStock;
-    }
-
-    public void setTotalStock(Long totalStock) {
-        this.totalStock = totalStock;
-    }
 
     public String getSelectedColor() {
         return selectedColor;
@@ -278,6 +256,30 @@ public class ProductModel implements Serializable
 
     public void setDelivery_charges(double delivery_charges) {
         this.delivery_charges = delivery_charges;
+    }
+
+    public int getMax_quantity() {
+        return max_quantity;
+    }
+
+    public void setMax_quantity(int max_quantity) {
+        this.max_quantity = max_quantity;
+    }
+
+    public int getSelled_items() {
+        return selled_items;
+    }
+
+    public void setSelled_items(int selled_items) {
+        this.selled_items = selled_items;
+    }
+
+    public int getTotalStock() {
+        return totalStock;
+    }
+
+    public void setTotalStock(int totalStock) {
+        this.totalStock = totalStock;
     }
 
     @Override

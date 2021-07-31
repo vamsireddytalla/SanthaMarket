@@ -131,7 +131,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
             binding.discount.setText(String.valueOf(res) + "%OFF");
             binding.toggleBtn.setChecked(true);
 
-            if (favouriteModel.isOut_of_stock() || (favouriteModel.getTotalStock().equals(favouriteModel.getSelled_items()))) {
+            if (favouriteModel.isOut_of_stock() || (favouriteModel.getTotalStock()<=0)) {
                 binding.buyNow.setText("Sold Out");
                 binding.buyNow.setTextColor(context.getResources().getColor(R.color.orange));
             }

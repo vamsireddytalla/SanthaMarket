@@ -1,6 +1,7 @@
 package com.talla.santhamarket.fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -29,6 +30,7 @@ import com.talla.santhamarket.activities.HomeActivity;
 import com.talla.santhamarket.activities.OrderSummaryActivity;
 import com.talla.santhamarket.adapters.OrdersAdapter;
 import com.talla.santhamarket.adapters.SummaryAdapter;
+import com.talla.santhamarket.databinding.CustomProgressDialogBinding;
 import com.talla.santhamarket.databinding.FragmentMyOrdersBinding;
 import com.talla.santhamarket.interfaces.OnFragmentListner;
 import com.talla.santhamarket.models.CartModel;
@@ -46,6 +48,7 @@ public class MyOrdersFragment extends Fragment {
     private DocumentReference documentReference;
     private FirebaseAuth auth;
     private String UID;
+    private Dialog progressDialog;
     private OrdersAdapter ordersAdapter;
     private List<OrderModel> orderModelList = new ArrayList<>();
     private ListenerRegistration ordersListner;
@@ -58,15 +61,11 @@ public class MyOrdersFragment extends Fragment {
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         UID = auth.getUid();
-
+        dialogIninit();
+        getOrders();
         return binding.getRoot();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        getOrders();
-    }
 
     @Override
     public void onAttach(@NonNull Activity activity) {
@@ -93,7 +92,7 @@ public class MyOrdersFragment extends Fragment {
             orderModelList.clear();
         }
         binding.progressCircle.setVisibility(View.VISIBLE);
-        ordersListner = firestore.collection(activity.getResources().getString(R.string.ORDERS)).whereEqualTo("userId", UID).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        ordersListner = firestore.collection(activity.getResources().getString(R.string.ORDERS)).whereEqualTo("userId", UID).orderBy("ordered_date").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -103,6 +102,7 @@ public class MyOrdersFragment extends Fragment {
                     for (DocumentChange dc : value.getDocumentChanges()) {
                         switch (dc.getType()) {
                             case ADDED:
+                                Log.d(TAG, dc.getDocument().toObject(Object.class).toString());
                                 OrderModel orderModel = dc.getDocument().toObject(OrderModel.class);
                                 orderModelList.add(orderModel);
                                 Log.d(TAG, "Ordered data added to list: " + orderModel.toString());
@@ -148,5 +148,13 @@ public class MyOrdersFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         ordersListner.remove();
+    }
+
+
+    public void dialogIninit() {
+        progressDialog = new Dialog(activity);
+        CustomProgressDialogBinding customProgressDialogBinding = CustomProgressDialogBinding.inflate(this.getLayoutInflater());
+        progressDialog.setContentView(customProgressDialogBinding.getRoot());
+        progressDialog.setCancelable(false);
     }
 }

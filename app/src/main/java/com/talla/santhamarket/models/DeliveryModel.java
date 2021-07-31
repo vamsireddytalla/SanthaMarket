@@ -1,6 +1,8 @@
 package com.talla.santhamarket.models;
 
-public class DeliveryModel
+import java.io.Serializable;
+
+public class DeliveryModel implements Serializable
 {
     private String deliveryTitle;
     private String deliveryDate;

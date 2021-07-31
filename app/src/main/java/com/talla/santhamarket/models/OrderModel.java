@@ -21,15 +21,17 @@ public class OrderModel implements Serializable
     private String ordered_date;
     private String payment_method;
     private int deliveryCharges;
-    private String cancelReason;
     private UserAddress delvery_address;
     private String transaction_id;
     private String delivered_date;
     private boolean isDelivered = false;
     private String webUrl;
     private boolean paidOrNot = false;
+    private boolean isLocal;
     private String payment_status_doc;
+    private String order_doc_id;
     private List<DeliveryModel> deliveryModelList;
+    private RatingModel ratingModel;
 
 
     public String getProduct_id() {
@@ -153,14 +155,6 @@ public class OrderModel implements Serializable
         this.payment_method = payment_method;
     }
 
-    public String getCancelReason() {
-        return cancelReason;
-    }
-
-    public void setCancelReason(String cancelReason) {
-        this.cancelReason = cancelReason;
-    }
-
     public UserAddress getDelvery_address() {
         return delvery_address;
     }
@@ -236,6 +230,31 @@ public class OrderModel implements Serializable
         this.payment_status_doc = payment_status_doc;
     }
 
+
+    public String getOrder_doc_id() {
+        return order_doc_id;
+    }
+
+    public void setOrder_doc_id(String order_doc_id) {
+        this.order_doc_id = order_doc_id;
+    }
+
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    public void setLocal(boolean local) {
+        isLocal = local;
+    }
+
+    public RatingModel getRatingModel() {
+        return ratingModel;
+    }
+
+    public void setRatingModel(RatingModel ratingModel) {
+        this.ratingModel = ratingModel;
+    }
+
     @Override
     public String toString() {
         return "OrderModel{" +
@@ -255,15 +274,17 @@ public class OrderModel implements Serializable
                 ", ordered_date='" + ordered_date + '\'' +
                 ", payment_method='" + payment_method + '\'' +
                 ", deliveryCharges=" + deliveryCharges +
-                ", cancelReason='" + cancelReason + '\'' +
                 ", delvery_address=" + delvery_address +
                 ", transaction_id='" + transaction_id + '\'' +
                 ", delivered_date='" + delivered_date + '\'' +
                 ", isDelivered=" + isDelivered +
                 ", webUrl='" + webUrl + '\'' +
                 ", paidOrNot=" + paidOrNot +
+                ", isLocal=" + isLocal +
                 ", payment_status_doc='" + payment_status_doc + '\'' +
+                ", order_doc_id='" + order_doc_id + '\'' +
                 ", deliveryModelList=" + deliveryModelList +
+                ", ratingModel=" + ratingModel +
                 '}';
     }
 }

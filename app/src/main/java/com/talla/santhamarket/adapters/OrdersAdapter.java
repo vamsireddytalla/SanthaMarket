@@ -3,14 +3,20 @@ package com.talla.santhamarket.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.RatingBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.talla.santhamarket.R;
+import com.talla.santhamarket.activities.DetailOrderActivity;
+import com.talla.santhamarket.activities.ReviewActivity;
 import com.talla.santhamarket.activities.WebViewActivity;
 import com.talla.santhamarket.databinding.OrderItemBinding;
 import com.talla.santhamarket.databinding.RatingsItemBinding;
@@ -45,11 +51,28 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         holder.binding.orderItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context, WebViewActivity.class);
-                intent.putExtra(context.getString(R.string.order_status),orderModelList.get(position));
+                OrderModel orderModel = orderModelList.get(position);
+                if (orderModel.isLocal()) {
+                    Intent intent = new Intent(context, DetailOrderActivity.class);
+                    intent.putExtra(context.getString(R.string.order_status), orderModelList.get(position));
+                    context.startActivity(intent);
+                } else {
+                    Intent intent = new Intent(context, WebViewActivity.class);
+                    intent.putExtra(context.getString(R.string.order_status), orderModelList.get(position));
+                    context.startActivity(intent);
+                }
+            }
+        });
+
+        holder.binding.ratingRoot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ReviewActivity.class);
+                intent.putExtra(context.getString(R.string.order_status), orderModelList.get(position));
                 context.startActivity(intent);
             }
         });
+
     }
 
     @Override
@@ -65,27 +88,44 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
             this.binding = itemView;
         }
 
-        public void onBindView(OrderModel orderModel)
-        {
+        public void onBindView(OrderModel orderModel) {
             Glide.with(context).load(orderModel.getProduct_image()).fitCenter().into(binding.orderImage);
             binding.orderTitle.setText(orderModel.getProduct_name());
-            binding.orderDate.setText("Ordered At: "+orderModel.getOrdered_date());
-            binding.orderPaymentMethod.setText("Payment Mode : "+orderModel.getPayment_method());
-            boolean isDelivered=orderModel.isDelivered();
-            if (isDelivered)
-            {
-                binding.deliveryTxt.setText("Delivered");
-                binding.deliveryTxt.setTextColor(context.getResources().getColor(R.color.greeen));
-            }else {
-                binding.deliveryTxt.setText("Pending");
-                binding.deliveryTxt.setTextColor(context.getResources().getColor(R.color.orange));
+            binding.orderDate.setText("Ordered At : " + orderModel.getOrdered_date());
+            binding.orderPaymentMethod.setText("Payment Mode : " + orderModel.getPayment_method());
+            boolean isDelivered = orderModel.isDelivered();
+            if (isDelivered) {
+                binding.orderStatus.setText(context.getResources().getString(R.string.DELIVERED));
+                binding.orderStatus.setTextColor(context.getResources().getColor(R.color.delivered_color));
+                binding.myRatingBar.setVisibility(View.VISIBLE);
+            } else {
+                int size = orderModel.getDeliveryModelList().size();
+                String orderStatus = orderModel.getDeliveryModelList().get(size-1).getDeliveryTitle();
+                if (orderStatus.equalsIgnoreCase(context.getResources().getString(R.string.PROCESSING))) {
+                    binding.orderStatus.setTextColor(context.getResources().getColor(R.color.processing_color));
+                    binding.orderStatus.setText(orderStatus);
+                } else if (orderStatus.equalsIgnoreCase(context.getResources().getString(R.string.ORDERED))) {
+                    binding.orderStatus.setTextColor(context.getResources().getColor(R.color.ordered_color));
+                    binding.orderStatus.setText(orderStatus);
+                    RunAnimation();
+                } else if (orderStatus.equalsIgnoreCase(context.getResources().getString(R.string.CANCELLED))) {
+                    binding.orderStatus.setTextColor(context.getResources().getColor(R.color.cancelled_color));
+                    binding.orderStatus.setText(orderStatus);
+                }
             }
-            String cancelProduct=orderModel.getCancelReason();
-            if (cancelProduct!=null && !cancelProduct.isEmpty())
+
+            if (orderModel.getRatingModel()!=null)
             {
-                binding.deliveryTxt.setText(cancelProduct);
-                binding.deliveryTxt.setTextColor(context.getResources().getColor(R.color.red));
+                binding.myRatingBar.setRating((float) orderModel.getRatingModel().getRating());
             }
+
+        }
+
+        private void RunAnimation() {
+            Animation a = AnimationUtils.loadAnimation(context, R.anim.animate_text);
+            a.reset();
+            binding.orderStatus.clearAnimation();
+            binding.orderStatus.startAnimation(a);
         }
 
     }

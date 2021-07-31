@@ -91,7 +91,7 @@ public class SearchedProductsAdapter extends RecyclerView.Adapter<SearchedProduc
             Glide.with(context).load(imgUrl).fitCenter().into(binding.viewProdImage);
             binding.ratingbar.setRating((float) productModel.getAvgRatings());
             binding.totalRaters.setText("(" + productModel.getTotal_ratings() + ")");
-            if (productModel.getTotalStock().equals(productModel.getSelled_items()))
+            if (productModel.getTotalStock()<=0)
             {
                   binding.soldOut.setText("Sold Out");
                   binding.soldOut.setTextColor(context.getResources().getColor(R.color.orange));

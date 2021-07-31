@@ -46,6 +46,7 @@
     <string name="fav">Fav</string>
     <string name="remove_ad_fav">Remove as Favourite</string>
     <string name="add_to_fav">Add to Favourite</string>
+    <string name="please_enter_cancellation_reason">Please Enter Cancellation Reason</string>
 
     <string name="no_address_found">No Address Found !</string>
     <string name="no_orders_found">No Orders Found !</string>
@@ -55,6 +56,16 @@
     <string name="address_book">Address Book</string>
     <string name="amount_payable">Amount Payable</string>
     <string name="admin_email">santhamarketonline@gmail.com</string>
+    <string name="local_shop_image">https://1.bp.blogspot.com/-v2mJf8VcOXQ/YQP56TL503I/AAAAAAAABlI/7-FV9XNHjVULS3NIhx0C6jnvAWMpcUU4QCLcBGAsYHQ/s320/Group%2B4.png</string>
+
+    //status keys
+    <string name="ORDERED">ORDERED</string>
+    <string name="PROCESSING">PROCESSING</string>
+    <string name="CANCELLED">CANCELLED</string>
+    <string name="DELIVERED">DELIVERED</string>
+
+    <string name="ACCEPT">ACCEPT</string>
+    <string name="REJECT">REJECT</string>
 
     //Server Collections
     <string name="ADDRESS_BOOK">ADDRESS_BOOK</string>
@@ -74,6 +85,7 @@
     <string name="PROFILE_PICS">FCM_TOKENS</string>
     <string name="DAILY_VIEWS">DAILY_VIEWS</string>
     <string name="PAYMENT_STATUS">PAYMENT_STATUS</string>
+    <string name="RATINGS">RATINGS</string>
 
     //bullets selections
     <string name="OUT_OF_STOCK">Out-of-Stock</string>
@@ -100,6 +112,8 @@
     <string name="final_no_data_found">Take ScreenShot and send to customer care santhamarketonline@gmail.com</string>
     <string name="online">Online</string>
     <string name="COD">COD</string>
+    <string name="review_product">Review Product</string>
+
 
 
     <string-array name="india_states">

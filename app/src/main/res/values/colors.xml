@@ -21,5 +21,13 @@
     <color name="light_text_color">#AFAFAF</color>
     <color name="transparent">#A05D6063</color>
     <color name="red">#BC1813</color>
+    <color name="xd_green">#5FC695</color>
+
+    //status colors
+    <color name="ordered_color">#27AE60</color>
+    <color name="processing_color">#3498DB</color>
+    <color name="cancelled_color">#D35400</color>
+    <color name="delivered_color">#8E44AD</color>
+
 
 </resources>

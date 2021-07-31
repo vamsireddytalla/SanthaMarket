@@ -56,16 +56,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_10sdp"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical" />
 
     <TextView
         android:id="@+id/noProductsAvail"
-        style="@style/Pop_TextView_Above_Medium"
+        style="@style/roboto_TextView_Above_Medium"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal|center"
         android:text="No Products Available"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 </LinearLayout>

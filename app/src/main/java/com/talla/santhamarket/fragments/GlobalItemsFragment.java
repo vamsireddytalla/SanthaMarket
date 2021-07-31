@@ -381,7 +381,7 @@ public class GlobalItemsFragment extends Fragment implements QuantityClickListne
         deliveryCharges = 0;
         for (int i = 0; i < productModelList.size(); i++) {
             ProductModel productModel1 = productModelList.get(i);
-            if (!productModel1.isOut_of_stock() && !(productModel1.getTotalStock().equals(productModel1.getSelled_items()))) {
+            if (!productModel1.isOut_of_stock() && (productModel1.getTotalStock()>0)) {
                 double mrp_price = productModel1.getMrp_price();
                 double selling_price = productModel1.getProduct_price();
 

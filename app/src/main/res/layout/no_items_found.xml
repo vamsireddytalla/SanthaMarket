@@ -11,6 +11,6 @@
         android:text="No Items Found !"
         android:id="@+id/noItemsFound"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:fontFamily="@font/poppins_medium"/>
+       style="@style/Roboto_TextView_Medium"/>
 
 </LinearLayout>

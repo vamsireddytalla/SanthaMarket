@@ -45,6 +45,7 @@ public class SCModel {
     private String user_name;
     private String timestamp;
     private String phoneNumber;
+    private String transactionId;
 
 
     public String getId() {
@@ -167,24 +168,11 @@ public class SCModel {
         this.phoneNumber = phoneNumber;
     }
 
-    @Override
-    public String toString() {
-        return "SCModel{" +
-                "id='" + id + '\'' +
-                ", entity='" + entity + '\'' +
-                ", amount=" + amount +
-                ", amountPaid=" + amountPaid +
-                ", amountDue=" + amountDue +
-                ", currency='" + currency + '\'' +
-                ", receipt='" + receipt + '\'' +
-                ", offerId=" + offerId +
-                ", status='" + status + '\'' +
-                ", attempts=" + attempts +
-                ", notes=" + notes +
-                ", createdAt=" + createdAt +
-                ", user_name='" + user_name + '\'' +
-                ", timestamp='" + timestamp + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                '}';
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 }

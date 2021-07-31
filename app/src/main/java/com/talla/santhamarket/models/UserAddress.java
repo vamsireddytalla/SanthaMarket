@@ -1,6 +1,8 @@
 package com.talla.santhamarket.models;
 
-public class UserAddress
+import java.io.Serializable;
+
+public class UserAddress implements Serializable
 {
     private String userId;
     private String user_name;

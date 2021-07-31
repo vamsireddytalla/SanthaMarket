@@ -334,7 +334,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                     if (cartModel == null) {
                         Log.d(TAG, "No Doc Available");
 
-                        if (totalCart_items < 50 || !productModel.isOut_of_stock() && !productModel.getTotalStock().equals(productModel.getSelled_items())) {
+                        if (totalCart_items < 50) {
                             addItemToCart();
                         } else {
                             progressDialog.dismiss();
@@ -523,7 +523,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         int res = StaticUtills.discountPercentage(selling_price, mrp_price);
         binding.discount.setText(String.valueOf(res) + "%OFF");
         binding.productWeight.setText("Product Weight : " + productModel.getProduct_weight() + " Kg");
-        if (productModel.isOut_of_stock() || (productModel.getTotalStock().equals(productModel.getSelled_items()))) {
+        if (productModel.isOut_of_stock() || productModel.getTotalStock()<=0) {
             binding.continueBtn.setBackgroundColor(getResources().getColor(R.color.red));
             binding.continueText.setText(getString(R.string.out_of_stock));
         } else {
@@ -565,7 +565,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     public void nextStep(View view) {
         key = binding.continueText.getText().toString();
-        if (productModel.isOut_of_stock() && (productModel.getTotalStock().equals(productModel.getSelled_items()))) {
+        if (productModel.isOut_of_stock() || (productModel.getTotalStock()<=0)) {
             showSnackBar("Out Of Stock");
             binding.continueText.setText(R.string.out_of_stock);
         } else {

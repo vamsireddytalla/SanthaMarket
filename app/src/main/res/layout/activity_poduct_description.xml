@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:text="Item Details"
                 android:textColor="@color/white"
-                android:theme="@style/Pop_TextView_Medium"
+                android:theme="@style/Roboto_TextView_Medium"
                 android:layout_toRightOf="@+id/backBtn"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/_10sdp"/>

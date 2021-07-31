@@ -26,12 +26,14 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.razorpay.Checkout;
@@ -42,6 +44,7 @@ import com.talla.santhamarket.databinding.ActivityMultiCartBinding;
 import com.talla.santhamarket.fragments.GlobalItemsFragment;
 import com.talla.santhamarket.fragments.LocalItemsFragment;
 import com.talla.santhamarket.interfaces.PaymentListner;
+import com.talla.santhamarket.models.BackGroundModel;
 import com.talla.santhamarket.models.CategoryModel;
 import com.talla.santhamarket.models.DeliveryModel;
 import com.talla.santhamarket.models.FinalPayTransferModel;
@@ -83,7 +86,7 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
     private SCModel curlObj;
     private FinalPayTransferModel finalPay;
     private ListenerRegistration serverListner, profileListner, addressDataListner, addressCountListner;
-    private String transactionType = "COD", orderID, transactionID, orderDocId,receiptId;
+    private String transactionType = "COD", orderID, transactionID, orderDocId, receiptId;
     private List<String> localDocList = new ArrayList<>();
     private static String TAG = "MultiCartActivity";
 
@@ -251,8 +254,7 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                 localFinalStep(finalPayTransferModel);
             } else {
                 finalPay = finalPayTransferModel;
-                if (userAddress!=null && userAddress.getUser_name()!=null && !userAddress.getUser_name().isEmpty())
-                {
+                if (userAddress != null && userAddress.getUser_name() != null && !userAddress.getUser_name().isEmpty()) {
                     if (finalPay.getTotalPayment() != 0 && finalPay.getTotalPayment() > 20) {
                         new Thread(new Runnable() {
                             @Override
@@ -274,7 +276,7 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                     } else {
                         showDialog("Total Amount Error", "Minimum Total amount must be above 20 rupees");
                     }
-                }else {
+                } else {
                     showSnackBar("Please Add Address to Continue !");
                 }
 
@@ -426,19 +428,22 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                 orderModel.setDelivered_date(CheckUtill.getSystemTime(this));
                 orderModel.setDelivered(false);
                 orderModel.setWebUrl("");
+                orderModel.setLocal(true);
+                receiptId = UUID.randomUUID().toString();
+                orderModel.setOrder_id(receiptId);
                 int deliveryCharges = (int) (((productModel.getProduct_price() * productModel.getTemp_qty()) * 10) / 100);
                 orderModel.setDeliveryCharges(deliveryCharges);
                 orderModel.setPaidOrNot(false);
                 List<DeliveryModel> deliveryModelList = new ArrayList<>();
                 DeliveryModel deliveryModel = new DeliveryModel();
                 deliveryModel.setDeliveryDate(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
-                deliveryModel.setDeliveryTitle("Order Placed");
+                deliveryModel.setDeliveryTitle(getString(R.string.ORDERED));
                 deliveryModel.setDeliveryMessage("Order has been placed sucessfully");
                 deliveryModelList.add(deliveryModel);
                 orderModel.setDeliveryModelList(deliveryModelList);
                 //after for loop this
                 final DocumentReference docRef = firestore.collection(getString(R.string.ORDERS)).document();
-                orderModel.setOrder_id(docRef.getId());
+                orderModel.setOrder_doc_id(docRef.getId());
 
                 docRef.set(orderModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -447,7 +452,7 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                         if (localDocList.size() == productModelList.size()) {
                             progressDialog.dismiss();
                             Intent backIntent = new Intent(MultiCartActivity.this, BackGroundService.class);
-                            backIntent.putExtra("DELETE_CART_ITEMS", (Serializable) finalModel.getCartModelList());
+                            backIntent.putExtra("DELETE_CART_ITEMS", (Serializable) finalPay);
                             startService(backIntent);
                             Intent intent = new Intent(MultiCartActivity.this, OrderSucessActivity.class);
                             startActivity(intent);
@@ -480,6 +485,7 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
         progressDialog.show();
         curlObj.setAmountPaid(finalPay.getTotalPayment());
         curlObj.setAmountDue(0);
+        curlObj.setTransactionId(transactionID);
         firestore.collection(getString(R.string.PAYMENT_STATUS)).document(orderDocId).set(curlObj).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -524,21 +530,22 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                 orderModel.setTransaction_id(transactionID);
                 orderModel.setOrder_id(orderID);
                 orderModel.setPayment_status_doc(orderDocId);
-                orderModel.setDelivered_date(CheckUtill.getSystemTime(this));
+                orderModel.setDelivered_date(CheckUtill.getDateAfterDays(7));
                 orderModel.setDelivered(false);
                 orderModel.setWebUrl("");
+                orderModel.setLocal(false);
                 orderModel.setDeliveryCharges((int) productModel.getDelivery_charges());
                 orderModel.setPaidOrNot(true);
                 List<DeliveryModel> deliveryModelList = new ArrayList<>();
                 DeliveryModel deliveryModel = new DeliveryModel();
                 deliveryModel.setDeliveryDate(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
-                deliveryModel.setDeliveryTitle("Order Placed");
+                deliveryModel.setDeliveryTitle(getString(R.string.ORDERED));
                 deliveryModel.setDeliveryMessage("Order has been placed sucessfully");
                 deliveryModelList.add(deliveryModel);
                 orderModel.setDeliveryModelList(deliveryModelList);
                 //after for loop this
                 final DocumentReference docRef = firestore.collection(getString(R.string.ORDERS)).document();
-
+                orderModel.setOrder_doc_id(docRef.getId());
                 docRef.set(orderModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -546,7 +553,7 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                         if (localDocList.size() == productModelList.size()) {
                             progressDialog.dismiss();
                             Intent backIntent = new Intent(MultiCartActivity.this, BackGroundService.class);
-                            backIntent.putExtra("DELETE_CART_ITEMS", (Serializable) finalModel.getCartModelList());
+                            backIntent.putExtra("DELETE_CART_ITEMS", (Serializable) finalPay);
                             startService(backIntent);
                             Intent intent = new Intent(MultiCartActivity.this, OrderSucessActivity.class);
                             startActivity(intent);
@@ -567,6 +574,7 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
             }
         }
     }
+
 
     @Override
     public void onPaymentError(int i, String s) {
@@ -647,6 +655,8 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
         addressDataListner.remove();
         addressCountListner.remove();
     }
+
+
 
 
 }

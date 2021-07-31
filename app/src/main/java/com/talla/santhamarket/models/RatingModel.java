@@ -1,84 +1,54 @@
 package com.talla.santhamarket.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class RatingModel
+public class RatingModel implements Serializable
 {
-    private Long userId;
-    private Long productId;
-    private Long categoryId;
-    private String rating_title;
-    private String rating_desc;
-    private Long rating;
-    private List<ProductImageModel> productImageModelList;
+    private String ratingMessage;
+    private double rating;
+    private List<String> ratingImages;
 
-
-    public Long getUserId() {
-        return userId;
+    public RatingModel() {
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getRating_title() {
-        return rating_title;
-    }
-
-    public void setRating_title(String rating_title) {
-        this.rating_title = rating_title;
-    }
-
-    public String getRating_desc() {
-        return rating_desc;
-    }
-
-    public void setRating_desc(String rating_desc) {
-        this.rating_desc = rating_desc;
-    }
-
-    public Long getRating() {
-        return rating;
-    }
-
-    public void setRating(Long rating) {
+    public RatingModel(String ratingMessage, double rating) {
+        this.ratingMessage = ratingMessage;
         this.rating = rating;
     }
 
-    public List<ProductImageModel> getProductImageModelList() {
-        return productImageModelList;
+    public String getRatingMessage() {
+        return ratingMessage;
     }
 
-    public void setProductImageModelList(List<ProductImageModel> productImageModelList) {
-        this.productImageModelList = productImageModelList;
+    public void setRatingMessage(String ratingMessage) {
+        this.ratingMessage = ratingMessage;
     }
+
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public List<String> getRatingImages() {
+        return ratingImages;
+    }
+
+    public void setRatingImages(List<String> ratingImages) {
+        this.ratingImages = ratingImages;
+    }
+
 
     @Override
     public String toString() {
         return "RatingModel{" +
-                "userId=" + userId +
-                ", productId=" + productId +
-                ", categoryId=" + categoryId +
-                ", rating_title='" + rating_title + '\'' +
-                ", rating_desc='" + rating_desc + '\'' +
+                ", ratingMessage='" + ratingMessage + '\'' +
                 ", rating=" + rating +
-                ", productImageModelList=" + productImageModelList +
+                ", ratingImages=" + ratingImages +
                 '}';
     }
 }
