@@ -45,6 +45,7 @@ import com.talla.santhamarket.fragments.GlobalItemsFragment;
 import com.talla.santhamarket.fragments.LocalItemsFragment;
 import com.talla.santhamarket.interfaces.PaymentListner;
 import com.talla.santhamarket.models.BackGroundModel;
+import com.talla.santhamarket.models.CartModel;
 import com.talla.santhamarket.models.CategoryModel;
 import com.talla.santhamarket.models.DeliveryModel;
 import com.talla.santhamarket.models.FinalPayTransferModel;
@@ -430,7 +431,8 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                 orderModel.setWebUrl("");
                 orderModel.setLocal(true);
                 receiptId = UUID.randomUUID().toString();
-                orderModel.setOrder_id(receiptId);
+                String[] ordersIds=receiptId.split("-");
+                orderModel.setOrder_id(ordersIds[ordersIds.length-1]);
                 int deliveryCharges = (int) (((productModel.getProduct_price() * productModel.getTemp_qty()) * 10) / 100);
                 orderModel.setDeliveryCharges(deliveryCharges);
                 orderModel.setPaidOrNot(false);
@@ -451,9 +453,10 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                         localDocList.add(docRef.getId());
                         if (localDocList.size() == productModelList.size()) {
                             progressDialog.dismiss();
-                            Intent backIntent = new Intent(MultiCartActivity.this, BackGroundService.class);
-                            backIntent.putExtra("DELETE_CART_ITEMS", (Serializable) finalPay);
-                            startService(backIntent);
+//                            Intent backIntent = new Intent(MultiCartActivity.this, BackGroundService.class);
+//                            backIntent.putExtra("DELETE_CART_ITEMS", (Serializable) finalPay);
+//                            startService(backIntent);
+                            updateProductDataDeleteCartItems(finalModel);
                             Intent intent = new Intent(MultiCartActivity.this, OrderSucessActivity.class);
                             startActivity(intent);
                             finish();
@@ -552,9 +555,10 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                         localDocList.add(docRef.getId());
                         if (localDocList.size() == productModelList.size()) {
                             progressDialog.dismiss();
-                            Intent backIntent = new Intent(MultiCartActivity.this, BackGroundService.class);
-                            backIntent.putExtra("DELETE_CART_ITEMS", (Serializable) finalPay);
-                            startService(backIntent);
+//                            Intent backIntent = new Intent(MultiCartActivity.this, BackGroundService.class);
+//                            backIntent.putExtra("DELETE_CART_ITEMS", (Serializable) finalPay);
+//                            startService(backIntent);
+                            updateProductDataDeleteCartItems(finalModel);
                             Intent intent = new Intent(MultiCartActivity.this, OrderSucessActivity.class);
                             startActivity(intent);
                             finish();
@@ -598,6 +602,36 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
         }
         Log.d("PAYMENT", output.toString());
         return output.toString();
+    }
+
+    private void updateProductDataDeleteCartItems(FinalPayTransferModel finalPayTransferModel)
+    {
+        progressDialog.show();
+        Log.d(TAG, "updateProductDataDeleteCartItems: "+finalPayTransferModel.toString());
+        List<CartModel> cartModelList = finalPayTransferModel.getCartModelList();
+        List<ProductModel> productModelList = finalPayTransferModel.getProductModelsList();
+        for (int i = 0; i < cartModelList.size(); i++) {
+            DocumentReference docref = firestore.collection(getString(R.string.CART_ITEMS)).document(cartModelList.get(i).getCart_doc_id());
+            int finalI = i;
+            if (cartModelList.size()==productModelList.size())
+            {
+                updateProductStatus(cartModelList.get(i).getCart_product_id(), productModelList.get(i).getTemp_qty());
+            }
+            docref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Deleted Cart Item " + finalI);
+                }
+            });
+        }
+        progressDialog.dismiss();
+    }
+
+    private void updateProductStatus(String prodDocId,int quantity) {
+        DocumentReference docRef = firestore.collection(getString(R.string.PRODUCTS)).document(prodDocId);
+
+        docRef.update("totalStock", FieldValue.increment(-quantity));
+        docRef.update("selled_items", FieldValue.increment(quantity));
     }
 
     private String makeCurl(int amount) {

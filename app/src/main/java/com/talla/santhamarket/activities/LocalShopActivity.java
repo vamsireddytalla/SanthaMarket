@@ -61,14 +61,15 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.talla.santhamarket.BuildConfig;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.adapters.LocalProductsAdapter;
 import com.talla.santhamarket.adapters.ProductAdapter;
 import com.talla.santhamarket.adapters.SearchedProductsAdapter;
+import com.talla.santhamarket.adapters.ShopsAdapter;
 import com.talla.santhamarket.databinding.ActivityLocalShopBinding;
 import com.talla.santhamarket.databinding.CustomProgressDialogBinding;
 import com.talla.santhamarket.models.ProductModel;
+import com.talla.santhamarket.models.RegisterModel;
 import com.talla.santhamarket.utills.SharedEncryptUtills;
 
 import java.io.IOException;
@@ -81,22 +82,17 @@ import java.util.Locale;
 public class LocalShopActivity extends AppCompatActivity {
     private ActivityLocalShopBinding binding;
     private SharedEncryptUtills sharedEncryptUtills;
-    private LocalProductsAdapter localProductsAdapter;
+    private ShopsAdapter shopsAdapter;
     private FirebaseFirestore firebaseFirestore;
-    private List<ProductModel> productModelList = new ArrayList<>();
+    private List<RegisterModel> registerModelList = new ArrayList<>();
     private Dialog progressDialog;
-    private ListenerRegistration localProdListner;
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private String locality;
+    private ListenerRegistration shopsListner;
     private static final String TAG = "LocalShopActivity";
 
-    //location updates
-    private String mLastUpdateTime;
-    // location updates interval - 10sec
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-    // fastest updates interval - 5 sec
-    // location updates will be received if another app is requesting the locations
-    // than your app can handle
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
+
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000000;
     private static final int REQUEST_CHECK_SETTINGS = 100;
     // bunch of location related apis
     private FusedLocationProviderClient mFusedLocationClient;
@@ -190,8 +186,7 @@ public class LocalShopActivity extends AppCompatActivity {
             }
         } else {
             // Permission has already beengranted
-            init();
-            startLocationButtonClick();
+            firstCall();
         }
     }
 
@@ -200,8 +195,7 @@ public class LocalShopActivity extends AppCompatActivity {
         switch (requestCode) {
             case 101: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    init();
-                    startLocationButtonClick();
+                    firstCall();
                 } else {
                     Toast.makeText(this, "Denied Storage Permission", Toast.LENGTH_SHORT).show();
                     requestPermissions();
@@ -211,6 +205,12 @@ public class LocalShopActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private void firstCall() {
+        init();
+        startLocationButtonClick();
+    }
+
     public void dialogIninit() {
         progressDialog = new Dialog(this);
         CustomProgressDialogBinding customProgressDialogBinding = CustomProgressDialogBinding.inflate(this.getLayoutInflater());
@@ -218,89 +218,10 @@ public class LocalShopActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
     }
 
-    private void getLocalProducts() {
-        progressDialog.show();
-        if (!productModelList.isEmpty()) {
-            productModelList.clear();
-        }
-        localProdListner = firebaseFirestore.collection(getString(R.string.PRODUCTS)).whereEqualTo("itemTypeModel.local", true).whereEqualTo("itemTypeModel.pincode", "533343").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    progressDialog.dismiss();
-                    showDialog("Error Occured !", error.getMessage());
-                } else {
-                    for (DocumentChange dc : value.getDocumentChanges()) {
-                        switch (dc.getType()) {
-                            case ADDED:
-                                ProductModel productModel = dc.getDocument().toObject(ProductModel.class);
-                                productModelList.add(productModel);
-                                Log.d(TAG, "Product data added to list: " + productModel.toString());
-                                break;
-                            case MODIFIED:
-                                ProductModel productModelModified = dc.getDocument().toObject(ProductModel.class);
-                                Log.d(TAG, "Product data modified to list: " + productModelModified.toString());
-                                for (int i = 0; i < productModelList.size(); i++) {
-                                    if (productModelList.get(i).getProduct_id().equalsIgnoreCase(productModelModified.getProduct_id())) {
-                                        productModelList.remove(i);
-                                        productModelList.add(i, productModelModified);
-                                        break;
-                                    }
-                                }
-                                break;
-                            case REMOVED:
-                                ProductModel productModelRemoved = dc.getDocument().toObject(ProductModel.class);
-                                Log.d(TAG, "Product data removed to list: " + productModelRemoved.toString());
-                                for (int i = 0; i < productModelList.size(); i++) {
-                                    if (productModelList.get(i).getProduct_id().equalsIgnoreCase(productModelRemoved.getProduct_id())) {
-                                        productModelList.remove(i);
-                                        break;
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                }
-                localProductsAdapter = new LocalProductsAdapter(productModelList, LocalShopActivity.this);
-                binding.localRCV.setAdapter(localProductsAdapter);
-                if (productModelList.isEmpty()) {
-                    binding.noProductsAvail.setVisibility(View.VISIBLE);
-                } else {
-                    binding.noProductsAvail.setVisibility(View.GONE);
-                }
-                progressDialog.dismiss();
-            }
-        });
-
-    }
 
     private void showSnackBar(String message) {
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
         snackbar.show();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_menu, menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        binding.searchView.setMenuItem(item);
-        binding.searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                //Do some magic
-                if (localProductsAdapter != null) {
-                    localProductsAdapter.getFilter().filter(newText);
-                }
-                return false;
-            }
-        });
-
-        return true;
     }
 
     private void showDialog(String title, String message) {
@@ -322,11 +243,6 @@ public class LocalShopActivity extends AppCompatActivity {
         alertDialogBuilder.show();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     private void init() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
@@ -337,7 +253,6 @@ public class LocalShopActivity extends AppCompatActivity {
                 super.onLocationResult(locationResult);
                 // location is received
                 mCurrentLocation = locationResult.getLastLocation();
-                mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 updateLocationUI();
             }
         };
@@ -345,7 +260,7 @@ public class LocalShopActivity extends AppCompatActivity {
         mRequestingLocationUpdates = false;
 
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+//        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
@@ -354,29 +269,8 @@ public class LocalShopActivity extends AppCompatActivity {
         mLocationSettingsRequest = builder.build();
     }
 
-    private void updateLocationUI() {
-        if (mCurrentLocation != null) {
-            geoCode(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-            // location last updated time
-            showSnackBar("Last updated on: " + mLastUpdateTime);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("is_requesting_updates", mRequestingLocationUpdates);
-        outState.putParcelable("last_known_location", mCurrentLocation);
-        outState.putString("last_updated_on", mLastUpdateTime);
-
-    }
-
-    /**
-     * Starting location updates
-     * Check whether location settings are satisfied and then
-     * location updates will be requested
-     */
     private void startLocationUpdates() {
+        progressDialog.show();
         Task<LocationSettingsResponse> locationSettingsResponseTask = mSettingsClient
                 .checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
@@ -384,22 +278,17 @@ public class LocalShopActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                         Log.i(TAG, "All location settings are satisfied.");
-                        Toast.makeText(getApplicationContext(), "Started location updates!", Toast.LENGTH_SHORT).show();
-                        //noinspection MissingPermission
-                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                                mLocationCallback, Looper.myLooper());
-
+                        Log.d(TAG, "Location settings are satisfies");
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                         updateLocationUI();
                     }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
+                }).addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         int statusCode = ((ApiException) e).getStatusCode();
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
-                                        "location settings ");
+                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade location settings ");
                                 try {
                                     // Show the dialog by calling startResolutionForResult(), and check the
                                     // result in onActivityResult().
@@ -410,10 +299,8 @@ public class LocalShopActivity extends AppCompatActivity {
                                 }
                                 break;
                             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                String errorMessage = "Location settings are inadequate, and cannot be " +
-                                        "fixed here. Fix in Settings.";
+                                String errorMessage = "Location settings are inadequate, and cannot be fixed here. Fix in Settings.";
                                 Log.e(TAG, errorMessage);
-
                                 Toast.makeText(LocalShopActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                         }
 
@@ -423,20 +310,9 @@ public class LocalShopActivity extends AppCompatActivity {
     }
 
     public void startLocationButtonClick() {
+        progressDialog.show();
         mRequestingLocationUpdates = true;
         startLocationUpdates();
-    }
-
-    public void stopLocationUpdates() {
-        // Removing location updates
-        mFusedLocationClient
-                .removeLocationUpdates(mLocationCallback)
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(getApplicationContext(), "Location updates stopped!", Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     @Override
@@ -448,53 +324,47 @@ public class LocalShopActivity extends AppCompatActivity {
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         Log.e(TAG, "User agreed to make required location settings changes.");
-                        // Nothing to do. startLocationupdates() gets called in onResume again.
+                        startLocationButtonClick();
                         break;
                     case Activity.RESULT_CANCELED:
                         Log.e(TAG, "User chose not to make required location settings changes.");
                         mRequestingLocationUpdates = false;
+                        showLocationMandatoryDialog();
                         break;
                 }
                 break;
         }
     }
 
-    private void openSettings() {
-        Intent intent = new Intent();
-        intent.setAction(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package",
-                BuildConfig.APPLICATION_ID, null);
-        intent.setData(uri);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Resuming location updates depending on button state and
-        // allowed permissions
-        if (mRequestingLocationUpdates && checkPermissions()) {
-            startLocationUpdates();
-        }
-
-        updateLocationUI();
+    private void showLocationMandatoryDialog() {
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Turn On Gps");
+        alertDialogBuilder.setMessage("Please allow permission to get nearest shops to you.");
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startLocationButtonClick();
+                dialogInterface.dismiss();
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        alertDialogBuilder.show();
     }
 
     private boolean checkPermissions() {
-        int permissionState = ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionState = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (mRequestingLocationUpdates) {
-            // pausing location updates
-            stopLocationUpdates();
+    private void updateLocationUI() {
+        if (mCurrentLocation != null) {
+            geoCode(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
         }
     }
 
@@ -504,17 +374,84 @@ public class LocalShopActivity extends AppCompatActivity {
         List<Address> list = null;
         try {
             list = geocoder.getFromLocation(lat, longi, 1);
+            if (list != null && list.size() > 0) {
+                Address address = list.get(0);
+                result = address.getLocality();
+                locality = address.getLocality();
+            }
+            if (mRequestingLocationUpdates) {
+                stopLocationUpdates();
+                progressDialog.dismiss();
+                getShops();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (list != null && list.size() > 0) {
-            Address address = list.get(0);
-            // sending back first address line and locality
-            result = address.getAddressLine(0) + ", " + address.getLocality();
-        }
-        showSnackBar(result);
-        binding.noProductsAvail.setText(result);
     }
 
+    public void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback).addOnCompleteListener(this, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d(TAG, "Location updates stopped");
+            }
+        });
+    }
 
+    private void getShops() {
+        shopsListner = firebaseFirestore.collection(getString(R.string.SHOP_OWNERS)).whereEqualTo("shopAddress.city", locality).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.d(TAG, "onEvent: " + error.getMessage());
+                } else {
+                    for (DocumentChange dc : value.getDocumentChanges()) {
+                        switch (dc.getType()) {
+                            case ADDED:
+                                RegisterModel registerModel = dc.getDocument().toObject(RegisterModel.class);
+                                registerModelList.add(registerModel);
+                                Log.d(TAG, "RegisterModel data added to list: " + registerModel.toString());
+                                break;
+                            case MODIFIED:
+                                RegisterModel registerModelModified = dc.getDocument().toObject(RegisterModel.class);
+                                Log.d(TAG, "RegisterModel data modified to list: " + registerModelModified.toString());
+                                for (int i = 0; i < registerModelList.size(); i++) {
+                                    if (registerModelList.get(i).getShop_id().equalsIgnoreCase(registerModelModified.getShop_id())) {
+                                        registerModelList.remove(i);
+                                        registerModelList.add(i, registerModelModified);
+                                        break;
+                                    }
+                                }
+                                break;
+                            case REMOVED:
+                                RegisterModel registerModelRemoved = dc.getDocument().toObject(RegisterModel.class);
+                                Log.d(TAG, "RegisterModel data removed to list: " + registerModelRemoved.toString());
+                                for (int i = 0; i < registerModelList.size(); i++) {
+                                    if (registerModelList.get(i).getShop_id().equalsIgnoreCase(registerModelRemoved.getShop_id())) {
+                                        registerModelList.remove(i);
+                                        break;
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                }
+                shopsAdapter = new ShopsAdapter(registerModelList, LocalShopActivity.this);
+                binding.localRCV.setAdapter(shopsAdapter);
+                if (registerModelList.isEmpty()) {
+                    binding.noProductsAvail.setVisibility(View.VISIBLE);
+                } else {
+                    binding.noProductsAvail.setVisibility(View.GONE);
+                    binding.localRCV.setVisibility(View.VISIBLE);
+                }
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        shopsListner.remove();
+    }
 }

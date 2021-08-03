@@ -15,6 +15,12 @@ public class StaticUtills {
         return new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(new java.util.Date());
     }
 
+
+    public static String getLocalDeliveryDate() {
+        return new SimpleDateFormat(" dd MMMM yyyy").format(new java.util.Date());
+    }
+
+
     public static int productWeightConversion(int productWeight) {
         if (productWeight < 1 || productWeight <= 2) {
             return 110;

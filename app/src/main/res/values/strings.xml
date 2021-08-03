@@ -113,7 +113,9 @@
     <string name="online">Online</string>
     <string name="COD">COD</string>
     <string name="review_product">Review Product</string>
-
+    <string name="shop_id">intent_shop_id</string>
+    <string name="intent_reg_model_key">intent_register_model_key</string>
+    <string name="intent_category_shopId">intent_category_shopId</string>
 
 
     <string-array name="india_states">

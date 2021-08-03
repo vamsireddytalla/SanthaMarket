@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray"
     android:orientation="vertical"
-    tools:context="com.talla.santhamarket.activities.LocalShopActivity">
+    tools:context=".activities.LocalProductsActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_weight="1"
-                    android:text="Local Shop Items"
+                    android:text="Products"
                     android:textColor="@color/white" />
 
             </LinearLayout>
@@ -49,7 +49,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </FrameLayout>
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/localRCV"

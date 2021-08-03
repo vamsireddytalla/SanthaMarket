@@ -88,6 +88,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     private ActivityDetailProductBinding binding;
     private ProductImagesAdapter poductImagesAdapter;
     private ProductSizeAdapter productSizeAdapter;
+    private RatingsAdapter ratingsAdapter;
     private List<ProductImageModel> productsImagesList = new ArrayList<>();
     private List<SubProductModel> subProductModelList;
     private String productId, key;
@@ -235,19 +236,17 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
             }
         });
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         getCartItemsCount();
         getProdBasedOnProdId();
         isFavOrNot();
+        getRatings();
+
     }
 
+
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         cartitemCountListner.remove();
         productListner.remove();
         favListner.remove();
@@ -523,7 +522,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         int res = StaticUtills.discountPercentage(selling_price, mrp_price);
         binding.discount.setText(String.valueOf(res) + "%OFF");
         binding.productWeight.setText("Product Weight : " + productModel.getProduct_weight() + " Kg");
-        if (productModel.isOut_of_stock() || productModel.getTotalStock()<=0) {
+        if (productModel.isOut_of_stock() || productModel.getTotalStock() <= 0) {
             binding.continueBtn.setBackgroundColor(getResources().getColor(R.color.red));
             binding.continueText.setText(getString(R.string.out_of_stock));
         } else {
@@ -531,6 +530,29 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
             binding.continueText.setText(R.string.Continue);
         }
         key = binding.continueText.getText().toString();
+    }
+
+    private void getRatings() {
+        List<RatingModel> ratingModelList = new ArrayList<>();
+        CollectionReference ratRef = firestore.collection(getString(R.string.PRODUCTS)).document(productId).collection(getString(R.string.RATINGS));
+        ratRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        RatingModel ratingModel = document.toObject(RatingModel.class);
+                        ratingModelList.add(ratingModel);
+                    }
+                    ratingsAdapter = new RatingsAdapter(DetailProductActivity.this, ratingModelList);
+                    binding.ratingRCV.setAdapter(ratingsAdapter);
+                    if (ratingModelList.isEmpty()) {
+                        binding.ratingRoot.setVisibility(View.GONE);
+                    }
+                } else {
+                    Log.d(TAG, "onComplete: " + task.getException());
+                }
+            }
+        });
     }
 
     @Override
@@ -565,7 +587,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     public void nextStep(View view) {
         key = binding.continueText.getText().toString();
-        if (productModel.isOut_of_stock() || (productModel.getTotalStock()<=0)) {
+        if (productModel.isOut_of_stock() || (productModel.getTotalStock() <= 0)) {
             showSnackBar("Out Of Stock");
             binding.continueText.setText(R.string.out_of_stock);
         } else {
@@ -576,12 +598,11 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     private void openIntent() {
         Intent intent = new Intent(this, MultiCartActivity.class);
-        int itemKey=0;
-        if (productModel.getItemTypeModel().isLocal())
-        {
-            itemKey=1;
+        int itemKey = 0;
+        if (productModel.getItemTypeModel().isLocal()) {
+            itemKey = 1;
         }
-        intent.putExtra(getString(R.string.cart_typ_key),itemKey);
+        intent.putExtra(getString(R.string.cart_typ_key), itemKey);
         startActivity(intent);
     }
 
@@ -602,5 +623,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         progressDialog.setContentView(customProgressDialogBinding.getRoot());
         progressDialog.setCancelable(false);
     }
+
 
 }

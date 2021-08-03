@@ -1,56 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
     tools:context=".activities.OrderSucessActivity">
 
-
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lav_toggle"
-        android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_150sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="@dimen/_20sdp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/sucess"
         app:lottie_speed="1.75" />
 
-    <TextView
-        style="@style/Roboto_TextView_Light_dark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_20sdp"
-        android:text="Thanque for shopping with Us." />
 
-    <TextView
-        style="@style/Roboto_TextView_Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Congratulations!" />
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/continueBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lav_toggle">
 
-    <TextView
-        style="@style/Roboto_TextView_Light_dark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Order Sucessfully Placed." />
+        <TextView
+            style="@style/Roboto_TextView_Light_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thanque for shopping with Us." />
+
+        <TextView
+            style="@style/Roboto_TextView_Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Congratulations!" />
+
+        <TextView
+            style="@style/Roboto_TextView_Light_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Order Sucessfully Placed." />
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/continueBtn"
         style="@style/Roboto_TextView_Medium"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_40sdp"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="@dimen/_40sdp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="50dp"
         android:background="@drawable/btn_bg"
         android:clickable="true"
         android:focusable="true"
@@ -59,6 +73,11 @@
         android:padding="15dp"
         android:text="Done"
         android:textColor="#fff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
         tools:ignore="MissingConstraints,OnClick" />
 
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

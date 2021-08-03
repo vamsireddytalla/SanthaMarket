@@ -165,6 +165,7 @@ public class LocalCartAdapter extends RecyclerView.Adapter<LocalCartAdapter.MyVi
 
             binding.qtyText.setText(productModel.getTemp_qty() + "");
             listner.quantityClickListener(getAdapterPosition(), productModel);
+            binding.dateDelivery.setText(StaticUtills.getLocalDeliveryDate());
 
         }
 

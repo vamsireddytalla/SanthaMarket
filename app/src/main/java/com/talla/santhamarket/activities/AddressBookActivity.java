@@ -4,16 +4,29 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Contacts;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -21,8 +34,22 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -45,9 +72,12 @@ import com.talla.santhamarket.interfaces.AddressItemListner;
 import com.talla.santhamarket.models.CategoryModel;
 import com.talla.santhamarket.models.ProductModel;
 import com.talla.santhamarket.models.UserAddress;
+import com.talla.santhamarket.utills.SharedEncryptUtills;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class AddressBookActivity extends AppCompatActivity implements AddressItemListner  {
     private ActivityAddressBookBinding binding;
@@ -62,7 +92,23 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     List<UserAddress> userAddressList = new ArrayList<>();
     private String clickerAction = "Add";
     private int itemClickedPos, totalAddress = 0;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private SharedEncryptUtills sharedEncryptUtills;
     private ListenerRegistration addressListner, addressCountListner;
+
+    //locations variables
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000000;
+    private static final int REQUEST_CHECK_SETTINGS = 100;
+    // bunch of location related apis
+    private FusedLocationProviderClient mFusedLocationClient;
+    private SettingsClient mSettingsClient;
+    private LocationRequest mLocationRequest;
+    private LocationSettingsRequest mLocationSettingsRequest;
+    private LocationCallback mLocationCallback;
+    private Location mCurrentLocation;
+    private Geocoder geocoder;
+    // boolean flag to toggle the ui
+    private Boolean mRequestingLocationUpdates;
     private static final String TAG = "AddressBookActivity";
 
     @Override
@@ -85,7 +131,6 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
         getAddressBookListner();
     }
 
-
     public void addAddress(View view) {
         clickerAction = "Add";
         showAddressDialog();
@@ -100,6 +145,7 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
         int height = WindowManager.LayoutParams.MATCH_PARENT;
         dialog.getWindow().setLayout(width, height);
         dialog.show();
+        requestPermissions();
 
         if (clickerAction.equalsIgnoreCase("Add")) {
             profileDialogBinding.toolbarTitle.setText("Add New Address");
@@ -177,6 +223,8 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
             userAddress.setUser_alter_phone(alterPhone);
             userAddress.setUser_pincode(pincode);
             userAddress.setUser_streetAddress(streetAddress);
+            userAddress.setUser_lat(latitude);
+            userAddress.setUser_long(longitude);
 
             if (clickerAction.equalsIgnoreCase("Add")) {
                 if (totalAddress > 0) {
@@ -413,10 +461,273 @@ public class AddressBookActivity extends AppCompatActivity implements AddressIte
     }
 
     public void dialogIninit() {
+        sharedEncryptUtills = SharedEncryptUtills.getInstance(this);
         progressDialog = new Dialog(this);
         com.talla.santhamarket.databinding.CustomProgressDialogBinding customProgressDialogBinding = com.talla.santhamarket.databinding.CustomProgressDialogBinding.inflate(this.getLayoutInflater());
         progressDialog.setContentView(customProgressDialogBinding.getRoot());
         progressDialog.setCancelable(false);
+    }
+
+    //location details
+    private void init() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mSettingsClient = LocationServices.getSettingsClient(this);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                // location is received
+                mCurrentLocation = locationResult.getLastLocation();
+                updateLocationUI();
+            }
+        };
+
+        mRequestingLocationUpdates = false;
+
+        mLocationRequest = new LocationRequest();
+//        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        mLocationSettingsRequest = builder.build();
+    }
+
+    private void startLocationUpdates() {
+        progressDialog.show();
+        Task<LocationSettingsResponse> locationSettingsResponseTask = mSettingsClient
+                .checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+                    @SuppressLint("MissingPermission")
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                        Log.i(TAG, "All location settings are satisfied.");
+                        Log.d(TAG, "Location settings are satisfies");
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                        updateLocationUI();
+                    }
+                }).addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        int statusCode = ((ApiException) e).getStatusCode();
+                        switch (statusCode) {
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade location settings ");
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(), and check the
+                                    // result in onActivityResult().
+                                    ResolvableApiException rae = (ResolvableApiException) e;
+                                    rae.startResolutionForResult(AddressBookActivity.this, REQUEST_CHECK_SETTINGS);
+                                } catch (IntentSender.SendIntentException sie) {
+                                    Log.i(TAG, "PendingIntent unable to execute request.");
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                String errorMessage = "Location settings are inadequate, and cannot be fixed here. Fix in Settings.";
+                                Log.e(TAG, errorMessage);
+                                Toast.makeText(AddressBookActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                        }
+
+                        updateLocationUI();
+                    }
+                });
+    }
+
+    public void startLocationButtonClick() {
+        progressDialog.show();
+        mRequestingLocationUpdates = true;
+        startLocationUpdates();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            // Check for the integer request code originally supplied to startResolutionForResult().
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        Log.e(TAG, "User agreed to make required location settings changes.");
+                        startLocationButtonClick();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        Log.e(TAG, "User chose not to make required location settings changes.");
+                        mRequestingLocationUpdates = false;
+                        showLocationMandatoryDialog();
+                        break;
+                }
+                break;
+        }
+    }
+
+    private void showLocationMandatoryDialog() {
+        final androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Turn On Gps");
+        alertDialogBuilder.setMessage("Please allow permission to get nearest shops to you.");
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startLocationButtonClick();
+                dialogInterface.dismiss();
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        alertDialogBuilder.show();
+    }
+
+    private boolean checkPermissions() {
+        int permissionState = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void updateLocationUI() {
+        if (mCurrentLocation != null) {
+            geoCode(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+        }
+    }
+
+    private void geoCode(double lat, double longi) {
+        latitude= String.valueOf(lat);
+        longitude= String.valueOf(longi);
+        geocoder = new Geocoder(AddressBookActivity.this, Locale.getDefault());
+        String result = null;
+        List<Address> list = null;
+        try {
+            list = geocoder.getFromLocation(lat, longi, 1);
+            if (list != null && list.size() > 0) {
+                Address address = list.get(0);
+                result = address.getLocality();
+                String daddress = address.getAddressLine(0);
+                String cityc = address.getLocality();
+                String stateL = address.getAdminArea();
+                String countryC = address.getCountryName();
+                String postalCode = address.getPostalCode();
+                String knownName = address.getFeatureName();
+                if (cityc!=null)
+                {
+                    this.city=cityc;
+                    profileDialogBinding.city.setText(cityc);
+                }if (stateL!=null)
+                {
+                   this.state=stateL;
+                    profileDialogBinding.state.setText(stateL);
+                }if (countryC!=null)
+                {
+                    this.country=countryC;
+                    profileDialogBinding.country.setText(countryC);
+                }
+                Log.d(TAG, "geoCode: "+daddress+"\n"+city+"\n"+state+"\n"+country+"\n"+postalCode+"\n"+knownName);
+            }
+            if (mRequestingLocationUpdates) {
+                stopLocationUpdates();
+                progressDialog.dismiss();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback).addOnCompleteListener(this, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d(TAG, "Location updates stopped");
+            }
+        });
+    }
+
+    private void requestPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog_MinWidth);
+                builder.setTitle("Need Location Permissions");
+                builder.setMessage("This App requires location permission");
+                builder.setCancelable(false);
+                builder.setIcon(R.drawable.warning_icon);
+                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        ActivityCompat.requestPermissions(AddressBookActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        finish();
+                    }
+                });
+                builder.show();
+            } else {
+                if (!sharedEncryptUtills.getBooleanData(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    sharedEncryptUtills.saveBooleanData(Manifest.permission.ACCESS_FINE_LOCATION, true);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+                } else {
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog_MinWidth);
+                    builder.setTitle("Requires Permission");
+                    builder.setMessage("You have Denied permissions if you want to use this Application " +
+                            "Feature You have to allow permissions in Settings manually.");
+                    builder.setCancelable(false);
+                    builder.setIcon(R.drawable.warning_icon);
+                    builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            Intent i = new Intent();
+                            i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            i.addCategory(Intent.CATEGORY_DEFAULT);
+                            i.setData(Uri.parse("package:" + getPackageName()));
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                            i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                            startActivity(i);
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            finish();
+                        }
+                    });
+                    builder.show();
+
+                }
+            }
+        } else {
+            // Permission has already beengranted
+            firstCall();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 101: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    firstCall();
+                } else {
+                    Toast.makeText(this, "Denied Storage Permission", Toast.LENGTH_SHORT).show();
+                    requestPermissions();
+                }
+                return;
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void firstCall() {
+        init();
+        startLocationButtonClick();
     }
 
     @Override

@@ -398,7 +398,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_2sdp"
                         android:layout_marginTop="@dimen/_15sdp"
-                        android:layout_marginBottom="@dimen/_50sdp"
                         android:background="@color/cement" />
 
                     <LinearLayout
@@ -407,10 +406,11 @@
                         android:layout_marginTop="@dimen/_10sdp"
                         android:layout_marginBottom="@dimen/_50sdp"
                         android:orientation="vertical"
-                        android:visibility="gone">
+                        android:id="@+id/ratingRoot"
+                        android:visibility="visible">
 
                         <TextView
-                            style="@style/Roboto_TextView_Light_dark"
+                            style="@style/Roboto_TextView_Medium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Ratings and Reviews"

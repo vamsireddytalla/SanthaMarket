@@ -1,13 +1,15 @@
 package com.talla.santhamarket.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class CategoryModel {
+public class CategoryModel implements Serializable {
 
     private String id;
     private String cat_name;
     private String cat_logo;
     private String timestamp;
+    private String shopId;
 
     public CategoryModel() {
     }
@@ -44,6 +46,14 @@ public class CategoryModel {
         this.timestamp = timestamp;
     }
 
+    public String getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(String shopId) {
+        this.shopId = shopId;
+    }
+
     @Override
     public String toString() {
         return "CategoryModel{" +
@@ -51,6 +61,7 @@ public class CategoryModel {
                 ", cat_name='" + cat_name + '\'' +
                 ", cat_logo='" + cat_logo + '\'' +
                 ", timestamp='" + timestamp + '\'' +
+                ", shopId='" + shopId + '\'' +
                 '}';
     }
 }

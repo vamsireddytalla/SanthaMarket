@@ -9,10 +9,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -20,6 +23,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 import com.talla.santhamarket.R;
@@ -28,6 +32,9 @@ import com.talla.santhamarket.databinding.CustomProgressDialogBinding;
 import com.talla.santhamarket.models.OrderModel;
 import com.talla.santhamarket.models.ProductModel;
 import com.talla.santhamarket.models.RatingModel;
+import com.talla.santhamarket.models.UserModel;
+import com.talla.santhamarket.utills.CheckUtill;
+import com.talla.santhamarket.utills.StaticUtills;
 
 import java.util.List;
 
@@ -38,6 +45,7 @@ public class ReviewActivity extends AppCompatActivity {
     private Dialog progressDialog;
     private OrderModel orderModel;
     private RatingModel ratingModel;
+    private UserModel userModel;
     private static final String TAG = "ReviewActivity";
 
     @Override
@@ -68,6 +76,8 @@ public class ReviewActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        getProfileData();
 
     }
 
@@ -105,14 +115,19 @@ public class ReviewActivity extends AppCompatActivity {
                 productModel.setAvgRatings(newAvgRating);
 
                 //get rating model from products
-                CollectionReference ratRef = firebaseFirestore.collection(getString(R.string.PRODUCTS)).document(orderModel.getProduct_id()).collection(getString(R.string.RATINGS));
-                DocumentReference prodRatingDocRef = ratRef.document(ratRef.getId());
-                RatingModel ratingModel1 = transaction.get(prodRatingDocRef).toObject(RatingModel.class);
+                DocumentReference ratDocRef = firebaseFirestore.collection(getString(R.string.PRODUCTS)).document(orderModel.getProduct_id()).collection(getString(R.string.RATINGS)).document(productModel.getProduct_id());
+                RatingModel ratingModel1 = transaction.get(ratDocRef).toObject(RatingModel.class);
                 if (ratingModel1 == null) {
                     ratingModel1 = new RatingModel();
                 }
                 ratingModel1.setRating(newAvgRating);
                 ratingModel1.setRatingMessage(reviewMessage);
+                ratingModel1.setTimestamp(StaticUtills.getTimeStamp());
+                if (userModel.getUser_name()!=null)
+                {
+                    ratingModel1.setUserName(userModel.getUser_name());
+                }
+
 
                 DocumentReference orderDocRef = firebaseFirestore.collection(getString(R.string.ORDERS)).document(orderModel.getOrder_doc_id());
 
@@ -120,7 +135,7 @@ public class ReviewActivity extends AppCompatActivity {
                 transaction.set(orderDocRef, orderModel);
                 transaction.update(prodDocRef, "total_ratings", totalRatings);
                 transaction.update(prodDocRef, "avgRatings", newAvgRating);
-                transaction.set(ratRef.document(), ratingModel1);
+                transaction.set(ratDocRef, ratingModel1);
 
                 return "success";
             }
@@ -145,6 +160,34 @@ public class ReviewActivity extends AppCompatActivity {
         binding.myRatingBar.setRating((float) ratingModel.getRating());
     }
 
+    private void getProfileData() {
+        progressDialog.show();
+        DocumentReference docProfRef = firebaseFirestore.collection(getString(R.string.USERS)).document(firebaseAuth.getCurrentUser().getUid());
+        docProfRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        userModel = document.toObject(UserModel.class);
+                        progressDialog.dismiss();
+                    } else {
+                        progressDialog.dismiss();
+                        Log.d(TAG, "No such document");
+                        showDialog("Error Occured Retry");
+                    }
+                } else {
+                    progressDialog.dismiss();
+                    Log.d(TAG, "get failed with ", task.getException());
+                    showDialog("Error Occured Retry");
+                }
+
+            }
+        });
+    }
+
+
     private void showSnackBar(String message) {
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
         snackbar.show();
@@ -159,6 +202,8 @@ public class ReviewActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 if (message.equalsIgnoreCase("Sucessfully Added Rating")) {
                     dialog.cancel();
+                    finish();
+                } else if (message.equalsIgnoreCase("Error Occured Retry")) {
                     finish();
                 } else {
                     dialog.cancel();

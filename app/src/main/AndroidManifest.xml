@@ -19,8 +19,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.ReviewActivity"
-            android:theme="@style/MaterialTheme"/>
+        <activity android:name=".activities.LocalProductsActivity"></activity>
+        <activity android:name=".activities.CategoriesActivity" />
+        <activity
+            android:name=".activities.ReviewActivity"
+            android:theme="@style/MaterialTheme" />
         <activity android:name=".activities.PaymentActivity" />
         <activity android:name=".activities.MultiCartActivity" />
         <activity android:name=".activities.LocalShopActivity" />

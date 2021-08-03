@@ -6,11 +6,15 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.installations.InstallationTokenResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.activities.OtpActivity;
@@ -26,10 +30,19 @@ public class FirebaseTokenGneration extends FirebaseMessagingService
         super.onNewToken(s);
         firebaseFirestore= FirebaseFirestore.getInstance();
         FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
-        String refreshToken= FirebaseInstanceId.getInstance().getToken();
-        if(firebaseUser!=null){
-            updateToken(getApplicationContext(),refreshToken);
-        }
+        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(new OnCompleteListener<InstallationTokenResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstallationTokenResult> task) {
+                if(!task.isSuccessful()){
+                    return;
+                }
+                // Get new Instance ID token
+                String token = task.getResult().getToken();
+                if(firebaseUser!=null){
+                    updateToken(getApplicationContext(),token);
+                }
+            }
+        });
     }
 
     public void updateToken(Context context,String refreshToken){
