@@ -99,6 +99,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
                 binding.orderStatus.setTextColor(context.getResources().getColor(R.color.delivered_color));
                 binding.myRatingBar.setVisibility(View.VISIBLE);
             } else {
+                binding.myRatingBar.setVisibility(View.GONE);
                 int size = orderModel.getDeliveryModelList().size();
                 String orderStatus = orderModel.getDeliveryModelList().get(size-1).getDeliveryTitle();
                 if (orderStatus.equalsIgnoreCase(context.getResources().getString(R.string.PROCESSING))) {
@@ -118,6 +119,8 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
             {
                 binding.myRatingBar.setRating((float) orderModel.getRatingModel().getRating());
             }
+
+            binding.orderId.setText("Order Id : "+orderModel.getOrder_id());
 
         }
 

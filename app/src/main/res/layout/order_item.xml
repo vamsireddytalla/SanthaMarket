@@ -40,6 +40,19 @@
             android:singleLine="true" />
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Order Id: "
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:id="@+id/orderId"
+            android:textIsSelectable="true"
+            style="@style/Roboto_TextView_Light_dark"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:textColor="@color/light_cement" />
+
+        <TextView
             android:id="@+id/order_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

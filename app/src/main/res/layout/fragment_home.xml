@@ -36,13 +36,13 @@
 
                     <TextView
                         android:id="@+id/textView3"
-                        style="@style/Roboto_TextView_Medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_regular"
+                        android:fontFamily="@font/lobster_regular"
                         android:text="@string/app_name"
                         android:textColor="@color/white"
                         android:textStyle="bold"
+                        android:textSize="@dimen/_18sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.058"
@@ -138,12 +138,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_anchorGravity="center"
+            android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="@dimen/_70sdp"
+                android:background="#E6E4E4"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -155,7 +157,9 @@
                         android:id="@+id/viewPagerHome"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal" />
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_round"
+                        android:layout_margin="@dimen/_10sdp"/>
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tabIndicator"
@@ -173,22 +177,16 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="@dimen/_10sdp">
-
-                    <TextView
-                        style="@style/Roboto_TextView_Light"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:text="Categories" />
-
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/categoryRCV"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/_10sdp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
                 </LinearLayout>
 
 
@@ -199,7 +197,7 @@
                     android:layout_margin="10dp"
                     android:elevation="2dp"
                     android:orientation="vertical"
-                    app:cardBackgroundColor="@color/white"
+                    app:cardBackgroundColor="@color/colorAccent"
                     app:cardCornerRadius="10dp"
                     app:cardElevation="5dp">
 
@@ -210,11 +208,6 @@
                         android:padding="@dimen/_10sdp"
                         android:id="@+id/localShop"
                         android:gravity="center">
-
-                       <ImageView
-                           android:layout_width="match_parent"
-                           android:layout_height="match_parent"
-                           android:id="@+id/localShopImage"/>
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

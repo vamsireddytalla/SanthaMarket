@@ -8,7 +8,6 @@ public class UserModel
     private String walletBal;
     private String user_email;
     private String user_name;
-    private String user_gender;
     private String image_url;
     private String deviceId;
 
@@ -60,14 +59,6 @@ public class UserModel
         this.user_name = user_name;
     }
 
-    public String getUser_gender() {
-        return user_gender;
-    }
-
-    public void setUser_gender(String user_gender) {
-        this.user_gender = user_gender;
-    }
-
     public String getImage_url() {
         return image_url;
     }
@@ -94,7 +85,6 @@ public class UserModel
                 ", walletBal='" + walletBal + '\'' +
                 ", user_email='" + user_email + '\'' +
                 ", user_name='" + user_name + '\'' +
-                ", user_gender='" + user_gender + '\'' +
                 ", image_url='" + image_url + '\'' +
                 ", deviceId='" + deviceId + '\'' +
                 '}';

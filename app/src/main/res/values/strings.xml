@@ -61,6 +61,8 @@
     //status keys
     <string name="ORDERED">ORDERED</string>
     <string name="PROCESSING">PROCESSING</string>
+    <string name="PICKED">PICKED_BY_AGENT</string>
+    <string name="RETURNED">RETURNED</string>
     <string name="CANCELLED">CANCELLED</string>
     <string name="DELIVERED">DELIVERED</string>
 
@@ -86,6 +88,8 @@
     <string name="DAILY_VIEWS">DAILY_VIEWS</string>
     <string name="PAYMENT_STATUS">PAYMENT_STATUS</string>
     <string name="RATINGS">RATINGS</string>
+    <string name="DASHBOARD">DASHBOARD</string>
+    <string name="CITIES">CITIES</string>
 
     //bullets selections
     <string name="OUT_OF_STOCK">Out-of-Stock</string>
@@ -116,6 +120,12 @@
     <string name="shop_id">intent_shop_id</string>
     <string name="intent_reg_model_key">intent_register_model_key</string>
     <string name="intent_category_shopId">intent_category_shopId</string>
+    <string name="FCM_BASE_URL">https://fcm.googleapis.com/</string>
+
+    <string name="OrdersActivity">OrdersActivity</string>
+    <string name="HomeActivity">HomeActivity</string>
+    <string name="orderFragment">OrderFragment</string>
+    <string name="intent_city_id">intent_city_id</string>
 
 
     <string-array name="india_states">

@@ -87,7 +87,7 @@ public class LocalShopActivity extends AppCompatActivity {
     private List<RegisterModel> registerModelList = new ArrayList<>();
     private Dialog progressDialog;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private String locality;
+    private String locality,cityId;
     private ListenerRegistration shopsListner;
     private static final String TAG = "LocalShopActivity";
 
@@ -116,13 +116,26 @@ public class LocalShopActivity extends AppCompatActivity {
         sharedEncryptUtills = SharedEncryptUtills.getInstance(this);
         firebaseFirestore = FirebaseFirestore.getInstance();
         dialogIninit();
+        Intent intent = getIntent();
+        if (intent != null) {
+            cityId =intent.getExtras().getString(getString(R.string.intent_city_id));
+            if (cityId!=null)
+            {
+                getShops();
+            }else {
+                showDialog("Error Occured","Retry After Some Time");
+            }
+        }
+
+
         binding.backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        requestPermissions();
+
+
     }
 
     private void requestPermissions() {
@@ -399,7 +412,7 @@ public class LocalShopActivity extends AppCompatActivity {
     }
 
     private void getShops() {
-        shopsListner = firebaseFirestore.collection(getString(R.string.SHOP_OWNERS)).whereEqualTo("shopAddress.city", locality).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        shopsListner = firebaseFirestore.collection(getString(R.string.SHOP_OWNERS)).whereEqualTo("cityId", cityId).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -442,7 +455,6 @@ public class LocalShopActivity extends AppCompatActivity {
                     binding.noProductsAvail.setVisibility(View.VISIBLE);
                 } else {
                     binding.noProductsAvail.setVisibility(View.GONE);
-                    binding.localRCV.setVisibility(View.VISIBLE);
                 }
                 progressDialog.dismiss();
             }

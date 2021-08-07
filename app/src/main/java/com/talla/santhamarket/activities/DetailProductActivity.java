@@ -104,7 +104,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     List<String> productSizes = new ArrayList<>();
     private View view;
     private int totalCart_items = 0;
-    private ListenerRegistration cartitemCountListner, productListner, favListner;
+    private ListenerRegistration cartitemCountListner, productListner, favListner, specificationListner;
     private static final String TAG = "DetailProductActivity";
 
     @Override
@@ -156,21 +156,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
         binding.dateDelivery.setText(CheckUtill.getDateAfterDays(7));
 
-//        List<RatingModel> ratingModelList = new ArrayList<>();
-//        for (int i = 20; i < 25; i++) {
-//            RatingModel ratingModel = new RatingModel();
-//            ratingModel.setRating_title("Title " + i);
-//            ratingModel.setRating_desc("Desc " + i);
-//            List<ProductImageModel> productImageModelList = new ArrayList<>();
-//            ProductImageModel productImageModel = new ProductImageModel();
-//            productImageModel.setProduct_image("https://getk2.org/media/k2/items/cache/42433d914d50be2debde725181e28d45_XL.jpg?t=20160407_065923");
-//            productImageModelList.add(productImageModel);
-//            ratingModel.setProductImageModelList(productImageModelList);
-//            ratingModelList.add(ratingModel);
-//        }
-//        RatingsAdapter ratingsAdapter = new RatingsAdapter(this, ratingModelList);
-//        binding.ratingRCV.setAdapter(ratingsAdapter);
-
         binding.toggleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -197,7 +182,6 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                                 Toast.makeText(DetailProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
-
 
                     } else {
                         Intent intent = new Intent(DetailProductActivity.this, AuthenticationActivity.class);
@@ -230,9 +214,13 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
         binding.addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.show();
-                key = getString(R.string.add_to_cart);
-                checkItemIsExists(key);
+                if (productModel.isOut_of_stock() || (productModel.getTotalStock() <= 0)) {
+                    showDialog("Out of Stock Products cant add to Cart\nOnly you can add to Favourites");
+                } else {
+                    progressDialog.show();
+                    key = getString(R.string.add_to_cart);
+                    checkItemIsExists(key);
+                }
             }
         });
 
@@ -243,13 +231,13 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
 
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         cartitemCountListner.remove();
         productListner.remove();
-        favListner.remove();
+        productListner.remove();
+        specificationListner.remove();
     }
 
     private void addItemToCart() {
@@ -333,11 +321,11 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                     if (cartModel == null) {
                         Log.d(TAG, "No Doc Available");
 
-                        if (totalCart_items < 50) {
+                        if (totalCart_items < 30) {
                             addItemToCart();
                         } else {
                             progressDialog.dismiss();
-                            showDialog("Cart Items limit Exceeded...");
+                            showDialog("Cart Items Limit Exceeded !");
                         }
 
                     } else {
@@ -442,7 +430,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
     private void getProdBasedOnProdId() {
         progressDialog.show();
         final DocumentReference docRef = firestore.collection(getString(R.string.PRODUCTS)).document(productId);
-        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        productListner = docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -451,7 +439,7 @@ public class DetailProductActivity extends AppCompatActivity implements ChartsCl
                     if (value != null && value.exists()) {
                         productModel = value.toObject(ProductModel.class);
                         Log.d(TAG, "Product Model :" + productModel.toString());
-                        productListner = docRef.collection(getString(R.string.SPECIFICATIONS)).document(productModel.getProduct_id()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        specificationListner = docRef.collection(getString(R.string.SPECIFICATIONS)).document(productModel.getProduct_id()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
                             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                                 if (error != null) {

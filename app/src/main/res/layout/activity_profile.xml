@@ -65,20 +65,16 @@
 
             <ImageView
                 android:id="@+id/profile_uploadImage"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignStart="@+id/profile_imageView"
-                android:layout_alignLeft="@+id/profile_imageView"
                 android:layout_alignTop="@+id/profile_imageView"
-                android:layout_alignEnd="@+id/profile_imageView"
-                android:layout_alignRight="@+id/profile_imageView"
                 android:layout_alignBottom="@+id/profile_imageView"
-                android:layout_marginStart="61dp"
-                android:layout_marginLeft="61dp"
-                android:layout_marginTop="69dp"
-                android:layout_marginEnd="9dp"
-                android:layout_marginRight="9dp"
-                android:layout_marginBottom="1dp"
+                android:layout_marginStart="56dp"
+                android:layout_marginLeft="-24dp"
+                android:layout_marginTop="33dp"
+                android:layout_marginBottom="7dp"
+                android:layout_toRightOf="@+id/profile_imageView"
                 android:onClick="uploadProfileImage"
                 android:src="@drawable/edit_pencil"
                 tools:ignore="OnClick" />
@@ -217,48 +213,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal">
-
-                <RadioGroup
-                    android:id="@+id/profile_radioGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/profile_maleRadio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/RadioButtonStyle"
-                        android:textColor="@color/black"
-                        android:text="Male" />
-
-                    <RadioButton
-                        android:id="@+id/profile_femaleRadio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                       style="@style/RadioButtonStyle"
-                        android:textColor="@color/black"
-                        android:text="Female" />
-
-                    <RadioButton
-                        android:id="@+id/profile_othersRadio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                       style="@style/RadioButtonStyle"
-                        android:textColor="@color/black"
-                        android:text="Others" />
-                </RadioGroup>
-
-            </LinearLayout>
-
         </LinearLayout>
 
         <TextView
@@ -268,6 +222,7 @@
             style="@style/Roboto_TextView_Light_dark"
             android:gravity="bottom|center_horizontal"
             android:paddingBottom="5dp"
+            android:id="@+id/appVersion"
             android:text="Version 1.00.01"
             android:textColor="@color/gray" />
 

@@ -19,10 +19,6 @@
             android:icon="@drawable/about_icon"
             android:title="Help"
             android:id="@+id/about_us"/>
-        <item
-            android:icon="@drawable/iprivacy_policy"
-            android:title="Privacy Policy"
-            android:id="@+id/privacy"/>
     </group>
 
 

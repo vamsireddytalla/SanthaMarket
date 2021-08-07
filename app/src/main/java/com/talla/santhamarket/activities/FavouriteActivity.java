@@ -60,15 +60,9 @@ public class FavouriteActivity extends AppCompatActivity implements ToggleItemLi
         UID = auth.getCurrentUser().getUid();
         favouriteAdapter = new FavouriteAdapter(this, productModelList, this);
         binding.favRCV.setAdapter(favouriteAdapter);
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //get ALl Fav Data Based on UID
         getFavData();
     }
+
 
     private void getFavData() {
         favouriteModelList.clear();

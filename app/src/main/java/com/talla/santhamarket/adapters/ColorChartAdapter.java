@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -54,10 +55,18 @@ public class ColorChartAdapter extends RecyclerView.Adapter<ColorChartAdapter.My
         });
 
         if (itemIndex == position) {
+//            int width = 90;
+//            int height = 90;
+//            LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(width,height);
+//            holder.binding.colorRoot.setLayoutParams(parms);
             holder.binding.colorRoot.setBackground(context.getResources().getDrawable(R.drawable.color_slected_item));
             listner.onSelectionCLick(sizeList.get(position),context.getString(R.string.Selected_Color));
         } else {
-            holder.binding.colorRoot.setBackground(context.getResources().getDrawable(R.drawable.linear_border));
+            holder.binding.colorRoot.setBackground(context.getResources().getDrawable(R.drawable.empty_border));
+//            int width = 60;
+//            int height = 60;
+//            LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(width,height);
+//            holder.binding.colorRoot.setLayoutParams(parms);
         }
     }
 

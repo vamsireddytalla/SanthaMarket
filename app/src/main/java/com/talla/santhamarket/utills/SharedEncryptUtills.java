@@ -18,16 +18,7 @@ public class SharedEncryptUtills
     public static final String BASE_URL = "BASE_URL";
     public static final String FIRST_TIME = "firsttime";
     public static final String DAY_FIRST_TIME = "DAY_FIRST_TIME";
-    public static final String NOTIFICATION_ON_OFF = "NOTIFICATION_ON_OFF";
-    public static final String DEFAULT_PLAYER = "DEFAULT_PLAYER";
-    public static final String IS_NEW_USER = "IS_NEW_USER";
-    public static final String TELEGRAM_CHANNEL = "TELEGRAM_CHANNEL";
-    public static final String TELEGRAM_GROUP = "TELEGRAM_GROUP";
-    public static final String WEB_SITE = "WEB_SITE";
-    public static final String ADD_MOB_ID = "ADD_MOB_ID";
-    public static final String APP_VERSION = "APP_VERSION";
-    public static final String USER_NAME = "USER_NAME";
-    public static final String SHOW_ADS = "SHOW_ADS";
+    public static final String FCM_TOKEN = "FCM_TOKEN";
 
 
     public static SharedEncryptUtills getInstance(Context context) {
@@ -73,6 +64,12 @@ public class SharedEncryptUtills
             return sharedPreferences.getString(key, "");
         }
         return "";
+    }
+
+    public void deleteData(String key) {
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        prefsEditor.remove(key);
+        prefsEditor.commit();
     }
 
     public void saveBooleanData(String key,boolean val)

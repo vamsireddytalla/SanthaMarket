@@ -15,50 +15,65 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.installations.InstallationTokenResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.talla.santhamarket.R;
+import com.talla.santhamarket.activities.HomeActivity;
 import com.talla.santhamarket.activities.OtpActivity;
 import com.talla.santhamarket.models.TokenModel;
 import com.talla.santhamarket.utills.CheckUtill;
+import com.talla.santhamarket.utills.SharedEncryptUtills;
 import com.talla.santhamarket.utills.StaticUtills;
 
 public class FirebaseTokenGneration extends FirebaseMessagingService
 {
     FirebaseFirestore firebaseFirestore;
+    private SharedEncryptUtills sharedEncryptUtills;
+    private Context mContext;
+
+    public FirebaseTokenGneration() {
+    }
+
+    public FirebaseTokenGneration(Context context)
+    {
+        firebaseFirestore= FirebaseFirestore.getInstance();
+        sharedEncryptUtills=SharedEncryptUtills.getInstance(context);
+        this.mContext=context;
+    }
+
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
-        firebaseFirestore= FirebaseFirestore.getInstance();
+        String fcm_token= sharedEncryptUtills.getData(SharedEncryptUtills.FCM_TOKEN);
+        FirebaseMessaging.getInstance().subscribeToTopic("SanthaMarket");
         FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(new OnCompleteListener<InstallationTokenResult>() {
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        if (!fcm_token.equalsIgnoreCase(refreshedToken))
+        {
+            // Get new Instance ID token
+            if(firebaseUser!=null){
+                updateToken(refreshedToken);
+            }
+        }
+    }
+
+    public void updateToken(String refreshToken){
+        FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
+        TokenModel tokenModel=new TokenModel();
+        tokenModel.setUserToken(refreshToken);
+        String android_id = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
+        tokenModel.setDeviceId(android_id);
+        tokenModel.setTokenUpdated_date(StaticUtills.getTimeStamp());
+
+        firebaseFirestore.collection(mContext.getResources().getString(R.string.FCM_TOKENS)).document(firebaseUser.getUid()).set(tokenModel).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<InstallationTokenResult> task) {
-                if(!task.isSuccessful()){
-                    return;
-                }
-                // Get new Instance ID token
-                String token = task.getResult().getToken();
-                if(firebaseUser!=null){
-                    updateToken(getApplicationContext(),token);
-                }
+            public void onSuccess(Void aVoid) {
+                Log.d("FirebaseTokenGneration ","Success");
+                sharedEncryptUtills.saveData(SharedEncryptUtills.FCM_TOKEN,refreshToken);
             }
         });
     }
 
-    public void updateToken(Context context,String refreshToken){
-        FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
-        TokenModel tokenModel=new TokenModel();
-        tokenModel.setUserToken(refreshToken);
-        String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        tokenModel.setDeviceId(android_id);
-        tokenModel.setTokenUpdated_date(StaticUtills.getTimeStamp());
-        firebaseFirestore= FirebaseFirestore.getInstance();
-        firebaseFirestore.collection(context.getResources().getString(R.string.FCM_TOKENS)).document(firebaseUser.getUid()).set(tokenModel).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d("FirebaseTokenGneration ","Success");
-            }
-        });
-    }
+
 
 }

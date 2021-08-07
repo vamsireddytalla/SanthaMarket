@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".SplashActivity">
 
 
-      <ImageView
-          android:layout_width="match_parent"
-          android:layout_marginTop="@dimen/_50sdp"
-          android:layout_height="wrap_content"
-          android:id="@+id/splImgOne"/>
+    <ImageView
+        android:id="@+id/splImgOne"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_80sdp"
+        android:src="@drawable/ic_carts" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lobster_regular"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:text="Santha Market"/>
 
 
 </LinearLayout>

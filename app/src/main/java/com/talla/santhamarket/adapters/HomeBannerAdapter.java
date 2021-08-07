@@ -11,17 +11,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.talla.santhamarket.databinding.DashHomeBannerBinding;
+import com.talla.santhamarket.models.BackGroundModel;
+import com.talla.santhamarket.models.BannerModel;
 
 import java.util.List;
 
 public class HomeBannerAdapter extends RecyclerView.Adapter<HomeBannerAdapter.MyViewHolder> {
 
     private Context context;
-    private List<String> stringList;
+    private List<BannerModel> bannerModelList;
 
-    public HomeBannerAdapter(Context context, List<String> stringList) {
+    public HomeBannerAdapter(Context context, List<BannerModel> bannerModelList) {
         this.context = context;
-        this.stringList = stringList;
+        this.bannerModelList = bannerModelList;
+        notifyDataSetChanged();
+    }
+
+    public void setBannerModelList(List<BannerModel> bannerModelList) {
+        this.bannerModelList = bannerModelList;
         notifyDataSetChanged();
     }
 
@@ -29,18 +36,18 @@ public class HomeBannerAdapter extends RecyclerView.Adapter<HomeBannerAdapter.My
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        DashHomeBannerBinding itemBinding = DashHomeBannerBinding.inflate(layoutInflater, parent,false);
+        DashHomeBannerBinding itemBinding = DashHomeBannerBinding.inflate(layoutInflater, parent, false);
         return new HomeBannerAdapter.MyViewHolder(itemBinding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.onBindView(stringList.get(position));
+        holder.onBindView(bannerModelList.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return stringList.size();
+        return bannerModelList.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -52,8 +59,8 @@ public class HomeBannerAdapter extends RecyclerView.Adapter<HomeBannerAdapter.My
             this.bannerBinding = itemView;
         }
 
-        public void onBindView(String s) {
-            String img =s;
+        public void onBindView(BannerModel bannerModel) {
+            String img = bannerModel.getBanner_image();
             Glide.with(context).load(img).fitCenter().into(bannerBinding.imgBamItem);
         }
 

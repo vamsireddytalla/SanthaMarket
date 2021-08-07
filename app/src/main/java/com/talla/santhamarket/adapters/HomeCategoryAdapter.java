@@ -64,7 +64,7 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
         }
 
         public void onBindView(CategoryModel categoryModel) {
-            Glide.with(context).load(categoryModel.getCat_logo()).fitCenter().into(binding.imageIcon);
+            Glide.with(context).load(categoryModel.getCat_logo()).fitCenter().into(binding.catImage);
             binding.catTitle.setText(categoryModel.getCat_name());
         }
 

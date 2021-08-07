@@ -1,6 +1,7 @@
 package com.talla.santhamarket.fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -45,17 +46,22 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.activities.AddressBookActivity;
+import com.talla.santhamarket.activities.CategoriesActivity;
+import com.talla.santhamarket.activities.CityActivity;
 import com.talla.santhamarket.activities.DetailProductActivity;
 import com.talla.santhamarket.activities.HomeActivity;
 import com.talla.santhamarket.activities.LocalShopActivity;
 import com.talla.santhamarket.activities.MultiCartActivity;
 import com.talla.santhamarket.activities.OrderSummaryActivity;
 import com.talla.santhamarket.activities.SearchProductActivity;
+import com.talla.santhamarket.adapters.CategoriesAdapter;
 import com.talla.santhamarket.adapters.HomeBannerAdapter;
 import com.talla.santhamarket.adapters.HomeCategoryAdapter;
 import com.talla.santhamarket.databinding.FragmentHomeBinding;
 import com.talla.santhamarket.interfaces.OnFragmentListner;
+import com.talla.santhamarket.models.BannerModel;
 import com.talla.santhamarket.models.CategoryModel;
+import com.talla.santhamarket.models.DashBoardModel;
 import com.talla.santhamarket.models.GraphView;
 import com.talla.santhamarket.utills.CheckInternet;
 import com.talla.santhamarket.utills.CheckUtill;
@@ -63,6 +69,7 @@ import com.talla.santhamarket.utills.SharedEncryptUtills;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class HomeFragment extends Fragment {
@@ -77,9 +84,12 @@ public class HomeFragment extends Fragment {
     private HomeCategoryAdapter homeCategoryAdapter;
     private static final String TAG = "HOME_FRAGMENT_DASHBOARD";
     private HomeActivity homeActivity;
-    private ListenerRegistration categoriesListner,cartItemsCountListner;
+    private Dialog progressDialog;
+    private ListenerRegistration categoriesListner, cartItemsCountListner,dashBoardDataListner;
     private OnFragmentListner fragmentListner;
     private int totalCart_items;
+    private List<BannerModel> bannerModelList = new ArrayList<>();
+    List<String> cateList = new ArrayList<>();
     private SharedEncryptUtills sharedEncryptUtills;
 
     @Override
@@ -96,12 +106,8 @@ public class HomeFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         UID = auth.getUid();
         sharedEncryptUtills = SharedEncryptUtills.getInstance(homeActivity);
-        List<String> stringList = new ArrayList<>();
-        stringList.add("https://1.bp.blogspot.com/-9zFjk2JH4H0/YPaSpGN27SI/AAAAAAAABkk/uWlTx8ZiESgTmAXk13ShrqcMdi2a8edXQCLcBGAsYHQ/s400/discount-3078216.jpg");
-        stringList.add("https://previews.123rf.com/images/alhovik/alhovik1708/alhovik170800009/84049519-weekend-sale-banner-this-weekend-special-offer-banner-template.jpg");
-        stringList.add("https://www.bannerbatterien.com/upload/filecache/Banner-Batterien-Windrder2-web_06b2d8d686e91925353ddf153da5d939.webp");
-        stringList.add("https://cdn.pixabay.com/photo/2017/12/28/15/06/background-3045402__340.png");
-        homeBannerAdapter = new HomeBannerAdapter(homeActivity, stringList);
+        dialogIninit();
+        homeBannerAdapter = new HomeBannerAdapter(homeActivity, bannerModelList);
         binding.viewPagerHome.setOffscreenPageLimit(2);
         binding.viewPagerHome.setAdapter(homeBannerAdapter);
         new TabLayoutMediator(binding.tabIndicator, binding.viewPagerHome, new TabLayoutMediator.TabConfigurationStrategy() {
@@ -151,6 +157,7 @@ public class HomeFragment extends Fragment {
                         break;
                     case R.id.about_us:
                         binding.drawerLayout.closeDrawer(GravityCompat.START);
+                        getHelp();
                         break;
                 }
                 return false;
@@ -168,7 +175,7 @@ public class HomeFragment extends Fragment {
         binding.localShop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), LocalShopActivity.class);
+                Intent intent = new Intent(getContext(), CityActivity.class);
                 startActivity(intent);
             }
         });
@@ -180,7 +187,6 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
 
 
         binding.cartItem.setOnClickListener(new View.OnClickListener() {
@@ -203,14 +209,20 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        getDashBoardData();
+
         return binding.getRoot();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        getCategoriesData();
-        getCartItemsCount();
+    public void getHelp()
+    {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.admin_email)});
+        if (intent.resolveActivity(homeActivity.getPackageManager()) != null) {
+            startActivity(intent);
+        }
+
     }
 
     @Override
@@ -227,7 +239,7 @@ public class HomeFragment extends Fragment {
 
     private void getCartItemsCount() {
         Query query = firestore.collection(homeActivity.getString(R.string.CART_ITEMS)).whereEqualTo("user_id", UID);
-        cartItemsCountListner=query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        cartItemsCountListner = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -238,54 +250,7 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private void getCategoriesData() {
-        if (categoryModelList != null) {
-            categoryModelList.clear();
-        }
-        categoriesListner=firestore.collection(homeActivity.getString(R.string.CATEGORIES)).orderBy("timestamp", Query.Direction.ASCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-
-                for (DocumentChange dc : value.getDocumentChanges()) {
-                    switch (dc.getType()) {
-                        case ADDED:
-                            CategoryModel categoryModel = dc.getDocument().toObject(CategoryModel.class);
-                            categoryModelList.add(categoryModel);
-                            Log.d(TAG, "Category data added to list: " + categoryModel.toString());
-                            break;
-                        case MODIFIED:
-                            CategoryModel categoryModel1 = dc.getDocument().toObject(CategoryModel.class);
-                            Log.d(TAG, "Category data modified to list: " + categoryModel1.toString());
-                            for (int i = 0; i < categoryModelList.size(); i++) {
-                                if (categoryModelList.get(i).getId().equals(categoryModel1.getId())) {
-                                    categoryModelList.remove(i);
-                                    categoryModelList.add(i, categoryModel1);
-                                    break;
-                                }
-                            }
-                            break;
-                        case REMOVED:
-                            CategoryModel categoryModel2 = dc.getDocument().toObject(CategoryModel.class);
-                            Log.d(TAG, "Category data removed to list: " + categoryModel2.toString());
-                            for (int i = 0; i < categoryModelList.size(); i++) {
-                                if (categoryModelList.get(i).getId().equals(categoryModel2.getId())) {
-                                    categoryModelList.remove(i);
-                                    break;
-                                }
-                            }
-                            break;
-                    }
-                }
-                binding.categoryRCV.setHasFixedSize(true);
-                binding.categoryRCV.setLayoutManager(new GridLayoutManager(getContext(), 3));
-                homeCategoryAdapter = new HomeCategoryAdapter(getContext(), categoryModelList);
-                binding.categoryRCV.setAdapter(homeCategoryAdapter);
-                sendVisitorsCount();
-
-            }
-        });
+        sendVisitorsCount();
     }
 
     private void sendVisitorsCount() {
@@ -340,16 +305,106 @@ public class HomeFragment extends Fragment {
 
     }
 
+    private void getDashBoardData() {
+        if (cateList != null) {
+            cateList.clear();
+        }
+        if (bannerModelList != null) {
+            bannerModelList.clear();
+        }
+        dashBoardDataListner=firestore.collection(homeActivity.getResources().getString(R.string.DASHBOARD)).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    progressDialog.dismiss();
+                    Log.d(TAG, "getDashBoardData: " + error.getMessage());
+                } else {
+                    for (DocumentSnapshot snapshot : value.getDocuments()) {
+                        DashBoardModel dashBoardModel = snapshot.toObject(DashBoardModel.class);
+                        bannerModelList = dashBoardModel.getBannerModelList();
+                        Map<String, Object> catList = dashBoardModel.getCategoriesList();
+                        for (Map.Entry<String, Object> set : catList.entrySet()) {
+                            cateList.add(set.getValue().toString());
+                        }
+                    }
+                    progressDialog.dismiss();
+                    homeBannerAdapter.setBannerModelList(bannerModelList);
+                    getCategoriesData();
+                }
+            }
+        });
+    }
+
+    private void getCategoriesData() {
+        if (categoryModelList != null) {
+            categoryModelList.clear();
+        }
+        if (cateList.size() > 0) {
+            for (String set : cateList) {
+                categoriesListner=firestore.collection(getString(R.string.CATEGORIES)).whereEqualTo("id", set).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                        for (DocumentChange dc : value.getDocumentChanges()) {
+                            switch (dc.getType()) {
+                                case ADDED:
+                                    CategoryModel categoryModel = dc.getDocument().toObject(CategoryModel.class);
+                                    categoryModelList.add(categoryModel);
+                                    Log.d(TAG, "Category data added to list: " + categoryModel.toString());
+                                    break;
+                                case MODIFIED:
+                                    CategoryModel categoryModel1 = dc.getDocument().toObject(CategoryModel.class);
+                                    Log.d(TAG, "Category data modified to list: " + categoryModel1.toString());
+                                    for (int i = 0; i < categoryModelList.size(); i++) {
+                                        if (categoryModelList.get(i).getId().equals(categoryModel1.getId())) {
+                                            categoryModelList.remove(i);
+                                            categoryModelList.add(i, categoryModel1);
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                case REMOVED:
+                                    CategoryModel categoryModel2 = dc.getDocument().toObject(CategoryModel.class);
+                                    Log.d(TAG, "Category data removed to list: " + categoryModel2.toString());
+                                    for (int i = 0; i < categoryModelList.size(); i++) {
+                                        if (categoryModelList.get(i).getId().equals(categoryModel2.getId())) {
+                                            categoryModelList.remove(i);
+                                            break;
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                        binding.categoryRCV.setHasFixedSize(true);
+                        homeCategoryAdapter = new HomeCategoryAdapter(getContext(), categoryModelList);
+                        binding.categoryRCV.setAdapter(homeCategoryAdapter);
+                        cateList.clear();
+                        getCartItemsCount();
+                    }
+                });
+            }
+        } else {
+            progressDialog.dismiss();
+        }
+    }
+
+    public void dialogIninit() {
+        progressDialog = new Dialog(homeActivity);
+        com.talla.santhamarket.databinding.CustomProgressDialogBinding customProgressDialogBinding = com.talla.santhamarket.databinding.CustomProgressDialogBinding.inflate(this.getLayoutInflater());
+        progressDialog.setContentView(customProgressDialogBinding.getRoot());
+        progressDialog.setCancelable(false);
+    }
+
     private void showSnackBar(String message) {
         Snackbar snackbar = Snackbar.make(homeActivity.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
         categoriesListner.remove();
         cartItemsCountListner.remove();
+        dashBoardDataListner.remove();
     }
-
 }

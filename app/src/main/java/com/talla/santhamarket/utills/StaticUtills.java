@@ -17,7 +17,7 @@ public class StaticUtills {
 
 
     public static String getLocalDeliveryDate() {
-        return new SimpleDateFormat(" dd MMMM yyyy").format(new java.util.Date());
+        return new SimpleDateFormat("dd.MM.yyyy").format(new java.util.Date());
     }
 
 

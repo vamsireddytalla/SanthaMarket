@@ -82,7 +82,7 @@ public class LocalCartAdapter extends RecyclerView.Adapter<LocalCartAdapter.MyVi
                     int maxQty = Math.round(productModel.getMax_quantity());
                     String qty = holder.binding.qtyText.getText().toString();
                     int enteredQuatity = Integer.parseInt(qty);
-                    if (enteredQuatity < maxQty) {
+                    if (enteredQuatity < maxQty && productModel.getTotalStock()>enteredQuatity) {
                         enteredQuatity += 1;
                         holder.binding.qtyText.setText(String.format("%02d", enteredQuatity));
                         productModelList.get(position).setTemp_qty(enteredQuatity);
@@ -176,7 +176,7 @@ public class LocalCartAdapter extends RecyclerView.Adapter<LocalCartAdapter.MyVi
                 if (subProductModelList.get(i).getProduct_color() != null) {
                     if (subProductModelList.get(i).getProduct_color().equalsIgnoreCase(prodColor)) {
                         Log.d("LOCAL ADAPTER", prodColor + i);
-                        return productImageModelList.get(i).getProduct_image();
+                        return productImageModelList.get(0).getProduct_image();
                     }
                 }
 

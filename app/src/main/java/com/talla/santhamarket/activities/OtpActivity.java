@@ -44,6 +44,7 @@ import com.talla.santhamarket.fcm.FirebaseTokenGneration;
 import com.talla.santhamarket.models.UserAddress;
 import com.talla.santhamarket.models.UserModel;
 import com.talla.santhamarket.utills.CheckInternet;
+import com.talla.santhamarket.utills.SharedEncryptUtills;
 
 import java.util.concurrent.TimeUnit;
 
@@ -60,6 +61,7 @@ public class OtpActivity extends AppCompatActivity {
     private int count = 60;
     private String android_id;
     private ProgressDialog progressDialog;
+    private SharedEncryptUtills sharedEncryptUtills;
     private static final String TAG = "OtpActivity";
 
     @Override
@@ -79,6 +81,8 @@ public class OtpActivity extends AppCompatActivity {
         progressDialog.setTitle("Loading...");
         progressDialog.setMessage("Please Wait untill finish");
         progressDialog.setCancelable(false);
+        sharedEncryptUtills = SharedEncryptUtills.getInstance(this);
+        sharedEncryptUtills.deleteData(SharedEncryptUtills.FCM_TOKEN);
         if (bundle != null) {
             phnNumber = bundle.getString("phnNumber");
             setUpVerificationCallBacks();
@@ -153,7 +157,6 @@ public class OtpActivity extends AppCompatActivity {
                                 userModel.setWalletBal("0");
                                 userModel.setUser_email("");
                                 userModel.setUser_name("");
-                                userModel.setUser_gender("");
                                 userModel.setImage_url("");
                                 userModel.setDeviceId(android_id);
 
@@ -175,7 +178,7 @@ public class OtpActivity extends AppCompatActivity {
                                     }
                                 });
                             } else {
-                                DocumentReference ref=firestore.collection(getString(R.string.USERS)).document(auth.getUid());
+                                DocumentReference ref = firestore.collection(getString(R.string.USERS)).document(auth.getUid());
                                 ref.update("deviceId", android_id).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {

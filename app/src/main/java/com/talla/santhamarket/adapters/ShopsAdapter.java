@@ -66,7 +66,7 @@ public class ShopsAdapter extends RecyclerView.Adapter<ShopsAdapter.MyViewHolder
                     intent.putExtra(context.getString(R.string.intent_reg_model_key), registerModel);
                     context.startActivity(intent);
                 } else {
-                    showDialog("Shop Closed","Today Time Up so We have closed Shop!");
+                    showDialog("Shop Closed","Please try After Some Time");
                 }
 
             }

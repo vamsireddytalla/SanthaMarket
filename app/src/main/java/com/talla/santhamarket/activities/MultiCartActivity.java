@@ -38,6 +38,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.razorpay.Checkout;
 import com.razorpay.PaymentResultListener;
+import com.squareup.okhttp.ResponseBody;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.adapters.CartTabsAdapter;
 import com.talla.santhamarket.databinding.ActivityMultiCartBinding;
@@ -47,15 +48,23 @@ import com.talla.santhamarket.interfaces.PaymentListner;
 import com.talla.santhamarket.models.BackGroundModel;
 import com.talla.santhamarket.models.CartModel;
 import com.talla.santhamarket.models.CategoryModel;
+import com.talla.santhamarket.models.Data;
 import com.talla.santhamarket.models.DeliveryModel;
+import com.talla.santhamarket.models.FcmResponse;
 import com.talla.santhamarket.models.FinalPayTransferModel;
+import com.talla.santhamarket.models.NotificationModel;
 import com.talla.santhamarket.models.OrderModel;
+import com.talla.santhamarket.models.ProductImageModel;
 import com.talla.santhamarket.models.ProductModel;
 import com.talla.santhamarket.models.SCModel;
 import com.talla.santhamarket.models.ServerModel;
 import com.talla.santhamarket.models.SpecificationModel;
+import com.talla.santhamarket.models.SubProductModel;
+import com.talla.santhamarket.models.TokenModel;
 import com.talla.santhamarket.models.UserAddress;
 import com.talla.santhamarket.models.UserModel;
+import com.talla.santhamarket.serverCalls.ApiClient;
+import com.talla.santhamarket.serverCalls.ApiInterface;
 import com.talla.santhamarket.services.BackGroundService;
 import com.talla.santhamarket.utills.CheckInternet;
 import com.talla.santhamarket.utills.CheckUtill;
@@ -69,6 +78,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MultiCartActivity extends AppCompatActivity implements PaymentListner, PaymentResultListener {
     private ActivityMultiCartBinding binding;
@@ -89,6 +102,7 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
     private ListenerRegistration serverListner, profileListner, addressDataListner, addressCountListner;
     private String transactionType = "COD", orderID, transactionID, orderDocId, receiptId;
     private List<String> localDocList = new ArrayList<>();
+    private ApiInterface apiInterface;
     private static String TAG = "MultiCartActivity";
 
     @Override
@@ -412,17 +426,18 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                 OrderModel orderModel = new OrderModel();
                 orderModel.setProduct_id(productModel.getProduct_id());
                 orderModel.setProduct_name(productModel.getProduct_name());
-                orderModel.setProduct_image(productModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_image());
+                String proImageUrl = getSelectedProductImage(productModel.getSubProductModelList(), productModel.getSelectedColor());
+                orderModel.setProduct_image(proImageUrl);
                 orderModel.setSelectedColor(productModel.getSelectedColor());
                 orderModel.setSelectedSize(productModel.getSelectedSize());
                 orderModel.setSelected_quantity(productModel.getTemp_qty());
                 orderModel.setProduct_price(productModel.getProduct_price());
                 orderModel.setMrp_price(productModel.getMrp_price());
-                orderModel.setTotalProductPrice(finalModel.getTotalPayment());
+                orderModel.setTotalProductPrice((orderModel.getProduct_price() * orderModel.getSelected_quantity()));
                 orderModel.setUserId(UID);
                 orderModel.setSeller_name(productModel.getSeller_name());
                 orderModel.setSeller_id(productModel.getSellerId());
-                orderModel.setOrdered_date(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
+                orderModel.setOrdered_date(StaticUtills.getLocalDeliveryDate());
                 orderModel.setPayment_method(getString(R.string.COD));
                 orderModel.setDelvery_address(userAddress);
                 orderModel.setTransaction_id(transactionID);
@@ -431,10 +446,16 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                 orderModel.setWebUrl("");
                 orderModel.setLocal(true);
                 receiptId = UUID.randomUUID().toString();
-                String[] ordersIds=receiptId.split("-");
-                orderModel.setOrder_id(ordersIds[ordersIds.length-1]);
-                int deliveryCharges = (int) (((productModel.getProduct_price() * productModel.getTemp_qty()) * 10) / 100);
-                orderModel.setDeliveryCharges(deliveryCharges);
+                String[] ordersIds = receiptId.split("-");
+                orderModel.setOrder_id(ordersIds[ordersIds.length - 1]);
+                double productPrice = productModel.getProduct_price();
+                int selectedQTY = productModel.getTemp_qty();
+                if (productPrice > 150) {
+                    orderModel.setDeliveryCharges((int) (productPrice + 15));
+                } else {
+                    int deliveryCharges= (int) Math.round(((productPrice * selectedQTY)*10/100));
+                    orderModel.setDeliveryCharges(deliveryCharges);
+                }
                 orderModel.setPaidOrNot(false);
                 List<DeliveryModel> deliveryModelList = new ArrayList<>();
                 DeliveryModel deliveryModel = new DeliveryModel();
@@ -457,12 +478,6 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
 //                            backIntent.putExtra("DELETE_CART_ITEMS", (Serializable) finalPay);
 //                            startService(backIntent);
                             updateProductDataDeleteCartItems(finalModel);
-                            Intent intent = new Intent(MultiCartActivity.this, OrderSucessActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            progressDialog.dismiss();
-                            showDialog("Error Occured", "Order Cancelled");
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -516,17 +531,18 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                 OrderModel orderModel = new OrderModel();
                 orderModel.setProduct_id(productModel.getProduct_id());
                 orderModel.setProduct_name(productModel.getProduct_name());
-                orderModel.setProduct_image(productModel.getSubProductModelList().get(0).getProduct_images().get(0).getProduct_image());
+                String proImageUrl = getSelectedProductImage(productModel.getSubProductModelList(), productModel.getSelectedColor());
+                orderModel.setProduct_image(proImageUrl);
                 orderModel.setSelectedColor(productModel.getSelectedColor());
                 orderModel.setSelectedSize(productModel.getSelectedSize());
                 orderModel.setSelected_quantity(productModel.getTemp_qty());
                 orderModel.setProduct_price(productModel.getProduct_price());
                 orderModel.setMrp_price(productModel.getMrp_price());
-                orderModel.setTotalProductPrice(finalModel.getTotalPayment());
+                orderModel.setTotalProductPrice((orderModel.getProduct_price() * orderModel.getSelected_quantity()));
                 orderModel.setUserId(UID);
                 orderModel.setSeller_name(productModel.getSeller_name());
                 orderModel.setSeller_id(productModel.getSellerId());
-                orderModel.setOrdered_date(CheckUtill.getDateFormat(System.currentTimeMillis(), this));
+                orderModel.setOrdered_date(StaticUtills.getLocalDeliveryDate());
                 orderModel.setPayment_method(getString(R.string.online));
                 orderModel.setDelvery_address(userAddress);
                 //Transaction id Pending
@@ -559,12 +575,6 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
 //                            backIntent.putExtra("DELETE_CART_ITEMS", (Serializable) finalPay);
 //                            startService(backIntent);
                             updateProductDataDeleteCartItems(finalModel);
-                            Intent intent = new Intent(MultiCartActivity.this, OrderSucessActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            progressDialog.dismiss();
-                            showDialog("Error Occured", "Order Cancelled");
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -577,6 +587,19 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                 });
             }
         }
+    }
+
+    private String getSelectedProductImage(List<SubProductModel> subProductModelList, String prodColor) {
+        for (int i = 0; i < subProductModelList.size(); i++) {
+            List<ProductImageModel> productImageModelList = subProductModelList.get(i).getProduct_images();
+            if (subProductModelList.get(i).getProduct_color() != null) {
+                if (subProductModelList.get(i).getProduct_color().equalsIgnoreCase(prodColor)) {
+                    Log.d("MultiCart_Activity", prodColor + i);
+                    return productImageModelList.get(0).getProduct_image();
+                }
+            }
+        }
+        return subProductModelList.get(0).getProduct_images().get(0).getProduct_image();
     }
 
 
@@ -604,17 +627,16 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
         return output.toString();
     }
 
-    private void updateProductDataDeleteCartItems(FinalPayTransferModel finalPayTransferModel)
-    {
+    private void updateProductDataDeleteCartItems(FinalPayTransferModel finalPayTransferModel) {
         progressDialog.show();
-        Log.d(TAG, "updateProductDataDeleteCartItems: "+finalPayTransferModel.toString());
+        Log.d(TAG, "updateProductDataDeleteCartItems: " + finalPayTransferModel.toString());
         List<CartModel> cartModelList = finalPayTransferModel.getCartModelList();
         List<ProductModel> productModelList = finalPayTransferModel.getProductModelsList();
         for (int i = 0; i < cartModelList.size(); i++) {
+            getFcmToken(finalPayTransferModel.getProductModelsList().get(i).getSellerId(), productModelList.get(i).getProduct_name(), "New Order Arrived");
             DocumentReference docref = firestore.collection(getString(R.string.CART_ITEMS)).document(cartModelList.get(i).getCart_doc_id());
             int finalI = i;
-            if (cartModelList.size()==productModelList.size())
-            {
+            if (cartModelList.size() == productModelList.size()) {
                 updateProductStatus(cartModelList.get(i).getCart_product_id(), productModelList.get(i).getTemp_qty());
             }
             docref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -624,10 +646,11 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
                 }
             });
         }
-        progressDialog.dismiss();
+//        progressDialog.dismiss();
+
     }
 
-    private void updateProductStatus(String prodDocId,int quantity) {
+    private void updateProductStatus(String prodDocId, int quantity) {
         DocumentReference docRef = firestore.collection(getString(R.string.PRODUCTS)).document(prodDocId);
 
         docRef.update("totalStock", FieldValue.increment(-quantity));
@@ -690,7 +713,57 @@ public class MultiCartActivity extends AppCompatActivity implements PaymentListn
         addressCountListner.remove();
     }
 
+    private void getFcmToken(String userID, String title, String message) {
+        firestore.collection(getString(R.string.FCM_TOKENS)).document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    TokenModel tokenModel = task.getResult().toObject(TokenModel.class);
+                    sendNotification(tokenModel.getUserToken(), title, message);
+                } else {
+                    progressDialog.dismiss();
+                    showSnackBar(task.getException().toString());
+                }
+            }
+        });
+    }
 
+    private void sendNotification(String fcm_token, String title, String message) {
+        apiInterface = ApiClient.getClient(getString(R.string.FCM_BASE_URL)).create(ApiInterface.class);
+        NotificationModel notificationModel = new NotificationModel();
+        notificationModel.setCollapseKey("type_a");
+        notificationModel.setTo(fcm_token);
+        Data data = new Data();
+        data.setTitle("Order : " + title);
+        data.setBody(message);
+        data.setOpenScreen(getString(R.string.OrdersActivity));
+        notificationModel.setData(data);
+        apiInterface.sendNotifcation(notificationModel).enqueue(new Callback<FcmResponse>() {
+            @Override
+            public void onResponse(Call<FcmResponse> call, Response<FcmResponse> response) {
+                if (response.isSuccessful()) {
+                    FcmResponse responseBody = response.body();
+                    if (responseBody.getSuccess() == 1) {
+                        Toast.makeText(MultiCartActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                    }
+                    progressDialog.dismiss();
+                    Intent intent = new Intent(MultiCartActivity.this, OrderSucessActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                } else {
+                    progressDialog.dismiss();
+                    showSnackBar(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FcmResponse> call, Throwable t) {
+                progressDialog.dismiss();
+                showSnackBar(t.getMessage());
+            }
+        });
+    }
 
 
 }

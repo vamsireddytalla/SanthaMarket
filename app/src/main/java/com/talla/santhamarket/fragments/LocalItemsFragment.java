@@ -56,7 +56,7 @@ public class LocalItemsFragment extends Fragment implements QuantityClickListner
     private List<ProductModel> productModelList = new ArrayList<>();
     private int totalMrpPrice = 0;
     private float totalDiscount;
-    private int finalPrice, deliveryCharges;
+    private double finalPrice, deliveryCharges, totalItems;
     private MultiCartActivity homeActivity;
     private FinalPayTransferModel finalPayTransferModel = new FinalPayTransferModel();
     private PaymentListner paymentListner;
@@ -90,7 +90,7 @@ public class LocalItemsFragment extends Fragment implements QuantityClickListner
                         showDialog("Minimum Requirement", "Total Cart Value Atleast 20rs\nAdd some more items to Cart to proceed");
                     } else {
                         finalPayTransferModel.setProductModelsList(productModelList);
-                        finalPayTransferModel.setTotalPayment(finalPrice);
+                        finalPayTransferModel.setTotalPayment((int) finalPrice);
                         finalPayTransferModel.setCartModelList(cartModelsList);
                         paymentListner.paymentClickListen(finalPayTransferModel);
                     }
@@ -361,7 +361,7 @@ public class LocalItemsFragment extends Fragment implements QuantityClickListner
         totalDiscount = 0;
         for (int i = 0; i < productModelList.size(); i++) {
             ProductModel productModel1 = productModelList.get(i);
-            if (!productModel1.isOut_of_stock() && (productModel1.getTotalStock()>0)) {
+            if (!productModel1.isOut_of_stock() && (productModel1.getTotalStock() > 0)) {
                 double mrp_price = productModel1.getMrp_price();
                 double selling_price = productModel1.getProduct_price();
 
@@ -375,15 +375,23 @@ public class LocalItemsFragment extends Fragment implements QuantityClickListner
         }
 
 
-        finalPrice = ((int) totalMrpPrice - (int) totalDiscount);
-        deliveryCharges = (finalPrice * 10) / 100;
+        finalPrice = (totalMrpPrice - totalDiscount);
+        //delivery charges calculated
+        if (finalPrice > 150) {
+            deliveryCharges = (finalPrice + 15);
+        } else {
+            deliveryCharges =Math.round((finalPrice*10/100));
+        }
+
         finalPrice = finalPrice + deliveryCharges;
 
+        totalItems = productModelList.size();
+        binding.itemsTitle.setText("Price ( " + totalItems + " Items )");
         binding.allItemsPriceText.setText(homeActivity.getResources().getString(R.string.rs_symbol) + CheckUtill.FormatCost(totalMrpPrice));
         binding.discountPriceText.setText("-" + CheckUtill.FormatCost((int) totalDiscount) + homeActivity.getResources().getString(R.string.rs_symbol));
-        binding.subTotalPriceText.setText(homeActivity.getResources().getString(R.string.rs_symbol) + CheckUtill.FormatCost(finalPrice));
-        binding.totalPrice.setText("Total " + CheckUtill.FormatCost(finalPrice) + " " + homeActivity.getResources().getString(R.string.Rs));
-        binding.deliveryCharges.setText((homeActivity.getResources().getString(R.string.rs_symbol) + deliveryCharges));
+        binding.subTotalPriceText.setText(homeActivity.getResources().getString(R.string.rs_symbol) + CheckUtill.FormatCost((int) finalPrice));
+        binding.totalPrice.setText("Total " + CheckUtill.FormatCost((int) finalPrice) + " " + homeActivity.getResources().getString(R.string.Rs));
+        binding.deliveryCharges.setText((homeActivity.getResources().getString(R.string.rs_symbol) + (int)deliveryCharges));
     }
 
     private void showSnackBar(String message) {

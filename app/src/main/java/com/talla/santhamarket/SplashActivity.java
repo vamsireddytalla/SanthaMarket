@@ -35,7 +35,6 @@ public class SplashActivity extends AppCompatActivity {
             statusBarColor();
         }
         auth = FirebaseAuth.getInstance();
-        Glide.with(this).load("https://1.bp.blogspot.com/-nBYsCwqNsCQ/YPaSpPOVjCI/AAAAAAAABkc/WxMK-8gQNYorX59p72SzcooZdUnBsmNBwCLcBGAsYHQ/s400/banner-48962_1280.png").fitCenter().into(binding.splImgOne);
         if (auth.getCurrentUser() != null) {
             Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
             startActivity(intent);

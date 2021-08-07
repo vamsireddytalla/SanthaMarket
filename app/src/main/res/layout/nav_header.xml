@@ -12,12 +12,12 @@
         android:src="@drawable/ic_carts" />
 
     <TextView
-        style="@style/Roboto_TextView_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_10sdp"
         android:text="Santha Market"
+        android:fontFamily="@font/lobster_regular"
         android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
 </LinearLayout>

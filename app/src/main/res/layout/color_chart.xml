@@ -5,13 +5,13 @@
     android:layout_height="@dimen/_30sdp"
     android:layout_marginRight="@dimen/_10sdp"
     android:layout_marginLeft="@dimen/_10sdp"
-    android:background="@drawable/linear_border"
-    android:padding="@dimen/_3sdp"
     android:id="@+id/colorRoot">
 
-    <ImageView
+    <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/colorItem" />
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/white_circle"
+        android:id="@+id/colorItem"/>
 
 </LinearLayout>

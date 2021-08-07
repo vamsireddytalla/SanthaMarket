@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#CB4335</color>
-    <color name="colorPrimaryDark">#C0392B</color>
-    <color name="colorAccent">#CB4335</color>
+    <color name="colorPrimary">#7286A0</color>
+    <color name="colorPrimaryDark">#7286A0</color>
+    <color name="colorAccent">#7286A0</color>
+    <color name="margin_yellow">#F6C72E</color>
     <color name="light_white">#fafafa</color>
     <color name="white">#fff</color>
     <color name="light_cement">#8B9DAF</color>
@@ -16,6 +17,7 @@
     <color name="pink">#ff577f</color>
     <color name="greeen">#00af91</color>
     <color name="orange">#f88f01</color>
+    <color name="app_orange">#fc6c04</color>
     <color name="yellow">#FFFF00</color>
     <color name="bottom_menu_item_color">#2f2f2f</color>
     <color name="light_text_color">#AFAFAF</color>

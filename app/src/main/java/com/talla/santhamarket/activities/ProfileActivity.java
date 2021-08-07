@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +45,7 @@ import com.google.firebase.storage.UploadTask;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.databinding.ActivityProfileBinding;
 import com.talla.santhamarket.databinding.ProfileBottomSheetBinding;
+import com.talla.santhamarket.models.ProductModel;
 import com.talla.santhamarket.models.UserAddress;
 import com.talla.santhamarket.models.UserModel;
 
@@ -59,7 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Uri pickedImageUri;
     private StorageReference storageReference;
     private FirebaseStorage firebaseStorage;
-    private ListenerRegistration jf;
+    private ListenerRegistration profileDataListner,addressListner;
     private Dialog progressDialog;
     private static final String TAG = "ProfileActivity";
 
@@ -76,61 +79,62 @@ public class ProfileActivity extends AppCompatActivity {
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference(getString(R.string.PROFILE_PICS));
 
-        checkRadioGroup();
-    }
+        PackageInfo pInfo = null;
+        try {
+            pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            int version = pInfo.versionCode;
+           binding.appVersion.setText("App Version :"+version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        getAddressData();
         getProfileData();
+
     }
 
     private void getProfileData() {
         progressDialog.show();
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        profileDataListner = documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        UserModel userModel = document.toObject(UserModel.class);
-                        Log.d(TAG, "DocumentSnapshot data: " + userModel.toString());
-                        setDataToUi(userModel);
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
+            public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.d(TAG, "onEvent: GetProfileData " + error.getMessage());
+                    progressDialog.dismiss();
+                    showSnackBar(error.getMessage());
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
+                    if (snapshot != null && snapshot.exists()) {
+                        UserModel userModel = snapshot.toObject(UserModel.class);
+                        if (userModel != null)
+                            setDataToUi(userModel);
+                    } else {
+                        Log.d(TAG, "Current data: null");
+                        progressDialog.dismiss();
+                        showSnackBar("Current data: Empty");
+                    }
                 }
-
             }
         });
     }
 
     private void getAddressData() {
-        firestore.collection(getString(R.string.ADDRESS_BOOK)).whereEqualTo("userId", UID).whereEqualTo("defaultAddress", true).get().addOnCompleteListener(this, new OnCompleteListener<QuerySnapshot>() {
+        addressListner=firestore.collection(getString(R.string.ADDRESS_BOOK)).whereEqualTo("userId", UID).whereEqualTo("defaultAddress", true).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "Get Address data sucessfull");
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d(TAG, "Server response : " + document.getId() + " => " + document.getData());
-                        UserAddress userAddress = document.toObject(UserAddress.class);
-                        userAddress.setDocID(document.getId());
-                        binding.addressProfile.setText(userAddress.getUser_country() + "," + userAddress.getUser_state() + "\n" + userAddress.getUser_city() + "," + userAddress.getUser_pincode() + "\n" + userAddress.getUser_streetAddress());
-                    }
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.d(TAG, "onEvent: getAddressData " + error.getMessage());
+                    progressDialog.dismiss();
+                    showSnackBar(error.getMessage());
                 } else {
-                    Log.d(TAG, "error occured" + task.getException());
+                    if (value != null && !value.isEmpty()) {
+                        for (QueryDocumentSnapshot doc : value) {
+                            UserAddress userAddress = doc.toObject(UserAddress.class);
+                            binding.addressProfile.setText(userAddress.getUser_country() + "," + userAddress.getUser_state() + "\n" + userAddress.getUser_city() + "," + userAddress.getUser_pincode() + "\n" + userAddress.getUser_streetAddress());
+                        }
+                    }
                 }
             }
-        }).addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                showSnackBar(e.getMessage());
-            }
         });
+        progressDialog.dismiss();
     }
 
     private void setDataToUi(UserModel userModel) {
@@ -139,34 +143,8 @@ public class ProfileActivity extends AppCompatActivity {
         binding.profileUserNameEdit.setText(userModel.getUser_name());
         binding.profileEmailText.setText(userModel.getUser_email());
         binding.profilePhoneEdit.setText(userModel.getUser_number());
-        if (userModel.getUser_gender() != null) {
-            String gender = userModel.getUser_gender();
-            if (gender.equalsIgnoreCase("male")) {
-                binding.profileMaleRadio.setChecked(true);
-                binding.profileFemaleRadio.setChecked(false);
-                binding.profileOthersRadio.setChecked(false);
-            } else if (gender.equalsIgnoreCase("female")) {
-                binding.profileFemaleRadio.setChecked(true);
-                binding.profileMaleRadio.setChecked(false);
-                binding.profileOthersRadio.setChecked(false);
-            } else if (gender.equalsIgnoreCase("others")) {
-                binding.profileOthersRadio.setChecked(true);
-                binding.profileFemaleRadio.setChecked(false);
-                binding.profileMaleRadio.setChecked(false);
-            }
-        }
+        getAddressData();
         progressDialog.dismiss();
-    }
-
-    private void checkRadioGroup() {
-        binding.profileRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton gender = (RadioButton) findViewById(checkedId);
-                documentReference.update("user_gender", gender.getText().toString());
-            }
-        });
-
     }
 
     public void uploadProfileImage(View view) {
@@ -299,20 +277,12 @@ public class ProfileActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
     }
 
-//    public void updatePhoneNumber(View view) {
-//        PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential("+91-98298XXXX2", "OTP_CODE");
-//        // Update Mobile Number...
-//        auth.getCurrentUser().updatePhoneNumber(phoneAuthCredential).addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Void> task) {
-//                if (task.isSuccessful()) {
-//                    // Update Successfully
-//                } else {
-//                    // Failed
-//                }
-//            }
-//        });
-//
-//    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        profileDataListner.remove();
+        addressListner.remove();
+    }
+
 
 }

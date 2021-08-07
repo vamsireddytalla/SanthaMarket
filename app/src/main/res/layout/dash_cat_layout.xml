@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:padding="@dimen/_10sdp"
@@ -11,11 +11,14 @@
     android:id="@+id/rootItem"
     android:foreground="?attr/selectableItemBackground">
 
-      <ImageView
-          android:layout_width="@dimen/_50sdp"
-          android:layout_height="@dimen/_50sdp"
-          android:src="@drawable/anchovies"
-          android:id="@+id/imageIcon"/>
+    <com.mikhaellopez.circularimageview.CircularImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/catImage"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@color/colorPrimary"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@color/colorAccent"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,6 +26,7 @@
         android:id="@+id/catTitle"
         android:gravity="center"
         android:textStyle="bold"
-        style="@style/Roboto_TextView_Light"/>
+        android:layout_marginTop="@dimen/_3sdp"
+        style="@style/Roboto_TextView_Light_dark"/>
 
 </LinearLayout>

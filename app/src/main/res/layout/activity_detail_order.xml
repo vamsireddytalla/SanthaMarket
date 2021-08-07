@@ -201,12 +201,13 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
                 <LinearLayout
-                    android:id="@+id/continueBtn"
+                    android:id="@+id/getHelp"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_40sdp"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:background="@color/xd_green"
                     android:gravity="center"
+                    android:onClick="getHelp"
                     android:padding="@dimen/_10sdp">
 
                     <TextView

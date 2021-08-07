@@ -139,6 +139,7 @@
                                 style="@style/Roboto_TextView_Light_dark"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/itemsTitle"
                                 android:layout_marginLeft="@dimen/_10sdp"
                                 android:layout_weight="0.50"
                                 android:text="Price ( 1 item )"

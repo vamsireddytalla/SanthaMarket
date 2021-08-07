@@ -4,13 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.MimeTypeMap;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,21 +23,32 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.talla.santhamarket.R;
 import com.talla.santhamarket.adapters.OrderStatusAdapter;
 import com.talla.santhamarket.databinding.ActivityDetailOrderBinding;
 import com.talla.santhamarket.databinding.CancelledDialogBinding;
 import com.talla.santhamarket.databinding.CustomProgressDialogBinding;
+import com.talla.santhamarket.models.Data;
 import com.talla.santhamarket.models.DeliveryModel;
+import com.talla.santhamarket.models.FcmResponse;
+import com.talla.santhamarket.models.NotificationModel;
 import com.talla.santhamarket.models.OrderModel;
+import com.talla.santhamarket.models.TokenModel;
 import com.talla.santhamarket.models.UserAddress;
+import com.talla.santhamarket.serverCalls.ApiClient;
+import com.talla.santhamarket.serverCalls.ApiInterface;
 import com.talla.santhamarket.utills.CheckInternet;
 import com.talla.santhamarket.utills.CheckUtill;
 import com.talla.santhamarket.utills.StaticUtills;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DetailOrderActivity extends AppCompatActivity {
     private ActivityDetailOrderBinding binding;
@@ -43,6 +58,7 @@ public class DetailOrderActivity extends AppCompatActivity {
     private Dialog progressDialog;
     private OrderModel orderModel;
     private OrderStatusAdapter orderStatusAdapter;
+    private ApiInterface apiInterface;
     private static final String TAG = "DetailOrderActivity";
 
     @Override
@@ -137,7 +153,7 @@ public class DetailOrderActivity extends AppCompatActivity {
         binding.listPrice.setPaintFlags(binding.listPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         binding.discountPrice.setText(res + "%OFF");
         binding.deliveryPrice.setText(this.getResources().getString(R.string.rs_symbol) + CheckUtill.FormatCost(orderModel.getDeliveryCharges()));
-        binding.totalCalcAmount.setText(CheckUtill.FormatCost((int) orderModel.getTotalProductPrice()) + this.getResources().getString(R.string.Rs));
+        binding.totalCalcAmount.setText(CheckUtill.FormatCost((int) (orderModel.getTotalProductPrice()+orderModel.getDeliveryCharges())) + this.getResources().getString(R.string.Rs));
         int priceQty=(int) (orderModel.getSelected_quantity()*orderModel.getProduct_price());
         binding.totItemsQty.setText(("("+orderModel.getSelected_quantity()+"*"+((int)orderModel.getProduct_price())+")")+"="+priceQty+this.getResources().getString(R.string.rs_symbol));
 
@@ -214,9 +230,8 @@ public class DetailOrderActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                progressDialog.dismiss();
+                                getFcmToken(orderModel.getSeller_id(),getString(R.string.CANCELLED)+"\n"+orderModel.getProduct_name(),"Order is cancelled due to " + cancelMessage + "\n" + "Cancelled by : " +"USER");
                                 dialog.dismiss();
-                                finish();
                             } else {
                                 progressDialog.dismiss();
                                 dialog.dismiss();
@@ -234,4 +249,67 @@ public class DetailOrderActivity extends AppCompatActivity {
 
     }
 
+
+    private void getFcmToken(String userID,String title,String message) {
+        firebaseFirestore.collection(getString(R.string.FCM_TOKENS)).document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    TokenModel tokenModel = task.getResult().toObject(TokenModel.class);
+                    sendNotification(tokenModel.getUserToken(),title,message);
+                } else {
+                    progressDialog.dismiss();
+                    showSnackBar(task.getException().toString());
+                }
+            }
+        });
+    }
+
+    private void sendNotification(String fcm_token,String title,String message) {
+        apiInterface = ApiClient.getClient(getString(R.string.FCM_BASE_URL)).create(ApiInterface.class);
+        NotificationModel notificationModel = new NotificationModel();
+        notificationModel.setCollapseKey("type_a");
+        notificationModel.setTo(fcm_token);
+        Data data = new Data();
+        data.setTitle("Order : "+title);
+        data.setBody(message);
+        data.setOpenScreen(getString(R.string.OrdersActivity));
+        notificationModel.setData(data);
+        apiInterface.sendNotifcation(notificationModel).enqueue(new Callback<FcmResponse>() {
+            @Override
+            public void onResponse(Call<FcmResponse> call, Response<FcmResponse> response) {
+                if (response.isSuccessful()) {
+                    FcmResponse responseBody = response.body();
+                    if (responseBody.getSuccess()==1)
+                    {
+                        Toast.makeText(DetailOrderActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                    }
+                    progressDialog.dismiss();
+                    finish();
+
+                } else {
+                    progressDialog.dismiss();
+                    showSnackBar(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FcmResponse> call, Throwable t) {
+                progressDialog.dismiss();
+                showSnackBar(t.getMessage());
+            }
+        });
+    }
+
+    public void getHelp(View view)
+    {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.admin_email)});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Help me with this order Id : " + orderModel.getOrder_id()+"\n"+"Order Doc Id "+orderModel.getOrder_doc_id());
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+
+    }
 }
